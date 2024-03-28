@@ -1,7 +1,7 @@
 # projet-thales
 SAE Thales 
-readme avec toutes les ifo uttile au projet.
-Personne du groupe avec les nom github :
+README avec toutes les infos utiles au projet.
+Personnes du groupe avec les noms Github :
 
 
 
@@ -15,3 +15,8 @@ Tomtech -> Thomas CAPHAM thomas.capham@gmail.com
 
 MaitreBastien -> Bastien LOSCO bastien.losco@gmail.com
 
+
+
+
+
+floben3 -> DELBREIL Florian florian.delbreil@etu.unice.fr
