@@ -20,3 +20,9 @@ MaitreBastien -> Bastien LOSCO bastien.losco@gmail.com
 
 
 floben3 -> DELBREIL Florian florian.delbreil@etu.unice.fr
+
+
+
+
+
+TimLLORET -> LLORET Timothée timothee.lloret@etu.univ-cotedazur.fr
