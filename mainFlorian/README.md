@@ -1,0 +1,60 @@
+# Répertoire de partage de mon travail personnel.
+
+Contient mes premiers fichiers PHP.
+
+---
+
+## Explications ==>
+
+### Le fichier index.php contient ==>
+  - Header & menu de navigation & footer (--> header.php, menu.php, footer.php).
+  - La page de connexion (--> login.php, submit_login.php).
+  - Les pages d'accueil en fonction du profil de l'utilisateur (--> operator.php, admin.php, superadmin.php).
+  - Le fichier logout.php permet la déconnexion.
+
+### Le fichier database_connect.php contient ==>
+  - La connexion à la Base De Données MySQL (PHPmyAdmin).
+  - Pour tester --> créer un fichier mysql.php pour déclarer les variables nécessaires.
+
+### Le fichier functions.php contient ==> 
+  - Les fonctions utiles.
+
+---
+
+## A suivre ==>
+
+  - Fichiers des différentes pages d'accueil pour les différents profil :
+    1. operator.php
+    2. admin.php
+    3. superadmin.php
+  
+  - Fichiers pour la création/modification des mots de passe en fonction des paramètres de configurations :
+    - Algorithme de hachage : ***bcrypt***. 
+    - Fonctions pour vérifier de la validité d'un mot de passe.
+  
+  - Alogrithme python pour création de checklist.
+
+  - Feuille de style (--> CSS).
+
+---
+
+## Concernant le rapport ==>
+
+  - Base De Données à modifier :
+    
+    - Ajout d'une table pour stocker les paramètres de configuration des mots de passe et le signal de mise à jour.
+
+---
+
+## Notes ==>
+
+> [!IMPORTANT]
+> Evénements de type : "**Informations**", "**Warnings***", "**Alarmes**" à définir :  
+> - ***--> validation par M. CAM (\! pour pouvoir commencer la mise en place de la gestion des logs \!).***
+
+---
+
+**Bonne vacances.**
+
+
+<====== Florian ======>
