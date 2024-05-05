@@ -30,7 +30,7 @@ Contient mes premiers fichiers PHP.
   
   - Fichiers pour la création/modification des mots de passe en fonction des paramètres de configurations :
     - Algorithme de hachage : ***bcrypt***. 
-    - Fonctions pour vérifier de la validité d'un mot de passe.
+    - [X] Fonctions pour vérifier la validité d'un mot de passe.
   
   - Alogrithme python pour création de checklist.
 
