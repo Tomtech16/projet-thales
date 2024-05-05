@@ -1,7 +1,7 @@
 <?php
     function UserIsBlocked(int $attempts): bool { return $userIsBlocked = ($attempts >= 3); }
 
-    function UserAttempts(int $primaryKey, int $option): void 
+    function UserAttempts(int $primaryKey, str $option): void 
     {
         /*  Option -->
                 If $option === 'reset' : reset login attempts.
