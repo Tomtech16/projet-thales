@@ -2,9 +2,9 @@
     <form action="submit_login.php" method="POST">
         <!-- si message d'erreur on l'affiche -->
         <?php 
-            if (isset($_SESSION['LOGIN_ERROR_MESSAGE'])) {
-                echo $_SESSION['LOGIN_ERROR_MESSAGE'];
-                unset($_SESSION['LOGIN_ERROR_MESSAGE']);
+            if (isset($_SESSION['LOGIN_MESSAGE'])) {
+                echo "<p>".$_SESSION['LOGIN_MESSAGE']."</p>";
+                unset($_SESSION['LOGIN_MESSAGE']);
             }
         ?>
         <p>Veuillez vous identifier</p>

@@ -1,12 +1,21 @@
 <?php
     function UserIsBlocked(int $attempts): bool { return $userIsBlocked = ($attempts >= 3); }
 
-    function IncrementUserAttempts(int $primaryKey): void 
+    function UserAttempts(int $primaryKey, int $option): void 
     {
+        /*  Option -->
+                If $option === 'reset' : reset login attempts.
+                If $option === 'increment' : increment login attempts.
+        */
+
         global $bd;
 
         $sql = "UPDATE USERS ";
-        $sql .= "SET attempts = attempts + 1 ";
+        if ($option === 'reset') {
+            $sql .= "SET attempts = 0 ";
+        } elseif ($option === 'increment') {
+            $sql .= "SET attempts = attempts + 1 ";
+        }   
         $sql .= "WHERE userkey = :primarykey";
         $req = $bd->prepare($sql);
         $marqueurs = array('primarykey' => $primaryKey);

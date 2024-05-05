@@ -31,14 +31,15 @@ if (isset($postData['username']) &&  isset($postData['password'])) {
                     'profile' => $user['profile']
                 ];
                 $passwordParameters = PasswordSelect();
-                $_SESSION['PASSWORD_UPDATE_REQUIRED'] = ($passwordParameters['update'] === TRUE);
+                $_SESSION['PASSWORD_UPDATE_REQUIRED'] = ($passwordParameters['update']);
+                UserAttempts($user['userkey'],'reset');
             } else {
-                IncrementUserAttempts($user['userkey']);
+                UserAttempts($user['userkey'],'increment');
             }
         }
     }
 
     if (!isset($_SESSION['LOGGED_USER'])) {
-        $_SESSION['LOGIN_ERROR_MESSAGE'] = "Echec de l'authentification.";
+        $_SESSION['LOGIN_MESSAGE'] = "Echec de l'authentification.";
     }
 }
