@@ -56,5 +56,4 @@ Contient mes premiers fichiers PHP.
 
 **Bonne vacances.**
 
-
 <====== Florian ======>

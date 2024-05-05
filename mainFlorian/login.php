@@ -14,6 +14,6 @@
     </form>
     <!-- Si utilisateur/trice bien connectée on affiche un message de succès -->
 <?php else : ?>
-        Connecté en tant que <?php echo $_SESSION['LOGGED_USER']['username']; ?>.
-        Bonjour <?php echo $_SESSION['LOGGED_USER']['firstname']." ".$_SESSION['LOGGED_USER']['lastname']; ?>.
+        <p>Connecté en tant que <?php echo $_SESSION['LOGGED_USER']['username']; ?>.</p>
+        <p>Bonjour <?php echo $_SESSION['LOGGED_USER']['firstname']." ".$_SESSION['LOGGED_USER']['lastname']; ?>.</p>
 <?php endif; ?>

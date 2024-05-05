@@ -1,50 +1,21 @@
 <?php
+
     function UserIsBlocked(int $attempts): bool { return $userIsBlocked = ($attempts >= 3); }
 
-    function UserAttempts(int $primaryKey, str $option): void 
-    {
-        /*  Option -->
-                If $option === 'reset' : reset login attempts.
-                If $option === 'increment' : increment login attempts.
-        */
-
-        global $bd;
-
-        $sql = "UPDATE USERS ";
-        if ($option === 'reset') {
-            $sql .= "SET attempts = 0 ";
-        } elseif ($option === 'increment') {
-            $sql .= "SET attempts = attempts + 1 ";
-        }   
-        $sql .= "WHERE userkey = :primarykey";
-        $req = $bd->prepare($sql);
-        $marqueurs = array('primarykey' => $primaryKey);
-        $req->execute($marqueurs) or die(print_r($req->errorInfo()));
-        $req->closeCursor();
+    function PasswordIsValid(string $username, string $password, int $n, $parameters): bool
+        {
+        if (!preg_match('/[^\x20-\x7E]/', $password)) {
+            if (!str_contains($password, $username)) {
+                $countDigits = preg_match_all('/[0-9]/', $password);
+                $countLowercase = preg_match_all('/[a-b]/', $password);
+                $countUppercase = preg_match_all('/[A-B]/', $password);
+                $countSpecial = preg_match_all('/[!"#$%&\'()*+,\-./;<=>?@\\\^_`{|}~]/', $password);
+                if ($countDigits >= $parameters['n'] || $countLowercase >= $parameters['p'] || $countUppercase >= $parameters['q'] || $countSpecial >= $parameters['r']) {
+                    return TRUE;
+                }
+            }
+        }
+        return FALSE;
     }
 
-    function UsersSelect(): array
-    {
-        global $bd;
-
-        $sql = "select * FROM USERS";
-        $req = $bd->prepare($sql);
-        $req->execute() or die(print_r($req->errorInfo()));
-        $users = $req->fetchall();
-        $req->closeCursor();
-        return $users;
-    }
-
-    function PasswordSelect()
-    {
-        global $bd;
-
-        $sql = "select * FROM PASSWORD";
-        $req = $bd->prepare($sql);
-        $req->execute() or die(print_r($req->errorInfo()));
-        $passwordParameters = $req->fetchall();
-        $req->closeCursor();
-        return $passwordParameters;
-    }
-        
 ?>
