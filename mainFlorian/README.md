@@ -33,9 +33,9 @@ Contient mes premiers fichiers PHP.
   - Fichiers et fonctions permettant la modification d'un mot de passe d'utilisateur.
 
   - Fichiers des différentes pages d'accueil pour les différents profil :
-    1. operator.php
-    2. admin.php
-    3. superadmin.php
+    - operator.php
+    - admin.php
+    - superadmin.php
   
   - Alogrithme python pour création de checklist.
 
