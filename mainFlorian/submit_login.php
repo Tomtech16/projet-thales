@@ -15,9 +15,9 @@ require_once(__DIR__ . '/sql_functions.php');
 $postData = $_POST;
 
 // Validation du formulaire
-if (isset($postData['username']) &&  isset($postData['password'])) {
-    $username = htmlspecialchars($postData['username'], ENT_QUOTES);
-    $password = htmlspecialchars($postData['password'], ENT_QUOTES);
+if (isset($postData['username']) && isset($postData['password'])) {
+    $username = Sanitize($postData['username']);
+    $password = Sanitize($postData['password']);
 
     $users = UsersSelect();
 
@@ -30,10 +30,9 @@ if (isset($postData['username']) &&  isset($postData['password'])) {
                     'username' => $user['username'], 
                     'firstname' => $user['firstname'], 
                     'lastname' => $user['lastname'],
-                    'profile' => $user['profile']
+                    'profile' => $user['profile'],
+                    'PASSWORD_UPDATE_REQUIRED' => $user['passwordupdaterequired']
                     ];
-                    $passwordParameters = PasswordSelect();
-                    $_SESSION['PASSWORD_UPDATE_REQUIRED'] = ($passwordParameters['update']);
                     UserAttempts($user['userkey'],'reset');
                     $userIsBlocked = FALSE;
                     break;

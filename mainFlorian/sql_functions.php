@@ -1,4 +1,31 @@
-<?php
+<?php    
+
+    function PasswordSelect()
+    {
+        global $bd;
+
+        $sql = "select * from PASSWORD";
+        $req = $bd->prepare($sql);
+        $req->execute() or die(print_r($req->errorInfo()));
+        $passwordParameters = $req->fetchall();
+        $req->closeCursor();
+        foreach ($passwordParameters as $parameters) {
+            return $parameters;
+        }
+    }
+
+    function UsersSelect(string $selection = '*'): array
+    {
+        global $bd;
+
+        $sql = "select :selection from USERS";
+        $req = $bd->prepare($sql);
+        $marqueurs = array('selection' => $selection);
+        $req->execute($marqueurs) or die(print_r($req->errorInfo()));
+        $users = $req->fetchall();
+        $req->closeCursor();
+        return $users;
+    }
 
     function UserAttempts(int $primaryKey, string $option): void 
     {
@@ -9,43 +36,45 @@
 
         global $bd;
 
-        $sql = "UPDATE USERS ";
+        $sql = "update USERS ";
         if ($option === 'reset') {
-            $sql .= "SET attempts = 0 ";
+            $sql .= "set attempts = 0 ";
         } elseif ($option === 'increment') {
-            $sql .= "SET attempts = attempts + 1 ";
+            $sql .= "set attempts = attempts + 1 ";
         }   
-        $sql .= "WHERE userkey = :primarykey";
+        $sql .= "where userkey = :primarykey";
         $req = $bd->prepare($sql);
         $marqueurs = array('primarykey' => $primaryKey);
         $req->execute($marqueurs) or die(print_r($req->errorInfo()));
         $req->closeCursor();
     }
 
-    function UsersSelect(): array
+    function UserIsInBDD(string $username): bool
     {
-        global $bd;
+        $users = UsersSelect('username');
+        foreach ($users as $user) {
+            if ($username === $user['username']) {
+                return TRUE;
+            } 
+        }
+        return FALSE;
 
-        $sql = "select * FROM USERS";
-        $req = $bd->prepare($sql);
-        $req->execute() or die(print_r($req->errorInfo()));
-        $users = $req->fetchall();
-        $req->closeCursor();
-        return $users;
     }
 
-    function PasswordSelect()
+    function UserAppend(string $username, string $firstname, string $lastname, string $password): bool
     {
-        global $bd;
 
-        $sql = "select * FROM PASSWORD";
-        $req = $bd->prepare($sql);
-        $req->execute() or die(print_r($req->errorInfo()));
-        $passwordParameters = $req->fetchall();
-        $req->closeCursor();
-        foreach ($passwordParameters as $parameters) {
-            return $parameters;
+        global $bd;
+        if (!UserIsInBDD($username)) {
+            $hash = password_hash($password, PASSWORD_BCRYPT);
+            $sql = "insert into USERS (username, firstname, lastname, profile, password, attempts) values (:username, :firstname, :lastname, 'operator', :password, 0)";
+            $req = $bd->prepare($sql);
+            $marqueurs = array('username' => $username, 'firstname' => $firstname, 'lastname' => $lastname, 'password' => $hash);
+            $req->execute($marqueurs) or die(print_r($req->errorInfo()));
+            $req->closeCursor();
+            return TRUE;
+        } else {
+            return FALSE;
         }
     }
-        
 ?>

@@ -1,6 +1,6 @@
 <?php if (!isset($_SESSION['LOGGED_USER'])) : ?>
     <form action="submit_login.php" method="POST">
-        <!-- si message d'erreur on l'affiche -->
+        <!-- Si message d'erreur on l'affiche -->
         <?php 
             if (isset($_SESSION['LOGIN_MESSAGE'])) {
                 echo "<p>".$_SESSION['LOGIN_MESSAGE']."</p>";
