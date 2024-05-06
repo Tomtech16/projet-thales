@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <form action="submit_create_user.php" method="POST">
     <!-- Affiche un message de succès ou d'erreur -->
     <?php 
@@ -16,6 +17,8 @@
         <li>Ne doit pas contenir d'accent.</li>
         <li>Ne doit pas contenir le nom d'utilisateur.</li>
         <?php
+            require_once(__DIR__ . '/database_connect.php');
+            require_once(__DIR__ . '/sql_functions.php');
             $parameters = PasswordSelect();
             echo "<li>Le mot de passe doit contenir au moins ".$parameters['n']." caractère(s) numérique(s) (entre “0” et “9”).</li>\n";
             echo "<li>Le mot de passe doit contenir au moins ".$parameters['p']." caractère(s) alphabétique(s) en minuscule (entre « a » et « z »).</li>\n";

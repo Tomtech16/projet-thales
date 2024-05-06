@@ -10,7 +10,7 @@ session_start();
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<link rel="stylesheet" href="../Utils/style.css" />
+		<link rel="stylesheet" href="style.css" />
 		<title>THALES - CHECKLIST</title>
 	</head>
 	<body>

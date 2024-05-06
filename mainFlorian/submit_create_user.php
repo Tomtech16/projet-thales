@@ -27,14 +27,16 @@ if (isset($postData['username']) && isset($postData['firstname']) && isset($post
             if (UserAppend($username, $firstname, $lastname, $password)) {
                 $_SESSION['CREATE_USER_MESSAGE'] = 'Utilisateur créé avec succès. Vous pouvez en ajouter un nouveau.';
             } else {
-                $_SESSION['CREATE_USER_MESSAGE'] = 'Nom d\'utilisateur indisponible.\n Veuillez réésayer.';
+                $_SESSION['CREATE_USER_MESSAGE'] = 'Nom d\'utilisateur indisponible.';
             } 
         } else {
-            $_SESSION['CREATE_USER_MESSAGE'] = 'Le mot de passe ne respecte pas les règles de configuration.\n Veuillez réésayer.';
+            $_SESSION['CREATE_USER_MESSAGE'] = 'Le mot de passe ne respecte pas les règles de configuration.';
         }
     } else {
-        $_SESSION['CREATE_USER_MESSAGE'] = 'Les deux mots de passe sont différents.\n Veuillez réésayer.';
+        $_SESSION['CREATE_USER_MESSAGE'] = 'Les deux mots de passe sont différents.';
     }
 }
+
+header('Location:create_user.php');
 
 ?>

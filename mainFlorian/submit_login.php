@@ -21,7 +21,7 @@ if (isset($postData['username']) && isset($postData['password'])) {
 
     $users = UsersSelect();
     $userIsBlocked = FALSE;
-    
+
     foreach ($users as $user) {
         if ($username === $user['username']) {
             $hash = $user['password'];
@@ -41,6 +41,7 @@ if (isset($postData['username']) && isset($postData['password'])) {
                     $_SESSION['LOGIN_MESSAGE'] = 'Utilisateur bloqué.';
                     break;
                 }
+                
             } else {
                 UserAttempts($user['userkey'],'increment');
                 break;
@@ -51,4 +52,6 @@ if (isset($postData['username']) && isset($postData['password'])) {
     if (!isset($_SESSION['LOGGED_USER']) && !$userIsBlocked) {
         $_SESSION['LOGIN_MESSAGE'] = "Echec de l'authentification.";
     }
+
+    header('Location:index.php');
 }

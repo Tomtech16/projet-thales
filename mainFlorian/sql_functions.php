@@ -16,19 +16,19 @@
         }
     }
 
-    function UsersSelect(string $selection = '*'): array
+    function UsersSelect(): array
     {
         // return data of USERS table
 
         global $bd;
 
-        $sql = "select :selection from USERS";
+        $sql = "select * from USERS";
         $req = $bd->prepare($sql);
-        $marqueurs = array('selection' => $selection);
-        $req->execute($marqueurs) or die(print_r($req->errorInfo()));
+        $req->execute() or die(print_r($req->errorInfo()));
         $users = $req->fetchall();
         $req->closeCursor();
         return $users;
+
     }
 
     function UserAttempts(int $primaryKey, string $option): void 
@@ -56,7 +56,7 @@
     function UserIsInBDD(string $username): bool
     {
         // check if user is in USERS table
-        $users = UsersSelect('username');
+        $users = UsersSelect();
         foreach ($users as $user) {
             if ($username === $user['username']) {
                 return TRUE;
