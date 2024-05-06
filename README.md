@@ -1,4 +1,4 @@
-**SAE Thales - Groupe 6**
+# **SAE Thales - Groupe 6**
 
 ---
 
