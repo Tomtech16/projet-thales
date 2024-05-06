@@ -1,4 +1,6 @@
-# **SAE Thales - Groupe 6**
+# THALES CHECKLIST
+
+**SAE Thales - Groupe 6**
 
 ---
 
