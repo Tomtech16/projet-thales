@@ -1,7 +1,9 @@
 <?php    
 
-    function PasswordSelect()
+    function PasswordSelect(): array
     {
+        // return data of PASSWORD table
+
         global $bd;
 
         $sql = "select * from PASSWORD";
@@ -16,6 +18,8 @@
 
     function UsersSelect(string $selection = '*'): array
     {
+        // return data of USERS table
+
         global $bd;
 
         $sql = "select :selection from USERS";
@@ -51,6 +55,7 @@
 
     function UserIsInBDD(string $username): bool
     {
+        // check if user is in USERS table
         $users = UsersSelect('username');
         foreach ($users as $user) {
             if ($username === $user['username']) {
@@ -63,8 +68,10 @@
 
     function UserAppend(string $username, string $firstname, string $lastname, string $password): bool
     {
+        // append user to USERS table
 
         global $bd;
+        
         if (!UserIsInBDD($username)) {
             $hash = password_hash($password, PASSWORD_BCRYPT);
             $sql = "insert into USERS (username, firstname, lastname, profile, password, attempts) values (:username, :firstname, :lastname, 'operator', :password, 0)";

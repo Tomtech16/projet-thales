@@ -1,5 +1,5 @@
 <form action="submit_create_user.php" method="POST">
-    <!-- Affichage du message de succès ou d'erreur -->
+    <!-- Affiche un message de succès ou d'erreur -->
     <?php 
         if (isset($_SESSION['CREATE_USER_MESSAGE'])) {
             echo "<p>".$_SESSION['CREATE_USER_MESSAGE']."</p>";

@@ -19,10 +19,13 @@ session_start();
         <?php require_once(__DIR__ . '/login.php'); ?>
 
         <?php
+            // if the user is logged
             if (isset($_SESSION['LOGGED_USER'])) {
+                // check for password update required
                 if ($_SESSION['PASSWORD_UPDATE_REQUIRED'] === TRUE) {
                     require_once(__DIR__ . '/password_update.php');
                 } else {
+                    // give the right page according to profiles : operator, admin, superadmin
                     switch ($_SESSION['LOGGED_USER']['profile'])
                     { 
                         case 'operator':
