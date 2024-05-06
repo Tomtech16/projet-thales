@@ -20,7 +20,8 @@ if (isset($postData['username']) && isset($postData['password'])) {
     $password = Sanitize($postData['password']);
 
     $users = UsersSelect();
-
+    $userIsBlocked = FALSE;
+    
     foreach ($users as $user) {
         if ($username === $user['username']) {
             $hash = $user['password'];
@@ -34,14 +35,12 @@ if (isset($postData['username']) && isset($postData['password'])) {
                     'PASSWORD_UPDATE_REQUIRED' => $user['passwordupdaterequired']
                     ];
                     UserAttempts($user['userkey'],'reset');
-                    $userIsBlocked = FALSE;
                     break;
                 } else {
                     $userIsBlocked = TRUE;
                     $_SESSION['LOGIN_MESSAGE'] = 'Utilisateur bloqué.';
                     break;
                 }
-                
             } else {
                 UserAttempts($user['userkey'],'increment');
                 break;
