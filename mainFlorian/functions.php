@@ -28,4 +28,14 @@
         return $sanitizedInput = htmlspecialchars($input, ENT_QUOTES);
     }
 
+    function StrContainsAnySubstring(string $haystack, array $needles): bool
+    {
+        foreach ($needles as $needle) {
+            if (str_contains($haystack, $needle)) {
+                return TRUE;
+            }
+        }
+        return FALSE;
+    }
+
 ?>

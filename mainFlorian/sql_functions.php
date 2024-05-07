@@ -85,39 +85,15 @@
         }
     }
 
-    function GoodPracticesSelect(array $whereStatements = NULL): array
+    function GoodPracticesSelect(): array
     {
-        /*  Return data of GOODPRACTICES table selected with all the WHERE statements passed with $whereStatements
-
-            $whereStatements structure ==>
-                array(array(string WHERE statement, string marker), array(string WHERE statement, string marker))
-
-            $whereStatements example ==>
-                array(array('WHERE program=:0', 'PROG_1'), array('WHERE program =:1', 'PROG_2'))
-        */
+        //  Return data of GOODPRACTICES table
 
         global $bd;
 
         $sql = "select * from GOODPRACTICES ";
-
-        if (isset($whereStatements)) {
-            $i = 0;
-            $marqueurs = array();
-
-            foreach ($whereStatements as $statement) {
-                $sql .= $statement[0];
-                $marqueurs[$i] = $statement[1];
-                $i++;
-            }
-            
-            $req = $bd->prepare($sql);
-            $req->execute($marqueurs) or die(print_r($req->errorInfo()));
-
-        } else {
-            $req = $bd->prepare($sql);
-            $req->execute() or die(print_r($req->errorInfo()));
-        }
-
+        $req = $bd->prepare($sql);
+        $req->execute() or die(print_r($req->errorInfo()));
         $goodPractices = $req->fetchall();
         $req->closeCursor();
         return $goodPractices;
