@@ -21,4 +21,6 @@ CREATE TABLE checklist.USERS (
 INSERT INTO USERS (username, firstname, lastname, profile, password, attempts) VALUES
 ('operator', 'thales', 'thales', 'operator', '$2y$10$dGtIzyANyT6PuMWSOkuc9.7uBNENbKwXCXNq9V33BYuwwK/nQ78kG', 0),
 ('admin', 'thales', 'thales', 'admin', '$2y$10$dGtIzyANyT6PuMWSOkuc9.7uBNENbKwXCXNq9V33BYuwwK/nQ78kG', 0),
-('superadmin', 'thales', 'thales', 'admin', '$2y$10$dGtIzyANyT6PuMWSOkuc9.7uBNENbKwXCXNq9V33BYuwwK/nQ78kG', 0);
+('superadmin', 'thales', 'thales', 'superadmin', '$2y$10$dGtIzyANyT6PuMWSOkuc9.7uBNENbKwXCXNq9V33BYuwwK/nQ78kG', 0);
+
+--- Mots de passe : "password"
