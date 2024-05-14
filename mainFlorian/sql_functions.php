@@ -85,16 +85,97 @@
         }
     }
 
-    function GoodPracticesSelect(): array
+    function GoodPracticesSelect(array $whereIs = NULL, array $orderBy = NULL): array
     {
-        //  Return data of GOODPRACTICES table
+        // Return data of tables :
+        //     - PROGRAM(program_names)
+        //     - PHASE(phase_name)
+        //     - GOODPRACTICE(item)
+        //     - KEYWORD(keywords)
+            
+        // Options :
+        //     - $whereIs = array($column => $value)
+
+        //         -- $column :
+        //             - 'program_names'
+        //             - 'phase_name'
+        //             - 'item'
+        //             - 'keywords'
+
+        //         -- $value :
+        //             - The filter to apply.
+                    
+        //         ==> WHERE $column = $value
+            
+        //     - $orderBy = array($column)
+                
+        //         ==> ORDER BY $column
 
         global $bd;
-
-        $sql = "select * from GOODPRACTICES ";
+    
+        $sql = "
+            SELECT 
+                GROUP_CONCAT(DISTINCT PROGRAM.program_name ORDER BY PROGRAM.program_name SEPARATOR ', ') AS program_names,
+                PHASE.phase_name,
+                GOODPRACTICE.item,
+                GROUP_CONCAT(DISTINCT KEYWORD.onekeyword ORDER BY KEYWORD.onekeyword SEPARATOR ', ') AS keywords
+            FROM GOODPRACTICE
+            INNER JOIN PHASE ON GOODPRACTICE.phase_id = PHASE.phase_id
+            INNER JOIN GOODPRACTICE_PROGRAM ON GOODPRACTICE.goodpractice_id = GOODPRACTICE_PROGRAM.goodpractice_id
+            INNER JOIN PROGRAM ON GOODPRACTICE_PROGRAM.program_id = PROGRAM.program_id
+            INNER JOIN GOODPRACTICE_KEYWORD ON GOODPRACTICE.goodpractice_id = GOODPRACTICE_KEYWORD.goodpractice_id
+            INNER JOIN KEYWORD ON GOODPRACTICE_KEYWORD.keyword_id = KEYWORD.keyword_id
+        ";
+    
+        // Check for WHERE clause
+        if ($whereIs != NULL) {
+            $whereClause = " WHERE ";
+        
+            // Loop through key-value pairs in $whereIs array
+            foreach ($whereIs as $where => $is) {
+                // Add the condition to WHERE clause with parameterized values
+                $whereClause .= "$where=:$where AND ";
+            }
+        
+            // Remove the last 'AND' if it exists
+            $whereClause = rtrim($whereClause, 'AND ');
+            $sql .= $whereClause;
+        }
+        
+        $sql .= ' GROUP BY GOODPRACTICE.item';
+    
+        // Check for ORDER BY clause
+        if ($orderBy != NULL) {
+            $orderClause = " ORDER BY ";
+        
+            foreach ($orderBy as $by) {
+                if ($by === 'program_names' || $by === 'phase_name' || $by === 'item' || $by === 'keywords') {
+                    $orderClause .= "$by, ";
+                }
+            }
+            
+            // Remove the last comma if it exists
+            $orderClause = rtrim($orderClause, ', ');
+            $sql .= $orderClause;
+        }
+    
+        $sql .= ";";
+        
+        // Prepare and execute the SQL query
         $req = $bd->prepare($sql);
+    
+        // Bind values to parameters in WHERE clause
+        if ($whereIs != NULL) {
+            foreach ($whereIs as $where => $is) {
+                $req->bindParam(":$where", $is);
+            }
+        }
+    
+        // For tests
+        print_r($sql);
+    
         $req->execute() or die(print_r($req->errorInfo()));
-        $goodPractices = $req->fetchall();
+        $goodPractices = $req->fetchAll();
         $req->closeCursor();
         return $goodPractices;
     }
