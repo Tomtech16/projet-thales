@@ -22,7 +22,7 @@ CREATE TABLE USERS (
 
 INSERT INTO USERS (user_id, username, firstname, lastname, profile, password, attempts) VALUES
 (1, 'operator', 'thales', 'thales', 'operator', '$2y$10$dGtIzyANyT6PuMWSOkuc9.7uBNENbKwXCXNq9V33BYuwwK/nQ78kG', 0),
-(2, 'admin', 'thales', 'thales', 'admin', '$2y$10$dGtIzyANyT6PuMWSOkuc9.7uBNENbKwXCXNq9V33BYuwwK/nQ78kG', 0),
-(3, 'superadmin', 'thales', 'thales', 'superadmin', '$2y$10$dGtIzyANyT6PuMWSOkuc9.7uBNENbKwXCXNq9V33BYuwwK/nQ78kG', 0);
+(2, 'admin', 'thales', 'thales', 'admin', '$2y$10$llEMmo.QXQIv3G6bpL2StOAB/iBDIJ/BYJZkdixL5VFLUpjf9Nh0C', 0),
+(3, 'superadmin', 'thales', 'thales', 'superadmin', '$2y$10$Oww8cGL4jDkklFaeAcgnHeLhojCNrA5LSu5KbpYKvQSOAmq2.KZcm', 0);
 
 --- Mots de passe : "password"

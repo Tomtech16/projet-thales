@@ -10,12 +10,11 @@ session_start();
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<link rel="stylesheet" href="style.css" />
-		<title>THALES - CHECKLIST</title>
+		<link rel="stylesheet" href="./style.css" />
+		<title>Thales - Checklist</title>
 	</head>
 	<body>
         <?php require_once(__DIR__ . '/header.php'); ?>
-		<?php require_once(__DIR__ . '/menu.php'); ?>
         <?php require_once(__DIR__ . '/login.php'); ?>
 
         <?php

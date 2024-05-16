@@ -1,8 +1,199 @@
+:root {
+    --thales-header: #151930;
+    --thales-gradient-1: #151930;
+    --thales-gradient-2: #082C46;
+    --thales-gradient-3: #073D59;
+    --thales-gradient-3-light: rgb(7, 61, 89, 0.1);
+    --thales-color: #00abc8;
+
+
+}
+
+body {
+    margin: 0%;
+    background-color: var(--thales-gradient-3-light);
+    font-family: Open Sans,sans-serif;
+    box-sizing: border-box;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    background-color: var(--thales-header);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 1%;
+}
+
+header img {
+    width: 10%;
+    height: 5%;
+    margin: 0%;
+}
+
+header h1 {
+    margin-left: 4%;
+    padding-right: 4%;
+    font-size: large;
+    color: var(--thales-color);
+}
+
+header ul {
+    list-style: none;
+}
+
+header a {
+    color: #fff;
+    text-decoration: none;
+}
+
+section {
+    padding-left: 5%;
+    padding-right: 5%;
+}
+
+.login {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid var(--thales-gradient-1);
+    background-color: var(--thales-gradient-3-light);
+    border-radius: 5px;
+    text-align: center;
+}
+
+input {
+    width: 80%;
+}
+
+button {
+    background-color: var(--thales-gradient-3);
+    color: #fff;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    opacity: 0.8;
+    margin: 1px;
+}
+
+button:hover {
+    opacity: 1;
+}
+
+h2, h3 {
+    color: var(--thales-color);
+}
+
+#deleteForm h3 {
+    color: red;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
+    border-radius: 10px;
 }
 
 th, td {
-    border: 1px solid black;
+    border: 1px solid var(--thales-gradient-1);
+    padding: 3px;
 }
+
+/* Fixez le bouton sur le côté gauche de la page */
+.action-btn-container {
+    position: relative;
+    display: inline-block;
+}
+
+/* Stylez et fixez le bouton sur la page */
+.action-btn {
+    background-color: var(--thales-gradient-3);
+    color: #fff;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    opacity: 0.8;
+    width: 100%;
+    margin: 1px;
+}
+
+/* Positionnez la forme Popup */
+.form-popup {
+    display: none;
+    position: fixed; /* Utiliser une position fixe */
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid #666;
+    padding: 20px;
+    background-color: #fff;
+    z-index: 999;
+}
+
+/* Styles pour le conteneur de la forme */
+.form-container {
+    max-width: 300px;
+}
+
+/* Largeur complète pour les champs de saisie */
+.form-container input[type="text"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 5px 0 22px 0;
+    border: none;
+    background: #eee;
+}
+
+/* Quand les entrées sont concentrées, faites quelque chose */
+.form-container input[type="text"]:focus {
+    background-color: #ddd;
+    outline: none;
+}
+
+/* Stylez le bouton de soumission */
+.form-container .btn {
+    background-color: var(--thales-gradient-3);
+    color: #fff;
+    padding: 12px 20px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 10px;
+    opacity: 0.8;
+}
+
+.btn-warning {
+    background-color: darkred;
+    color: #fff;
+    padding: 12px 20px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 10px;
+    opacity: 0.8;
+}
+
+/* Planez les effets pour les boutons */
+.action-btn:hover,
+.form-container .btn:hover,
+.form-container .btn-warning:hover {
+    opacity: 1;
+}
+
+footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    background-color: var(--thales-header);
+    color: #fff;
+    display: flex;
+    justify-content: space-around;
+    margin-top: 5%;
+    padding: 2%;
+}
+
