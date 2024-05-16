@@ -200,9 +200,6 @@
             }
         }
     
-        // For tests
-        print_r($sql);
-    
         $stmt->execute() or die(print_r($stmt->errorInfo()));
         $goodPractices = $stmt->fetchAll();
         $stmt->closeCursor();
