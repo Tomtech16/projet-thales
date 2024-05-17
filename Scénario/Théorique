@@ -45,3 +45,11 @@ Vérification si on peut ajouter une bonne pratique  mise à jour de la base 
 Vérification si on peut modifier une bonne pratique  mise à jour de la base de données
 Vérification si on peut supprimer une bonne pratique  mise à jour de la base de données
 Vérifier que fichier python de l’application Générateur de CHECKLIST sera “gencheck.py”.
+
+Sélection sur les bonnes pratiques : 
+L’application Web doit trier les bonnes pratiques en fonctions des souhaits de l’utilisateur. Tester si les filtres (programme, phase) fonctionnent correctement.
+L’application Web doit avoir la possibilité de sélectionner la ou les phases (préparation, codage, exécution, analyse) d’un programme donné pour lesquelles on souhaite avoir les bonnes pratiques.
+Le site web permettra de sélectionner un ou plusieurs mots-clés, pour voir toutes les bonnes pratiques associées.
+
+Maintenant que nous avons sélectionné les points clefs pour vérifier le bon déroulement de notre site web, Nous allons aux différents pour apporter la preuve que le produit remplit ses spécifications regrouper sous le tableau suivant : 
+
