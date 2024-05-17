@@ -18,3 +18,5 @@ Le mot de passe ne doit pas contenir le login de l’utilisateur.
 
 Sécurité de la phase de gestion :
 Test de la fonctionnalité de blocage des comptes des opérateurs et administrateurs après trois tentatives de connexion infructueuses.
+
+L’application CHECKLIST doit mémoriser les actions des différents utilisateurs, avec au minimum : La date, L’utilisateur connecté, Le profil de l’utilisateur, Le type de l’événement, La description de l’action effectuée.
