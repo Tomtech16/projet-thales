@@ -15,3 +15,6 @@ Pour le login il doit être visible tandis que le mot de passe doit être masqu�
 Le mot de passe :
 Le mot de passe ne doit pas contenir d’accent.
 Le mot de passe ne doit pas contenir le login de l’utilisateur.
+
+Sécurité de la phase de gestion :
+Test de la fonctionnalité de blocage des comptes des opérateurs et administrateurs après trois tentatives de connexion infructueuses.
