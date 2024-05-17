@@ -26,3 +26,14 @@ Le fichier CHECKLIST au format PDF respectera les couleurs de la charte de Thale
 Vérification de la forme de la page principale qui doit posséder une structure claire pour permettre aux utilisateurs de comprendre rapidement le but de l'application.
 
 Vérification du fonctionnement de la page principale sur le Raspberry
+
+Les bonnes pratiques :
+Vérifier si les bonnes pratiques s’affichent correctement :
+Les bonnes pratiques à appliquées seront affichées sous la forme d’un tableau en SQL.
+La première entrée correspond au nom du programme qui doit être contrôlé. Son intitulé est Programme.
+La deuxième entrée correspond à la phase du programme qui doit être contrôlé. Son intitulé est “Phase”.  
+La troisième entrée correspond à la bonne pratique qui doit être exécutée. Son intitulé est “Item”.
+La quatrième entrée correspond aux mots-clés sélectionnés, séparés par des virgules. Son intitulé est “Mots clés”. Les mots-clés sont en majuscules pour les acronymes, en minuscules sinon.
+La dernière entrée correspond à une case laissée vide afin de cocher l’exécution de la bonne pratique. Son intitulé est “Appliqué”.
+Vérification de la structure du fichier CSV est la suivante :  
+Programme;Phase;Item;Mots clés;Appliqué;
