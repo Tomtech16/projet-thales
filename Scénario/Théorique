@@ -10,3 +10,8 @@ Vérification du fonctionnement des boutons présents sur la page d'accueil.
 Confirmation que les identifiants et mots de passe saisis correspondent à ceux enregistrés dans la base de données (login / mot de passe). De plus, il faut une gestion des rôles et des autorisations
 
 Vérification de la mise en place d'un système de gestion des rôles et des autorisations pour contrôler l'accès des utilisateurs à différentes parties de l'application.
+
+Pour le login il doit être visible tandis que le mot de passe doit être masqué
+Le mot de passe :
+Le mot de passe ne doit pas contenir d’accent.
+Le mot de passe ne doit pas contenir le login de l’utilisateur.
