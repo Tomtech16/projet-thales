@@ -28,6 +28,10 @@
         return $sanitizedInput = htmlspecialchars($input, ENT_QUOTES);
     }
 
+    function Desanitize($input) {
+        return htmlspecialchars_decode($input, ENT_QUOTES);
+    }
+
     function StrContainsAnySubstring(string $haystack, array $needles): bool
     {
         foreach ($needles as $needle) {
@@ -36,6 +40,24 @@
             }
         }
         return FALSE;
+    }
+
+    function StrSearchValidation(string $haystack, array $needles): bool
+    {
+        foreach ($needles as $needle) {
+            if (!str_contains($haystack, $needle)) {
+                return FALSE;
+            }
+        }
+        return TRUE;
+    }
+
+    function replaceLastOccurrence($string, $patternToSearch, $replacement) {
+        $position = strrpos($string, $patternToSearch);
+        if ($position !== false) {
+            $string = substr_replace($string, $replacement, $position, strlen($patternToSearch));
+        }
+        return $string;
     }
 
 ?>

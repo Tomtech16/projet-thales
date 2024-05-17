@@ -2,7 +2,6 @@
 
     session_start();
     require_once(__DIR__ . '/database_connect.php');
-    // require_once(__DIR__ . '/variables.php');
     require_once(__DIR__ . '/functions.php');
     require_once(__DIR__ . '/sql_functions.php');
 
@@ -34,6 +33,7 @@
                         'PASSWORD_UPDATE_REQUIRED' => $user['passwordupdaterequired']
                         ];
                         UserAttempts($user['userkey'],'reset');
+                        header('Location:index.php');
                         break;
                     } else {
                         $userIsBlocked = TRUE;
@@ -52,7 +52,7 @@
             $_SESSION['LOGIN_MESSAGE'] = "Echec de l'authentification.";
         }
 
-        header('Location:index.php');
+        header('Location:login.php');
     }
     
 ?>

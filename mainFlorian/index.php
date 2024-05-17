@@ -1,10 +1,4 @@
-<?php
-session_start();
-// require_once(__DIR__ . '/config/mysql.php');
-// require_once(__DIR__ . '/databaseconnect.php');
-// require_once(__DIR__ . '/variables.php');
-// require_once(__DIR__ . '/functions.php');
-?>
+<?php session_start(); ?>
 
 <!DOCTYPE HTML>
 <html>
@@ -15,11 +9,29 @@ session_start();
 	</head>
 	<body>
         <?php require_once(__DIR__ . '/header.php'); ?>
-        <?php require_once(__DIR__ . '/login.php'); ?>
 
-        <?php
-            // if the user is logged
-            if (isset($_SESSION['LOGGED_USER'])) {
+        <?php if (!isset($_SESSION['LOGGED_USER'])) : ?>
+            <section class="welcome">
+                <h2>Bienvenue sur le projet Thales Checklist.</h2>
+                <ul>
+                    <p>Connectez-vous pour : </p>
+                    <li>gérer les bonnes pratiques</li>
+                    <li>créer des checklists</li>
+                </ul>
+                <form action="login.php" method="POST">
+                    <button type="submit" name="submit" class="btn" >Se connecter</button>
+                </form>
+            </section>
+        <?php endif; ?>
+
+
+        <!-- if the user is logged -->  
+        <?php if (isset($_SESSION['LOGGED_USER'])) : ?>
+            <section>
+                <p>Connecté en tant que <?php echo $_SESSION['LOGGED_USER']['username']; ?>.</p>
+                <p>Bonjour <?php echo $_SESSION['LOGGED_USER']['firstname']." ".$_SESSION['LOGGED_USER']['lastname']; ?>.</p>
+            </section>
+            <?php 
                 // check for password update required
                 if ($_SESSION['PASSWORD_UPDATE_REQUIRED'] === TRUE) {
                     require_once(__DIR__ . '/password_update.php');
@@ -43,8 +55,8 @@ session_start();
                             require_once(__DIR__ . '/logout.php');
                     }
                 }
-            }
-        ?>
+            ?>
+        <?php endif; ?>
 
         <?php require_once(__DIR__ . '/footer.php'); ?>
 	</body>

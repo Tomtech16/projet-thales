@@ -88,6 +88,7 @@
     function GoodPracticesSelect(array $whereIs = NULL, array $orderBy = NULL, array $deletedGoodpractices = NULL): array
     {
         // Return data of tables :
+        //     - GOODPRACTICE(goodpratice_id)
         //     - PROGRAM(program_names)
         //     - PHASE(phase_name)
         //     - GOODPRACTICE(item)
@@ -95,16 +96,17 @@
             
         // Parameters :
         
-        //     - $whereIs = array($column => $value)
+        //     - $whereIs = array($column = array($filter1, $filter2...))
 
         //         -- $column :
-        //             - 'program_names'
+        //             - 'goodpractice_id'
+        //             - 'program_name'
         //             - 'phase_name'
         //             - 'item'
-        //             - 'keywords'
+        //             - 'onekeyword'
 
         //         -- $value :
-        //             - The filter to apply.
+        //             - The filters to apply.
                     
         //         ==> WHERE $column = $value
             
@@ -119,7 +121,7 @@
         //     - $deletedGoodpractices = array of goodpractice_ids to exclude
 
         global $bd;
-    
+
         $sql = "
             SELECT 
                 GOODPRACTICE.goodpractice_id,
@@ -134,38 +136,45 @@
             INNER JOIN GOODPRACTICE_KEYWORD ON GOODPRACTICE.goodpractice_id = GOODPRACTICE_KEYWORD.goodpractice_id
             INNER JOIN KEYWORD ON GOODPRACTICE_KEYWORD.keyword_id = KEYWORD.keyword_id
         ";
-    
+
+        $params = array(); // Array to store parameter values
+
         // Check for WHERE clause
         if ($whereIs != NULL) {
             $whereClause = " WHERE ";
-        
-            // Loop through key-value pairs in $whereIs array
-            foreach ($whereIs as $where => $is) {
-                // Add the condition to WHERE clause with parameterized values
-                $whereClause .= "$where=:$where AND ";
+
+            foreach ($whereIs as $column => $filters) {
+                foreach ($filters as $index => $value) {
+                    if (!empty($value)) {
+                        $paramName = ":$column$index"; // Unique parameter name
+                        $whereClause .= "$column = $paramName OR ";
+                        $params[$paramName] = $value; // Store parameter value
+                    }
+                }
+                $whereClause = replaceLastOccurrence($whereClause, 'OR', 'AND');
             }
-        
-            // Remove the last 'AND' if it exists
-            $whereClause = rtrim($whereClause, 'AND ');
-            $sql .= $whereClause;
+            if ($whereClause != " WHERE " && $whereClause != " WHERE  AND " && $whereClause != " WHERE" && $whereClause != "WHERE") {
+                $whereClause = rtrim($whereClause, ' AND ');
+                $sql .= $whereClause;
+            }
         }
 
         // Check for excluded good practices
         if ($deletedGoodpractices != NULL) {
             // Construct the IN clause for excluded goodpractice_ids
-            $excludedIds = implode(",", $deletedGoodpractices);
-            $sql .= " AND GOODPRACTICE.goodpractice_id NOT IN (".implode(",", array_fill(0, count($deletedGoodpractices), "?")).")";
+            $excludedIds = implode(", ", $deletedGoodpractices);
+            $sql .= " AND GOODPRACTICE.goodpractice_id NOT IN ($excludedIds)";
         }
-        
+
         $sql .= ' GROUP BY GOODPRACTICE.item';
-    
+
         // Check for ORDER BY clause
         if ($orderBy != NULL) {
             $orderClause = " ORDER BY ";
             $oneBy = FALSE;
 
             foreach ($orderBy as $by => $dir) {
-                if ($by === 'program_names' || $by === 'phase_name' || $by === 'item' || $by === 'keywords' || $by === 'GOODPRACTICE.goodpractice_id') {
+                if ($by === 'program_names' || $by === 'phase_name' || $by === 'item' || $by === 'keywords') {
                     $oneBy = TRUE;
                     if ($dir === TRUE) {
                         $orderClause .= "$by, ";
@@ -180,137 +189,173 @@
                 $sql .= $orderClause;
             }
         }
-    
+
         $sql .= ";";
-        
+        print_r($sql);
         // Prepare and execute the SQL query
         $stmt = $bd->prepare($sql);
-    
-        // Bind values to parameters in WHERE clause
-        if ($whereIs != NULL) {
-            foreach ($whereIs as $where => $is) {
-                $stmt->bindParam(":$where", $is);
-            }
+
+        // Bind values to parameters
+        foreach ($params as $paramName => $value) {
+            $stmt->bindValue($paramName, $value);
         }
 
-        // Bind values to parameters in excluded good practices
-        if ($deletedGoodpractices != NULL) {
-            foreach ($deletedGoodpractices as $index => $value) {
-                $stmt->bindValue(($index+1), $value);
-            }
-        }
-    
         $stmt->execute() or die(print_r($stmt->errorInfo()));
         $goodPractices = $stmt->fetchAll();
         $stmt->closeCursor();
         return $goodPractices;
     }
 
-    // Fonction pour insérer une nouvelle bonne pratique et retourner son ID
+    function ProgramSelect(string $all = NULL): array
+    {
+        global $bd;
+        if ($all === 'all') {
+            $sql = "SELECT * FROM PROGRAM";
+        } else {
+            $sql = "SELECT program_name FROM PROGRAM";
+        }
+        $stmt = $bd->prepare($sql);
+        $stmt->execute();
+        $programs = $stmt->fetchAll();
+        $stmt->closeCursor();
+        return $programs;
+    }
+
+    function PhaseSelect(string $all = NULL): array
+    {
+        global $bd;
+        if ($all === 'all') {
+            $sql = "SELECT * FROM PHASE";
+        } else {
+            $sql = "SELECT phase_name FROM PHASE";
+        }
+        $stmt = $bd->prepare($sql);
+        $stmt->execute();
+        $phases = $stmt->fetchAll();
+        $stmt->closeCursor();
+        return $phases;
+    }
+
+    function KeywordSelect(string $all = NULL): array
+    {
+        global $bd;
+        if ($all === 'all') {
+            $sql = "SELECT * FROM KEYWORD";
+        } else {
+            $sql = "SELECT onekeyword FROM KEYWORD";
+        }
+        $stmt = $bd->prepare($sql);
+        $stmt->execute();
+        $keywords = $stmt->fetchAll();
+        $stmt->closeCursor();
+        return $keywords;
+    }
+
+    // Function to insert a new good practice item and return its ID
     function InsertGoodpracticeItem(string $item, int $phaseId): int
     {
         global $bd;
         $stmt = $bd->prepare("INSERT INTO GOODPRACTICE (item, phase_id) VALUES (:item, :phaseId)");
-        $stmt->bindParam(':item', $item, PDO::PARAM_STR);
-        $stmt->bindParam(':phaseId', $phaseId, PDO::PARAM_INT);
+        $stmt->bindParam(':item', Desanitize($item), PDO::PARAM_STR);
+        $stmt->bindParam(':phaseId', Desanitize($phaseId), PDO::PARAM_INT);
         $stmt->execute();
         return $bd->lastInsertId();
     }
 
-    // Fonction pour insérer une entrée dans la table de liaison GOODPRACTICE_PROGRAM
+    // Function to insert an entry into the junction table GOODPRACTICE_PROGRAM
     function InsertGoodpracticeProgram(int $goodpracticeId, int $programId): void
     {
         global $bd;
         $stmt = $bd->prepare("INSERT INTO GOODPRACTICE_PROGRAM (goodpractice_id, program_id) VALUES (:goodpracticeId, :programId)");
-        $stmt->bindParam(':goodpracticeId', $goodpracticeId, PDO::PARAM_INT);
-        $stmt->bindParam(':programId', $programId, PDO::PARAM_INT);
+        $stmt->bindParam(':goodpracticeId', Desanitize($goodpracticeId), PDO::PARAM_INT);
+        $stmt->bindParam(':programId', Desanitize($programId), PDO::PARAM_INT);
         $stmt->execute();
     }
 
-    // Fonction pour insérer une entrée dans la table de liaison GOODPRACTICE_KEYWORD
+    // Function to insert an entry into the junction table GOODPRACTICE_KEYWORD
     function InsertGoodpracticeKeyword(int $goodpracticeId, int $keywordId): void
     {
         global $bd;
         $stmt = $bd->prepare("INSERT INTO GOODPRACTICE_KEYWORD (goodpractice_id, keyword_id) VALUES (:goodpracticeId, :keywordId)");
-        $stmt->bindParam(':goodpracticeId', $goodpracticeId, PDO::PARAM_INT);
-        $stmt->bindParam(':keywordId', $keywordId, PDO::PARAM_INT);
+        $stmt->bindParam(':goodpracticeId', Desanitize($goodpracticeId), PDO::PARAM_INT);
+        $stmt->bindParam(':keywordId', Desanitize($keywordId), PDO::PARAM_INT);
         $stmt->execute();
     }
 
-    // Fonction pour obtenir l'ID de la phase ou insérer une nouvelle phase si elle n'existe pas
+    // Function to get the ID of the phase or insert a new phase if it does not exist
     function GetPhaseId(string $phaseName): int
     {
         global $bd;
         $stmt = $bd->prepare("SELECT phase_id FROM PHASE WHERE phase_name = :phaseName");
-        $stmt->bindParam(':phaseName', $phaseName, PDO::PARAM_STR);
+        $stmt->bindParam(':phaseName', Desanitize($phaseName), PDO::PARAM_STR);
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result !== false) {
             return $result['phase_id'];
         } else {
-            // La phase n'existe pas, l'insérer
+            // Phase does not exist, insert it
             return InsertPhase($phaseName);
         }
     }
 
-    // Fonction pour insérer une nouvelle phase et retourner son ID
+    // Function to insert a new phase and return its ID
     function InsertPhase(string $phaseName): int
     {
         global $bd;
         $stmt = $bd->prepare("INSERT INTO PHASE (phase_name) VALUES (:phaseName)");
-        $stmt->bindParam(':phaseName', $phaseName, PDO::PARAM_STR);
+        $stmt->bindParam(':phaseName', Desanitize($phaseName), PDO::PARAM_STR);
         $stmt->execute();
         return $bd->lastInsertId();
     }
 
-    // Fonction pour obtenir l'ID du programme ou insérer un nouveau programme s'il n'existe pas
+    // Function to get the ID of the program or insert a new program if it does not exist
     function GetProgramId(string $programName): int
     {
         global $bd;
         $stmt = $bd->prepare("SELECT program_id FROM PROGRAM WHERE program_name = :programName");
-        $stmt->bindParam(':programName', $programName, PDO::PARAM_STR);
+        $stmt->bindParam(':programName', Desanitize($programName), PDO::PARAM_STR);
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result !== false) {
             return $result['program_id'];
         } else {
-            // Le programme n'existe pas, l'insérer
+            // Program does not exist, insert it
             return InsertProgram($programName);
         }
     }
 
-    // Fonction pour insérer un nouveau programme et retourner son ID
+    // Function to insert a new program and return its ID
     function InsertProgram(string $programName): int
     {
         global $bd;
         $stmt = $bd->prepare("INSERT INTO PROGRAM (program_name) VALUES (:programName)");
-        $stmt->bindParam(':programName', $programName, PDO::PARAM_STR);
+        $stmt->bindParam(':programName', Desanitize($programName), PDO::PARAM_STR);
         $stmt->execute();
         return $bd->lastInsertId();
     }
 
-    // Fonction pour obtenir l'ID du mot-clé ou insérer un nouveau mot-clé s'il n'existe pas
+    // Function to get the ID of the keyword or insert a new keyword if it does not exist
     function GetKeywordId(string $keyword): int
     {
         global $bd;
         $stmt = $bd->prepare("SELECT keyword_id FROM KEYWORD WHERE onekeyword = :keyword");
-        $stmt->bindParam(':keyword', $keyword, PDO::PARAM_STR);
+        $stmt->bindParam(':keyword', Desanitize($keyword), PDO::PARAM_STR);
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result !== false) {
             return $result['keyword_id'];
         } else {
-            // Le mot-clé n'existe pas, l'insérer
+            // Keyword does not exist, insert it
             return InsertKeyword($keyword);
         }
     }
 
-    // Fonction pour insérer un nouveau mot-clé et retourner son ID
+    // Function to insert a new keyword and return its ID
     function InsertKeyword(string $keyword): int
     {
         global $bd;
         $stmt = $bd->prepare("INSERT INTO KEYWORD (onekeyword) VALUES (:keyword)");
-        $stmt->bindParam(':keyword', $keyword, PDO::PARAM_STR);
+        $stmt->bindParam(':keyword', Desanitize($keyword), PDO::PARAM_STR);
         $stmt->execute();
         return $bd->lastInsertId();
     }
@@ -334,6 +379,7 @@
             InsertGoodpracticeKeyword($goodpracticeId, $keywordId);
         }
     }
+
 
     function DeleteGoodpractice(int $goodpracticeId): void
     {

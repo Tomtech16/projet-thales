@@ -3,7 +3,7 @@
     --thales-gradient-1: #151930;
     --thales-gradient-2: #082C46;
     --thales-gradient-3: #073D59;
-    --thales-gradient-3-light: rgb(7, 61, 89, 0.1);
+    --thales-gradient-3-light: rgb(7, 61, 89, 0.4);
     --thales-color: #00abc8;
 
 
@@ -39,9 +39,16 @@ header h1 {
     font-size: large;
     color: var(--thales-color);
 }
-
 header ul {
-    list-style: none;
+    left: 0;
+    margin-left: 20%;
+    width: 300%;
+}
+
+header ul li {
+    display: inline;
+    list-style-type: none;
+    margin-right: 20%;
 }
 
 header a {
@@ -49,24 +56,136 @@ header a {
     text-decoration: none;
 }
 
+header .active {
+    color: var(--thales-color);
+}
+
 section {
     padding-left: 5%;
     padding-right: 5%;
 }
 
-.login {
+.welcome, .login {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border: 1px solid var(--thales-gradient-1);
-    background-color: var(--thales-gradient-3-light);
-    border-radius: 5px;
     text-align: center;
+    padding: 2%;
+    color: #fff;
+    border: 5px solid var(--thales-gradient-2);
+    background-color: var(--thales-gradient-3);
+    border-radius: 10px;
 }
 
-input {
-    width: 80%;
+.login {
+    padding: 4%;
+}
+
+.welcome h2, .welcome h3, .login h2, .login h3 {
+    color: var(--thales-color);
+}
+
+.welcome ul {
+    margin-top: 10%;
+    text-align: left;
+}
+
+.welcome li {
+    margin-left: 10%;
+    padding: 1%;
+}
+
+.welcome button, .login button {
+    margin-top:10%;
+    background-color: var(--thales-color);
+    color: black;
+}
+
+.login .input-line {
+    margin-top: 10%;
+    display: flex;
+    flex-direction: row;
+    width: 110%;
+}
+
+.login input {
+    margin-left: 3%;
+    background-color: #fff;
+    border: 1px solid var(--thales-gradient-2);
+    border-radius: 10px;
+    height: 20px;
+}
+
+.selection-form {
+    display: flex;
+    flex-direction: column;
+    justify-content:space-between;
+    align-items:baseline;
+    border-top: 2px solid var(--thales-gradient-3);
+    border-bottom: 1px solid var(--thales-gradient-3);
+    width: 100%;
+}
+
+.gestion {
+    display: flex;
+    justify-content:space-between;
+    align-items:baseline;
+    border-top: 2px solid var(--thales-gradient-3);
+    border-bottom: 2px solid var(--thales-gradient-3);
+    width: 100%;
+}
+
+.programs-selection, .phases-selection, .keywords-selection {
+    margin: 1%;
+    padding: 1%;
+    border: 1px solid var(--thales-gradient-2);
+    width: 100%;
+    height: 150px;
+}
+
+.checkbox-line {
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+.search-input {
+    width: 100%;
+}
+
+.selection-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: auto;
+    margin-left: auto;
+    padding: 2%;
+    width: 25%;
+}
+
+.selection-button button {
+    height: 50px;
+    width: 100%;
+}
+
+.order-selection {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    padding: 1%;
+}
+
+.radio-text {
+    margin-right: 5%;
+    width: 100%;
+}
+
+.order-selection .radio-line {
+    margin-right: 5%;
+    padding: 5px;
+    border: 1px solid var(--thales-gradient-2);
+    width: 100%;
 }
 
 button {
@@ -84,8 +203,8 @@ button:hover {
     opacity: 1;
 }
 
-h2, h3 {
-    color: var(--thales-color);
+h2, h3, h4 {
+    color: var(--thales-gradient-3);
 }
 
 #deleteForm h3 {
@@ -106,7 +225,8 @@ th, td {
 /* Fixez le bouton sur le côté gauche de la page */
 .action-btn-container {
     position: relative;
-    display: inline-block;
+    display: flex;
+    justify-content: center;
 }
 
 /* Stylez et fixez le bouton sur la page */
@@ -194,6 +314,6 @@ footer {
     display: flex;
     justify-content: space-around;
     margin-top: 5%;
-    padding: 2%;
+    padding: 1%;
 }
 
