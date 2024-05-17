@@ -37,3 +37,11 @@ La quatrième entrée correspond aux mots-clés sélectionnés, séparés par de
 La dernière entrée correspond à une case laissée vide afin de cocher l’exécution de la bonne pratique. Son intitulé est “Appliqué”.
 Vérification de la structure du fichier CSV est la suivante :  
 Programme;Phase;Item;Mots clés;Appliqué;
+
+Action sur les bonnes pratiques :
+
+Vérification si on peut du dupliquer une bonne pratique  mise à jour de la base de données
+Vérification si on peut ajouter une bonne pratique  mise à jour de la base de données
+Vérification si on peut modifier une bonne pratique  mise à jour de la base de données
+Vérification si on peut supprimer une bonne pratique  mise à jour de la base de données
+Vérifier que fichier python de l’application Générateur de CHECKLIST sera “gencheck.py”.
