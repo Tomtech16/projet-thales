@@ -1,4 +1,5 @@
 <?php session_start(); ?>
+<?php if (!isset($_SESSION['LOGGED_USER'])) { header('Location:index.php'); } ?>
 <form action="submit_create_user.php" method="POST">
     <!-- Affiche un message de succès ou d'erreur -->
     <?php 

@@ -1,4 +1,11 @@
 <?php
+    session_start();
+    if (!isset($_SESSION['LOGGED_USER'])) { header('Location:index.php'); }
+    function P($var) {
+        echo "<pre>";
+        print_r($var);
+        echo "</pre>";
+    }
 
     function UserIsBlocked(int $attempts): bool { return $userIsBlocked = ($attempts >= 3); }
 
@@ -40,16 +47,6 @@
             }
         }
         return FALSE;
-    }
-
-    function StrSearchValidation(string $haystack, array $needles): bool
-    {
-        foreach ($needles as $needle) {
-            if (!str_contains($haystack, $needle)) {
-                return FALSE;
-            }
-        }
-        return TRUE;
     }
 
     function replaceLastOccurrence($string, $patternToSearch, $replacement) {

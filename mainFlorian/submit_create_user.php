@@ -1,18 +1,12 @@
 <?php
     session_start();
-
+    if (!isset($_SESSION['LOGGED_USER'])) { header('Location:index.php'); }
     require_once(__DIR__ . '/database_connect.php');
     require_once(__DIR__ . '/functions.php');
     require_once(__DIR__ . '/sql_functions.php');
 
-    /**
-     * On ne traite pas les super globales provenant de l'utilisateur directement, 
-     * ces données doivent être testées et vérifiées.
-     */
-
     $postData = $_POST;
 
-    // Validation du formulaire
     if (isset($postData['username']) && isset($postData['firstname']) && isset($postData['lastname']) && isset($postData['password']) && isset($postData['password2'])) {
         $username = Sanitize($postData['username']);
         $firstname = Sanitize($postData['firstname']);

@@ -1,9 +1,10 @@
 <?php    
+    session_start();
+    if (!isset($_SESSION['LOGGED_USER'])) { header('Location:index.php'); }
 
     function PasswordSelect(): array
     {
-        // return data of PASSWORD table
-
+        // Return data of PASSWORD table
         global $bd;
 
         $sql = "select * from PASSWORD";
@@ -16,20 +17,50 @@
         }
     }
 
-    function UsersSelect(): array
+    function PasswordUpdate(int $n, int $p, int $q, int $r): void
     {
-        // return data of USERS table
-
+        // Update PASSWORD table
         global $bd;
 
-        $sql = "select * from USERS";
+        $sql = "UPDATE PASSWORD SET n = :n, p = :p, q = :q, r = :r";
         $stmt = $bd->prepare($sql);
-        $stmt->execute() or die(print_r($stmt->errorInfo()));
-        $users = $stmt->fetchall();
-        $stmt->closeCursor();
-        return $users;
 
+        $stmt->bindParam(':n', $n, PDO::PARAM_INT);
+        $stmt->bindParam(':p', $p, PDO::PARAM_INT);
+        $stmt->bindParam(':q', $q, PDO::PARAM_INT);
+        $stmt->bindParam(':r', $r, PDO::PARAM_INT);
+
+        $stmt->execute();
     }
+
+    function UsersSelect(string $username = NULL, array $orderBy = NULL): array
+    {
+        // Return data of USER table
+        global $bd;
+        
+        $sql = "SELECT * FROM USERS";
+        $params = [];
+    
+        if ($username !== NULL && !empty($username)) {
+            $sql .= " WHERE username = :username";
+            $params[':username'] = $username;
+        }
+    
+        if ($orderBy !== NULL && count($orderBy) == 2) {
+            $order = $orderBy[0];
+            $direction = $orderBy[1];
+            if (($order === 'username' || $order === 'firstname' || $order === 'lastname' || $order === 'profile' || $order === 'attempts') && ($direction === 'asc' || $direction === 'desc'))
+            $sql .= " ORDER BY {$order} {$direction}";
+        }
+    
+        $stmt = $bd->prepare($sql);
+        $stmt->execute($params) or die(print_r($stmt->errorInfo()));
+    
+        $users = $stmt->fetchAll();
+        $stmt->closeCursor();
+    
+        return $users;
+    }    
 
     function UserAttempts(int $primaryKey, string $option): void 
     {
@@ -85,7 +116,7 @@
         }
     }
 
-    function GoodPracticesSelect(array $whereIs = NULL, array $orderBy = NULL, array $deletedGoodpractices = NULL): array
+    function GoodPracticesSelect(array $whereIs = NULL, array $orderBy = NULL, array $erase = NULL): array
     {
         // Return data of tables :
         //     - GOODPRACTICE(goodpratice_id)
@@ -118,7 +149,7 @@
 
         //         ==> ORDER BY $column [ DESC if ($ascending === FALSE) ]
 
-        //     - $deletedGoodpractices = array of goodpractice_ids to exclude
+        //     - $erased = array(array(goodpractice_id, 'program_name', 'program_name', ...), ...)
 
         global $bd;
 
@@ -140,58 +171,63 @@
         $params = array(); // Array to store parameter values
 
         // Check for WHERE clause
-        if ($whereIs != NULL) {
+        if ($whereIs !== NULL) {
             $whereClause = " WHERE ";
 
             foreach ($whereIs as $column => $filters) {
-                foreach ($filters as $index => $value) {
-                    if (!empty($value)) {
-                        $paramName = ":$column$index"; // Unique parameter name
-                        $whereClause .= "$column = $paramName OR ";
-                        $params[$paramName] = $value; // Store parameter value
+                if (!empty($filters)) {
+                    $whereClause = replaceLastOccurrence($whereClause, 'OR', 'AND');
+                    foreach ($filters as $index => $value) {
+                        if (!empty($value)) {
+                            $paramName = ":$column$index"; // Unique parameter name
+                            $whereClause .= "$column = $paramName OR ";
+                            $params[$paramName] = $value; // Store parameter value
+                        }
                     }
                 }
-                $whereClause = replaceLastOccurrence($whereClause, 'OR', 'AND');
+                
             }
-            if ($whereClause != " WHERE " && $whereClause != " WHERE  AND " && $whereClause != " WHERE" && $whereClause != "WHERE") {
-                $whereClause = rtrim($whereClause, ' AND ');
+            if ($whereClause != " WHERE ") {
+                switch (substr($whereClause, -4)) {
+                    case 'AND ':
+                        $whereClause = rtrim($whereClause, 'AND ');
+                        break;
+                    case ' OR ':
+                        $whereClause = rtrim($whereClause, 'OR ');
+                        break;
+                }
                 $sql .= $whereClause;
             }
         }
 
-        // Check for excluded good practices
-        if ($deletedGoodpractices != NULL) {
-            // Construct the IN clause for excluded goodpractice_ids
-            $excludedIds = implode(", ", $deletedGoodpractices);
-            $sql .= " AND GOODPRACTICE.goodpractice_id NOT IN ($excludedIds)";
-        }
+        // if ($erased !== NULL) {
+        //     if ($whereIs !== NULL) {
+        //         $erasedClause = ' AND ';
+        //     } else {
+        //         $erasedClause = ' WHERE ';
+        //     }
+        //     foreach ($erased as $one) {
+        //         if (count($one) === 1) {
+        //             $paramName = ":$erased"; // Unique parameter name
+        //             $erasedClause .= 'GOODPRACTICE.goodpractice_id != :erased '
+        //             $params[$paramName] = $value; // Store parameter value
+        //         }
+        //     }
+        // }
 
         $sql .= ' GROUP BY GOODPRACTICE.item';
 
         // Check for ORDER BY clause
         if ($orderBy != NULL) {
-            $orderClause = " ORDER BY ";
-            $oneBy = FALSE;
-
-            foreach ($orderBy as $by => $dir) {
-                if ($by === 'program_names' || $by === 'phase_name' || $by === 'item' || $by === 'keywords') {
-                    $oneBy = TRUE;
-                    if ($dir === TRUE) {
-                        $orderClause .= "$by, ";
-                    } else {
-                        $orderClause .= "$by DESC, ";
-                    }
-                }
-            }
-            if ($oneBy) {
-                // Remove the last comma if it exists
-                $orderClause = rtrim($orderClause, ', ');
-                $sql .= $orderClause;
+            $order = $orderBy[0];
+            $direction = $orderBy[1];
+            if (($order === 'program_names' || $order === 'phase_name' || $order === 'item' || $order === 'keywords') && ($direction === 'asc' || $direction === 'desc')) {
+                $sql .= " ORDER BY {$order} {$direction}";
             }
         }
 
         $sql .= ";";
-        print_r($sql);
+
         // Prepare and execute the SQL query
         $stmt = $bd->prepare($sql);
 
@@ -199,7 +235,6 @@
         foreach ($params as $paramName => $value) {
             $stmt->bindValue($paramName, $value);
         }
-
         $stmt->execute() or die(print_r($stmt->errorInfo()));
         $goodPractices = $stmt->fetchAll();
         $stmt->closeCursor();
@@ -249,6 +284,19 @@
         $keywords = $stmt->fetchAll();
         $stmt->closeCursor();
         return $keywords;
+    }
+
+    function ValidateKeywordsSelection(string $keywordsSelection): array
+    {
+        $keywordSelect = KeywordSelect();
+        foreach ($keywordSelect as $keyword) {
+            $keywords[] = $keyword[0];
+        }
+        print_r($keywords);
+        $keywordsSelection = explode(', ', $keywordsSelection);
+        $wrongKeywords = array_diff($keywordsSelection, $keywords);
+        $keywordsSelection = array_diff($keywordsSelection, $wrongKeywords);
+        return array($keywordsSelection, $wrongKeywords);
     }
 
     // Function to insert a new good practice item and return its ID
@@ -380,9 +428,59 @@
         }
     }
 
-
-    function DeleteGoodpractice(int $goodpracticeId): void
+    function DuplicateGoodpractice(array $programNames, int $goodpracticeId): void
     {
+        foreach ($programNames as $programName) {
+            $programId = GetProgramId(Sanitize($programName));
+            InsertGoodpracticeProgram($goodpracticeId, $programId);
+        }
+    }
 
+    function DeleteGoodpractice(int $goodpracticeId, array $programNames = NULL): void
+    {
+        global $bd; // Assuming $bd is your PDO connection
+    
+        try {
+            $bd->beginTransaction();
+    
+            if (empty($programNames)) {
+                // If $programNames is empty, delete all related rows
+                $sql1 = "DELETE FROM GOODPRACTICE_PROGRAM WHERE goodpractice_id = :goodpractice_id;";
+                $sql2 = "DELETE FROM GOODPRACTICE_KEYWORD WHERE goodpractice_id = :goodpractice_id;";
+                $sql3 = "DELETE FROM GOODPRACTICE WHERE goodpractice_id = :goodpractice_id;";
+                
+                $stmt1 = $bd->prepare($sql1);
+                $stmt1->bindValue(':goodpractice_id', $goodpracticeId, PDO::PARAM_INT);
+                $stmt1->execute();
+                $stmt1->closeCursor();
+    
+                $stmt2 = $bd->prepare($sql2);
+                $stmt2->bindValue(':goodpractice_id', $goodpracticeId, PDO::PARAM_INT);
+                $stmt2->execute();
+                $stmt2->closeCursor();
+    
+                $stmt3 = $bd->prepare($sql3);
+                $stmt3->bindValue(':goodpractice_id', $goodpracticeId, PDO::PARAM_INT);
+                $stmt3->execute();
+                $stmt3->closeCursor();
+            } else {
+                // If $programNames is not empty, delete rows based on goodpractice_id and program_id
+                $sql = "DELETE FROM GOODPRACTICE_PROGRAM WHERE goodpractice_id = :goodpractice_id AND program_id = :program_id";
+                foreach ($programNames as $programName) {
+                    $programId = GetProgramId($programName);
+                    $stmt = $bd->prepare($sql);
+                    $stmt->bindValue(':goodpractice_id', $goodpracticeId, PDO::PARAM_INT);
+                    $stmt->bindValue(':program_id', $programId, PDO::PARAM_INT);
+                    $stmt->execute();
+                    $stmt->closeCursor();
+                }
+            }
+    
+            $bd->commit();
+        } catch (PDOException $e) {
+            $bd->rollBack();
+            // Log or handle the exception as needed
+            throw new Exception("Error deleting good practice: " . $e->getMessage());
+        }
     }
 ?>

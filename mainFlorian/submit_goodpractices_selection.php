@@ -1,46 +1,28 @@
 <?php 
     session_start(); 
-
+    if (!isset($_SESSION['LOGGED_USER'])) { header('Location:index.php'); }
     require_once(__DIR__ . '/database_connect.php');
     require_once(__DIR__ . '/functions.php');
     require_once(__DIR__ . '/sql_functions.php');
 
     $postData = $_POST;
     if ($postData['submit'] === 'submit') {
-        if (!empty($postData['programSearch'])) {
-            $_SESSION['GOODPRACTICES_SELECTION']['program_name'] = explode(', ', $postData['programSearch']);
-        }
+        $_SESSION['GOODPRACTICES_SELECTION']['program_name'] = $postData['programsSelection'];
         $_SESSION['GOODPRACTICES_SELECTION']['phase_name'] = $postData['phasesSelection'];
-        if (!empty($postData['keywordSearch'])) {
-            $_SESSION['GOODPRACTICES_SELECTION']['onekeyword'] = explode(', ', $postData['keywordSearch']);
+        $validateKeywordsSelection = ValidateKeywordsSelection($postData['keywordSearch']);
+        $keywordsSelection = $validateKeywordsSelection[0];
+        $wrongKeywords = Sanitize(implode(', ', $validateKeywordsSelection[1]));
+        $_SESSION['GOODPRACTICES_SELECTION']['onekeyword'] = $keywordsSelection;
+        if (!empty($wrongKeywords)) {
+            $_SESSION['GOODPRACTICES_KEYWORDS_SELECTION_MESSAGE'] = 'Erreur avec les mots-clés suivant : '.$wrongKeywords;
+        } else {
+            $_SESSION['GOODPRACTICES_KEYWORDS_SELECTION_MESSAGE'] = '';
         }
-        if (!empty($postData['order']['program'])) {
-            if ($postData['order']['program'] === 'asc') {
-                $_SESSION['GOODPRACTICES_ORDER'] = array('program_names' => TRUE);
-            } else {
-                $_SESSION['GOODPRACTICES_ORDER'] = array('program_names' => FALSE);
-            }
-        }
-        if (!empty($postData['order']['phase'])) {
-            if ($postData['order']['phase'] === 'asc') {
-                $_SESSION['GOODPRACTICES_ORDER'] = array('phase_name' => TRUE);
-            } else {
-                $_SESSION['GOODPRACTICES_ORDER'] = array('phase_name' => FALSE);
-            }
-        }
-        if (!empty($postData['order']['item'])) {
-            if ($postData['order']['item'] === 'asc') {
-                $_SESSION['GOODPRACTICES_ORDER'] = array('item' => TRUE);
-            } else {
-                $_SESSION['GOODPRACTICES_ORDER'] = array('item' => FALSE);
-            }
-        }
-        if (!empty($postData['order']['keywords'])) {
-            if ($postData['order']['keywords'] === 'asc') {
-                $_SESSION['GOODPRACTICES_ORDER'] = array('keywords' => TRUE);
-            } else {
-                $_SESSION['GOODPRACTICES_ORDER'] = array('keywords' => FALSE);
-            }
+        
+        if (!empty($postData['order']['type']) && !empty($postData['order']['direction'])) {
+            $orderType = $postData['order']['type'];
+            $orderDirection = $postData['order']['direction'];
+            $_SESSION['GOODPRACTICES_ORDER'] = array($orderType, $orderDirection);
         }
     } elseif ($postData['submit'] === 'reset') {
         $_SESSION['GOODPRACTICES_SELECTION'] = NULL;
