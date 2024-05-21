@@ -1,0 +1,14 @@
+#ici se trouvera le code python permettant d'extraire des bonnes pratiques que l'on souhaite avoir.
+import sqlite3
+conn = sqlite3.connect('bdd.db') #pour se connecter à la base de données.
+cursor.execute("""SELECT program, phase,item,keywords FROM GOODPRACTICE""")
+rows = cursor.fetchall()
+for row in rows:
+print('{0} : {1} - {2}'.format(row[0], row[1], row[2]))
+conn.close()
+
+
+## Fin
+print('PDF créé avec succès!')
+# Sauvegarde des données dans un fichier CSV
+df.to_csv('bonnes_pratiques_extraites.csv', index=False)
