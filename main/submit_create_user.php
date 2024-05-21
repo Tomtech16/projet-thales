@@ -13,16 +13,21 @@
         $lastname = Sanitize($postData['lastname']);
         $password = Sanitize($postData['password']);
         $password2 = Sanitize($postData['password2']);
+        
+        if ($_SESSION['LOGGED_USER']['profile'] === 'superadmin' && isset($postData['profile'])) {
+            $profile = Sanitize($postData['profile']);
+        }
 
         if ($password === $password2) {
-            if (PasswordIsValid($username, $password, $parameters = PasswordSelect())) {
-                if (UserAppend($username, $firstname, $lastname, $password)) {
+            $passwordValidationResult = PasswordIsValid($username, $password);
+            if ($passwordValidationResult === NULL) {
+                if (UserAppend($username, $firstname, $lastname, $password, $profile)) {
                     $_SESSION['CREATE_USER_MESSAGE'] = 'Utilisateur créé avec succès. Vous pouvez en ajouter un nouveau.';
                 } else {
                     $_SESSION['CREATE_USER_MESSAGE'] = 'Nom d\'utilisateur indisponible.';
                 } 
             } else {
-                $_SESSION['CREATE_USER_MESSAGE'] = 'Le mot de passe ne respecte pas les règles de configuration.';
+                $_SESSION['CREATE_USER_MESSAGE'] = $passwordValidationResult;
             }
         } else {
             $_SESSION['CREATE_USER_MESSAGE'] = 'Les deux mots de passe sont différents.';

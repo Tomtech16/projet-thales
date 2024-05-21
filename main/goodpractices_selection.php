@@ -61,7 +61,7 @@
                         <select id='order-type' name='order[type]'>
                             <option value='program_names' <?= $orderType === 'program_names' ? 'selected' : '' ?>>Programme</option>
                             <option value='phase_name' <?= $orderType === 'phase_name' ? 'selected' : '' ?>>Phase</option>
-                            <option value='item' <?= $orderType === 'item' ? 'selected' : '' ?>>Item</option>
+                            <option value='item' <?= $orderType === 'item' || empty($orderType) ? 'selected' : '' ?>>Item</option>
                             <option value='keywords' <?= $orderType === 'keywords' ? 'selected' : '' ?>>Mots-clés</option>
                         </select>
                     </div>
@@ -86,7 +86,19 @@
         <div class="selection-button">
             <button id="submit" type="submit" name="submit" value="submit">Appliquer</button>
             <button id="reset" type="submit" name="submit" value="reset">Effacer les filtres</button>
+            <button id="export" type="submit" name="submit" value="export">Télécharger la checklist</button>
         </div>
     </form> 
 </section>
 
+<script type="text/javascript">
+    function ChecklistCreationAlert(output) {
+        alert(output);
+    }
+
+    <?php if (isset($_SESSION['CHECKLIST_CREATION_OUTPUT'])) : ?>
+        window.onload = function() {
+            ChecklistCreationAlert("<?= Sanitize($_SESSION['CHECKLIST_CREATION_OUTPUT']); ?>");
+        };
+    <?php unset($_SESSION['CHECKLIST_CREATION_OUTPUT']); endif; ?>
+</script>

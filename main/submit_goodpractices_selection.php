@@ -16,17 +16,19 @@
         if (!empty($wrongKeywords)) {
             $_SESSION['GOODPRACTICES_KEYWORDS_SELECTION_MESSAGE'] = 'Erreur avec les mots-clés suivant : '.$wrongKeywords;
         } else {
-            $_SESSION['GOODPRACTICES_KEYWORDS_SELECTION_MESSAGE'] = '';
+            unset($_SESSION['GOODPRACTICES_KEYWORDS_SELECTION_MESSAGE']);
         }
         
         if (!empty($postData['order']['type']) && !empty($postData['order']['direction'])) {
-            $orderType = $postData['order']['type'];
-            $orderDirection = $postData['order']['direction'];
+            $orderType = Sanitize($postData['order']['type']);
+            $orderDirection = Sanitize($postData['order']['direction']);
             $_SESSION['GOODPRACTICES_ORDER'] = array($orderType, $orderDirection);
         }
     } elseif ($postData['submit'] === 'reset') {
-        $_SESSION['GOODPRACTICES_SELECTION'] = NULL;
-        $_SESSION['GOODPRACTICES_ORDER'] = NULL;
+        unset($_SESSION['GOODPRACTICES_SELECTION']);
+        unset($_SESSION['GOODPRACTICES_ORDER']);
+    } elseif ($postData['submit'] === 'export') {
+        $_SESSION['CHECKLIST_CREATION_OUTPUT'] = Sanitize(DownloadChecklist($_SESSION['GOODPRACTICES']));
     }
     header('Location:index.php');
 ?>

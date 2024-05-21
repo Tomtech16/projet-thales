@@ -6,8 +6,7 @@
     require_once(__DIR__ . '/sql_functions.php');
 
     $usersSelectionOrder = $_SESSION['USERS_SELECTION_ORDER'];
-
-    $users = UsersSelect(NULL, $usersSelectionOrder);
+    $users = UsersSelect($usersSelectionOrder);
 ?>
 
 <section>
@@ -35,7 +34,7 @@
                             <td class="lastname-column"><?= Sanitize($user['lastname']) ?></td>
                             <td class="profile-column"><?= Sanitize($user['profile']) ?></td>
                             <?php 
-                                if (UserIsBlocked($user['attempts'])) {
+                                if (UserIsBlocked(Sanitize($user['attempts']))) {
                                     echo '<td class="attempts-column">Compte bloqué</td>';
                                 } else {
                                     echo '<td class="attempts-column">'.Sanitize($user['attempts']).'</td>';

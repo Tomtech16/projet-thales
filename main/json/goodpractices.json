@@ -1,0 +1,135 @@
+[
+    {
+        "goodpractice_id": 17,
+        "program_names": "PROG_1, PROG_2",
+        "phase_name": "analyse",
+        "item": "ana_fonc -c -v",
+        "keywords": "TOUS"
+    },
+    {
+        "goodpractice_id": 5,
+        "program_names": "PROG_1, PROG_2",
+        "phase_name": "codage",
+        "item": "Autoriser l'utilisation de la FDTM durant le test",
+        "keywords": "sauf deploiement, TOUS"
+    },
+    {
+        "goodpractice_id": 14,
+        "program_names": "PROG_2",
+        "phase_name": "exécution",
+        "item": "Connecter l'EBB POS-3 en fonction du PM utilisé (si besoin)",
+        "keywords": "PL, POS3"
+    },
+    {
+        "goodpractice_id": 1,
+        "program_names": "PROG_1, PROG_2",
+        "phase_name": "codage",
+        "item": "creertest avec option -c ou -p selon besoin",
+        "keywords": "TOUS"
+    },
+    {
+        "goodpractice_id": 7,
+        "program_names": "PROG_1, PROG_2",
+        "phase_name": "codage",
+        "item": "Envoyer les TC spécifiques de reprise de contexte des SADM spécifiques avant l'envoi des TC decontexte",
+        "keywords": "post RDP1"
+    },
+    {
+        "goodpractice_id": 19,
+        "program_names": "GENERIQUE",
+        "phase_name": "préparation",
+        "item": "expédition équipement: liste des documents à fournir",
+        "keywords": "TOUS"
+    },
+    {
+        "goodpractice_id": 9,
+        "program_names": "PROG_1, PROG_2",
+        "phase_name": "codage",
+        "item": "La procedure de WarmStart à utiliser se trouve dans la librairie cc_proc_warmstart. Elle porte le nom WS_miss5__PM().",
+        "keywords": "GPS, MeO, warmstart"
+    },
+    {
+        "goodpractice_id": 12,
+        "program_names": "PROG_1, PROG_2",
+        "phase_name": "exécution",
+        "item": "Mettre à jour le fichier gyrostd.cal dans $SGSE_HOME/CURRENT_CONF/CHR et $SGSE_HOME/CONF/CHR en fonction des gyros utilisés",
+        "keywords": "BF GYRO"
+    },
+    {
+        "goodpractice_id": 16,
+        "program_names": "PROG_2",
+        "phase_name": "exécution",
+        "item": "Mettre ON les alimentations de l'EBB POS-3 quand nécessaire",
+        "keywords": "PL, POS3"
+    },
+    {
+        "goodpractice_id": 4,
+        "program_names": "PROG_1, PROG_2",
+        "phase_name": "codage",
+        "item": "Mettre une instruction set_1553_Error pour chaque instrument PL utilisé : Set_1553_Error (\"1\", \"TIMEOUT\"); /* POSEIDON 1 = 1, POSEIDON 2 = 4 */ Set_1553_Error (\"7\", \"TIMEOUT\"); /* DORIS 1 = 7, DORIS 2 = 10 */",
+        "keywords": "PL, POS3"
+    },
+    {
+        "goodpractice_id": 6,
+        "program_names": "PROG_1, PROG_2",
+        "phase_name": "codage",
+        "item": "Modifier la configuration du RM en cas de reconfiguration inattendue durant le test",
+        "keywords": "MeO, TOUS"
+    },
+    {
+        "goodpractice_id": 8,
+        "program_names": "PROG_1, PROG_2",
+        "phase_name": "codage",
+        "item": "Modifier la FDIR pour le health status GYRO pendant le mode TEST après l'envoi des TC de contexte",
+        "keywords": "annulé"
+    },
+    {
+        "goodpractice_id": 13,
+        "program_names": "PROG_2",
+        "phase_name": "exécution",
+        "item": "Modifier le fichier plbs.chr pour configurer le paquet DIODE sur le RT, la sous-adresse, la fréquence souhaitée (si paquet diode nécessaire)",
+        "keywords": "PL"
+    },
+    {
+        "goodpractice_id": 2,
+        "program_names": "PROG_1, PROG_2",
+        "phase_name": "codage",
+        "item": "modini",
+        "keywords": "TOUS"
+    },
+    {
+        "goodpractice_id": 18,
+        "program_names": "GENERIQUE",
+        "phase_name": "préparation",
+        "item": "réception équipement: liste des documents à demander",
+        "keywords": "TOUS"
+    },
+    {
+        "goodpractice_id": 11,
+        "program_names": "PROG_1, PROG_2",
+        "phase_name": "exécution",
+        "item": "Vérifier la date de la dernière calibration. Elle doit être < 15 jours sinon, il faut calibrer les gyros",
+        "keywords": "BF GYRO, calibration"
+    },
+    {
+        "goodpractice_id": 15,
+        "program_names": "PROG_1, PROG_2",
+        "phase_name": "exécution",
+        "item": "Vérifier que l'alimentation du DHU est ON",
+        "keywords": "TOUS"
+    },
+    {
+        "goodpractice_id": 3,
+        "program_names": "PROG_1, PROG_2",
+        "phase_name": "codage",
+        "item": "Vérifier que les dates dans le .tp correspond au fichier définition dans REF_CONTEXT//definition",
+        "keywords": ""
+    },
+    {
+        "goodpractice_id": 10,
+        "program_names": "PROG_1, PROG_2",
+        "phase_name": "exécution",
+        "item": "Vérifier que outputs et outputs_ctx sont accessibles en écriture",
+        "keywords": "TOUS"
+    }
+]

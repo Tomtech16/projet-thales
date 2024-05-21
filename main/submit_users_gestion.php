@@ -8,7 +8,7 @@
 
     $postData = $_POST;
 
-    if ($postData['submit'] === 'order') {
+    if ($postData['submit'] === 'users-order') {
         $_SESSION['USERS_SELECTION_ORDER'] = array(Sanitize($postData['users-order']['type']), Sanitize($postData['users-order']['direction']));
     } elseif ($postData['submit'] === 'password-update') {
         $n = Sanitize($postData['n']);
@@ -16,6 +16,9 @@
         $q = Sanitize($postData['q']);
         $r = Sanitize($postData['r']);
         PasswordUpdate($n, $p, $q, $r);
+    } elseif ($postData['submit'] === 'create-user') {
+        header('Location:create_user.php');
+        exit();
     }
     header('Location:admin.php');
 ?>

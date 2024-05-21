@@ -115,7 +115,7 @@ section {
     height: 20px;
 }
 
-.selection-form {
+.selection-form, .create-user-form {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -125,14 +125,18 @@ section {
     width: 100%;
 }
 
+.create-user-form {
+    flex-direction: row;
+}
+
 .gestion {
     display: flex;
-    justify-content:space-between;
-    align-items:center;
+    justify-content: space-between;
+    align-items: center;
     width: 100%;
 }
 
-.programs-selection, .popup-programs-selection, .phases-and-order-selection, .keywords-selection, .users-order-selection, .password-update-selection {
+.programs-selection, .popup-programs-selection, .phases-and-order-selection, .keywords-selection, .users-order-selection, .password-update-selection, .create-user-selection, .create-user {
     margin: 1%;
     padding-left: 10px;
     border: 1px solid var(--thales-gradient-2);
@@ -143,8 +147,12 @@ section {
     color: #fff;
 }
 
-.users-order-selection, .password-update-selection {
-    height: 170px;
+.users-order-selection, .password-update-selection, .create-user-selection {
+    height: 180px;
+}
+
+.create-user {
+    height: 100%;
 }
 
 .users-order-selection {
@@ -152,7 +160,11 @@ section {
 }
 
 .password-update-selection {
-    width: 40%;
+    width: 50%;
+}
+
+.create-user-selection {
+    width: 25%;
 }
 
 .popup-programs-selection {
@@ -160,10 +172,18 @@ section {
     margin-bottom: 10px;
 }
 
-.programs-selection h3, .popup-programs-selection h4, .phases-and-order-selection h3, .keywords-selection h3, .users-order-selection h3, .password-update-selection h3 {
+.programs-selection h3, .popup-programs-selection h4, .phases-and-order-selection h3, .keywords-selection h3, .users-order-selection h3, .password-update-selection h3, .create-user-selection h3, .create-user h3, .create-user h4 {
     color: var(--thales-color);
     margin-bottom: 10px;
     margin-top: 10px;
+}
+
+.create-user h3, .create-user h4 {
+    margin-bottom: 20px;
+}
+
+.create-user h4 {
+    margin-top: 30px;
 }
 
 .keywords-selection p {
@@ -171,6 +191,12 @@ section {
     flex-wrap: wrap;
     overflow-y: scroll;
     color: red;
+}
+
+.password-update-selection p {
+    font-style: italic;
+    margin: 0%;
+    margin-bottom: 3px;
 }
 
 .checkbox-area, .radio-area, .popup-checkbox-area, .password-input-area {
@@ -182,11 +208,11 @@ section {
     overflow-y: auto;
 }
 
-.users-order-selection .radio-area {
+.users-order-selection .radio-area, .user-create-input-area {
     display: block;
 }
 
-.users-order-selection .radio-line, .password-input-line {
+.users-order-selection .radio-line, .create-user-input-line {
     margin-bottom: 10px;
 }
 
@@ -198,17 +224,30 @@ section {
     align-items: center;
 }
 
+
 .popup-checkbox-line, .password-input-line {
     width: calc(50% - 10px);
 }
 
-.programs-selection .checkbox, .popup-programs-selection .popup-programs-checkbox, .phases-and-order-selection .checkbox, .password-input-line label {
+.password-input-line {
+    margin-bottom: 0%;
+}
+
+.password-input-line input {
+    width: 20%;
+}
+
+.programs-selection .checkbox, .popup-programs-selection .popup-programs-checkbox, .phases-and-order-selection .checkbox, .password-input-line label, .create-user-selection label {
     margin-right: 5px;
 }
 
-.programs-selection label, .popup-programs-selection label , .phases-and-order-selection label, .users-order-selection label {
+.programs-selection label, .popup-programs-selection label , .phases-and-order-selection label, .users-order-selection label, .create-user-selection label, .create-user label {
     color: #fff;
     cursor: pointer;
+}
+
+label {
+    font-weight: bold;
 }
 
 .search-input {
@@ -217,13 +256,13 @@ section {
     width: 90%;
 }
 
-.selection-button {
+.selection-button, .create-user-button {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-right: auto;
     margin-left: auto;
-    width: 25%;
+    width: 50%;
     height: 50px;
     padding: 1%;
 }
@@ -250,9 +289,31 @@ button {
     margin: 5%;
 }
 
-.users-order-selection .selection-button button, .password-update-selection .selection-button button {
+.users-order-selection button, .password-update-selection button, .create-user-selection button, .create-user-button button {
     background-color: var(--thales-color);
     margin: 0%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 200px;
+    opacity: 0.9;
+}
+
+.users-order-selection button {
+    margin-top: 25px;
+}
+
+.password-update-selection button {
+    margin-top: 10px;
+}
+
+.create-user-selection button {
+    margin-top: 60px;
+}
+
+.create-user-button button {
+    width: 300px;
+    height: 60px;
+    font-weight: bold;
 }
 
 button:hover {
@@ -263,7 +324,7 @@ h2, h3, h4 {
     color: var(--thales-gradient-3);
 }
 
-#deleteForm h3, .userDeleteForm h3 {
+#deleteForm h3, .userDeleteForm h3, .red-error {
     color: red;
 }
 

@@ -8,8 +8,9 @@
     $whereIs = $_SESSION['GOODPRACTICES_SELECTION'];
     $orderBy = $_SESSION['GOODPRACTICES_ORDER'];
     $erased = $_SESSION['ERASED_GOODPRACTICES'];
-    P($erased);
-    $goodPractices = GoodPracticesSelect($whereIs, $orderBy, $erased);
+    $erasedPrograms = $_SESSION['ERASED_GOODPRACTICES_PROGRAMS'];
+    $goodPractices = GoodPracticesSelect($whereIs, $orderBy, $erased, $erasedPrograms);
+    $_SESSION['GOODPRACTICES'] = $goodPractices;
 ?>
 
 <section>
@@ -31,7 +32,7 @@
                 <tbody class="scrollable-tbody">
                     <?php foreach ($goodPractices as $goodPractice) { ?>
                         <tr>
-                            <td class="programs-column"><?php echo Sanitize($goodPractice['program_names']); ?></td>
+                            <td class="programs-column"><?= Sanitize($goodPractice['program_names']) ?></td>
                             <td class="phase-column"><?= Sanitize($goodPractice['phase_name']) ?></td>
                             <td class="item-column"><?= Sanitize($goodPractice['item']) ?></td>
                             <td class="keywords-column"><?= Sanitize($goodPractice['keywords']) ?></td>

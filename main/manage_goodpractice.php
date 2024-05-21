@@ -9,11 +9,12 @@
     $goodpracticeId = Sanitize($postData['goodpracticeId']);
 
     if ($postData['submit'] === 'erase') {
-        $_SESSION['ERASED_GOODPRACTICES']['id'.$goodpracticeId][] = Sanitize($goodpracticeId);
-        if (isset($postData['programNames'])) {
+        if (!isset($postData['programNames'])) {
+        $_SESSION['ERASED_GOODPRACTICES'][] = $goodpracticeId;
+        } else {
             $programNames = $postData['programNames'];
             foreach ($programNames as $programName) {
-                $_SESSION['ERASED_GOODPRACTICES']['id'.$goodpracticeId][] = Sanitize($programName);
+                $_SESSION['ERASED_GOODPRACTICES_PROGRAMS']['id'.$goodpracticeId][] = Sanitize($programName);
             }
         }
     } elseif ($postData['submit'] === 'duplicate' && !empty($postData['programNames'])) {    
@@ -28,5 +29,5 @@
             DeleteGoodpractice($goodpracticeId, $programNames);
         }
     }
-    // header('Location:index.php');
+    header('Location:index.php');
 ?>

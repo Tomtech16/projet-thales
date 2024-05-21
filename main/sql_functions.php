@@ -33,20 +33,14 @@
         $stmt->execute();
     }
 
-    function UsersSelect(string $username = NULL, array $orderBy = NULL): array
+    function UsersSelect(array $orderBy = NULL): array
     {
         // Return data of USER table
         global $bd;
         
         $sql = "SELECT * FROM USERS";
-        $params = [];
     
-        if ($username !== NULL && !empty($username)) {
-            $sql .= " WHERE username = :username";
-            $params[':username'] = $username;
-        }
-    
-        if ($orderBy !== NULL && count($orderBy) == 2) {
+        if ($orderBy !== NULL) {
             $order = $orderBy[0];
             $direction = $orderBy[1];
             if (($order === 'username' || $order === 'firstname' || $order === 'lastname' || $order === 'profile' || $order === 'attempts') && ($direction === 'asc' || $direction === 'desc'))
@@ -54,7 +48,7 @@
         }
     
         $stmt = $bd->prepare($sql);
-        $stmt->execute($params) or die(print_r($stmt->errorInfo()));
+        $stmt->execute() or die(print_r($stmt->errorInfo()));
     
         $users = $stmt->fetchAll();
         $stmt->closeCursor();
@@ -97,7 +91,7 @@
 
     }
 
-    function UserAppend(string $username, string $firstname, string $lastname, string $password): bool
+    function UserAppend(string $username, string $firstname, string $lastname, string $password, string $profile = NULL): bool
     {
         // append user to USERS table
 
@@ -105,9 +99,14 @@
         
         if (!UserIsInBDD($username)) {
             $hash = password_hash($password, PASSWORD_BCRYPT);
-            $sql = "insert into USERS (username, firstname, lastname, profile, password, attempts) values (:username, :firstname, :lastname, 'operator', :password, 0)";
+            $sql = "insert into USERS (username, firstname, lastname, profile, password, attempts) values (:username, :firstname, :lastname, :profile, :password, 0)";
             $stmt = $bd->prepare($sql);
-            $marqueurs = array('username' => $username, 'firstname' => $firstname, 'lastname' => $lastname, 'password' => $hash);
+            $marqueurs = array('username' => Sanitize($username), 'firstname' => Sanitize($firstname), 'lastname' => Sanitize($lastname), 'password' => Sanitize($hash));
+            if ($profile === NULL || $profile === 'operator') {
+                $marqueurs['profile'] = 'operator';
+            } elseif ($profile === 'admin') {
+                $marqueurs['profile'] = 'admin';
+            }
             $stmt->execute($marqueurs) or die(print_r($stmt->errorInfo()));
             $stmt->closeCursor();
             return TRUE;
@@ -116,7 +115,7 @@
         }
     }
 
-    function GoodPracticesSelect(array $whereIs = NULL, array $orderBy = NULL, array $erase = NULL): array
+    function GoodPracticesSelect(array $whereIs = NULL, array $orderBy = NULL, array $erasedGoodpractices = NULL, array $erasedPrograms = NULL): array
     {
         // Return data of tables :
         //     - GOODPRACTICE(goodpratice_id)
@@ -149,7 +148,7 @@
 
         //         ==> ORDER BY $column [ DESC if ($ascending === FALSE) ]
 
-        //     - $erased = array(array(goodpractice_id, 'program_name', 'program_name', ...), ...)
+        //     - $erasedGoodpractices = array of goodpractice_ids to exclude
 
         global $bd;
 
@@ -185,7 +184,6 @@
                         }
                     }
                 }
-                
             }
             if ($whereClause != " WHERE ") {
                 switch (substr($whereClause, -4)) {
@@ -200,25 +198,17 @@
             }
         }
 
-        // if ($erased !== NULL) {
-        //     if ($whereIs !== NULL) {
-        //         $erasedClause = ' AND ';
-        //     } else {
-        //         $erasedClause = ' WHERE ';
-        //     }
-        //     foreach ($erased as $one) {
-        //         if (count($one) === 1) {
-        //             $paramName = ":$erased"; // Unique parameter name
-        //             $erasedClause .= 'GOODPRACTICE.goodpractice_id != :erased '
-        //             $params[$paramName] = $value; // Store parameter value
-        //         }
-        //     }
-        // }
-
+        // Check for excluded good practices
+        if ($erasedGoodpractices !== NULL) {
+            // Construct the IN clause for excluded goodpractice_ids
+            $excludedIds = implode(", ", $erasedGoodpractices);
+            $sql .= " AND GOODPRACTICE.goodpractice_id NOT IN ($excludedIds)";
+        }
+        
         $sql .= ' GROUP BY GOODPRACTICE.item';
 
         // Check for ORDER BY clause
-        if ($orderBy != NULL) {
+        if ($orderBy !== NULL) {
             $order = $orderBy[0];
             $direction = $orderBy[1];
             if (($order === 'program_names' || $order === 'phase_name' || $order === 'item' || $order === 'keywords') && ($direction === 'asc' || $direction === 'desc')) {
@@ -238,6 +228,14 @@
         $stmt->execute() or die(print_r($stmt->errorInfo()));
         $goodPractices = $stmt->fetchAll();
         $stmt->closeCursor();
+
+        if ($erasedPrograms !== NULL) {
+            foreach ($goodPractices as &$goodPractice) {
+                $goodPractice['program_names'] = EraseProgramNames($goodPractice['program_names'], $erasedPrograms['id'.$goodPractice['goodpractice_id']]);
+            }
+            unset($goodPractice);
+        }
+
         return $goodPractices;
     }
 
@@ -292,7 +290,6 @@
         foreach ($keywordSelect as $keyword) {
             $keywords[] = $keyword[0];
         }
-        print_r($keywords);
         $keywordsSelection = explode(', ', $keywordsSelection);
         $wrongKeywords = array_diff($keywordsSelection, $keywords);
         $keywordsSelection = array_diff($keywordsSelection, $wrongKeywords);
@@ -433,6 +430,15 @@
         foreach ($programNames as $programName) {
             $programId = GetProgramId(Sanitize($programName));
             InsertGoodpracticeProgram($goodpracticeId, $programId);
+        }
+    }
+
+    function EraseProgramNames(string $programNames, array $erasedProgramNames = NULL): string
+    {
+        if ($erasedProgramNames !== NULL) {
+            return Sanitize(implode(', ', array_diff(explode(', ', $programNames), $erasedProgramNames)));
+        } else {
+            return Sanitize($programNames);
         }
     }
 
