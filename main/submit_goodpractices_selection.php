@@ -27,6 +27,9 @@
     } elseif ($postData['submit'] === 'reset') {
         unset($_SESSION['GOODPRACTICES_SELECTION']);
         unset($_SESSION['GOODPRACTICES_ORDER']);
+    } elseif ($postData['submit'] === 'create') {
+        header('Location:create_goodpractice.php');
+        exit();
     } elseif ($postData['submit'] === 'export') {
         $_SESSION['CHECKLIST_CREATION_OUTPUT'] = Sanitize(DownloadChecklist($_SESSION['GOODPRACTICES']));
     }
