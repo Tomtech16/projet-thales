@@ -1,6 +1,4 @@
 <?php
-    session_start();
-    if (!isset($_SESSION['LOGGED_USER'])) { header('Location:index.php'); }
     function P($var) {
         echo "<pre>";
         print_r($var);
@@ -67,10 +65,17 @@
 
     function DownloadChecklist(array $goodpractices)
     {
-        $jsonVar = json_encode($var);
+        if ($erasedPrograms !== NULL) {
+            foreach ($goodPractices as $key => &$goodPractice) {
+                unset($goodPractice['goodpractice_id']);
+            }
+            unset($goodPractice);
+        }
+        
+        $jsonGoodpractices = json_encode($goodpractices);
 
-        if ($jsonVar === false) {
-            exit(1);
+        if ($jsonGoodpractices === false) {
+            return 'Erreur lors de l\'encodage JSON des bonnes pratiques.';
         }
 
         $jsonVarEscaped = escapeshellarg($jsonVar);

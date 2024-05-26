@@ -86,19 +86,16 @@
         <div class="selection-button">
             <button id="submit" type="submit" name="submit" value="submit">Appliquer</button>
             <button id="reset" type="submit" name="submit" value="reset">Effacer les filtres</button>
+            <button id="create" type="submit" name="submit" value="create">Créer une bonne pratique</button>
             <button id="export" type="submit" name="submit" value="export">Télécharger la checklist</button>
         </div>
     </form> 
 </section>
 
 <script type="text/javascript">
-    function ChecklistCreationAlert(output) {
-        alert(output);
-    }
-
     <?php if (isset($_SESSION['CHECKLIST_CREATION_OUTPUT'])) : ?>
         window.onload = function() {
-            ChecklistCreationAlert("<?= Sanitize($_SESSION['CHECKLIST_CREATION_OUTPUT']); ?>");
+            alert("<?= Sanitize($_SESSION['CHECKLIST_CREATION_OUTPUT']); ?>");
         };
     <?php unset($_SESSION['CHECKLIST_CREATION_OUTPUT']); endif; ?>
 </script>

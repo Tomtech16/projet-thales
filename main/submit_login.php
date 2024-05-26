@@ -1,6 +1,5 @@
 <?php
     session_start();
-    if (!isset($_SESSION['LOGGED_USER'])) { header('Location:index.php'); }
     require_once(__DIR__ . '/database_connect.php');
     require_once(__DIR__ . '/functions.php');
     require_once(__DIR__ . '/sql_functions.php');

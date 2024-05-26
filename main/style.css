@@ -272,6 +272,11 @@ label {
     align-items: baseline;
 }
 
+.goodpractices-selection .selection-button {
+    width: 80%;
+    height: 60px;
+}
+
 button {
     background-color: var(--thales-gradient-3);
     color: #fff;
@@ -326,6 +331,12 @@ h2, h3, h4 {
 
 #deleteForm h3, .userDeleteForm h3, .red-error {
     color: red;
+}
+
+.darkred {
+    background-color: darkred;
+    color: #fff;
+    padding: 2px;
 }
 
 /* Tableau */

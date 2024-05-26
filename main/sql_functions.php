@@ -115,7 +115,7 @@
         }
     }
 
-    function GoodPracticesSelect(array $whereIs = NULL, array $orderBy = NULL, array $erasedGoodpractices = NULL, array $erasedPrograms = NULL): array
+    function GoodPracticesSelect(array $whereIs = NULL, array $orderBy = NULL, array $erasedGoodpractices = NULL, array $erasedPrograms = NULL, string $profile): array
     {
         // Return data of tables :
         //     - GOODPRACTICE(goodpratice_id)
@@ -152,30 +152,52 @@
 
         global $bd;
 
-        $sql = "
-            SELECT 
-                GOODPRACTICE.goodpractice_id,
-                GROUP_CONCAT(DISTINCT PROGRAM.program_name ORDER BY PROGRAM.program_name SEPARATOR ', ') AS program_names,
-                PHASE.phase_name,
-                GOODPRACTICE.item,
-                GROUP_CONCAT(DISTINCT KEYWORD.onekeyword ORDER BY KEYWORD.onekeyword SEPARATOR ', ') AS keywords
-            FROM GOODPRACTICE
-            INNER JOIN PHASE ON GOODPRACTICE.phase_id = PHASE.phase_id
-            INNER JOIN GOODPRACTICE_PROGRAM ON GOODPRACTICE.goodpractice_id = GOODPRACTICE_PROGRAM.goodpractice_id
-            INNER JOIN PROGRAM ON GOODPRACTICE_PROGRAM.program_id = PROGRAM.program_id
-            INNER JOIN GOODPRACTICE_KEYWORD ON GOODPRACTICE.goodpractice_id = GOODPRACTICE_KEYWORD.goodpractice_id
-            INNER JOIN KEYWORD ON GOODPRACTICE_KEYWORD.keyword_id = KEYWORD.keyword_id
-        ";
+        if ($profile !== 'admin' && $profile !== 'superadmin') {
+            $sql .= " 
+                SELECT 
+                    GOODPRACTICE.goodpractice_id,
+                    GROUP_CONCAT(DISTINCT PROGRAM.program_name ORDER BY PROGRAM.program_name SEPARATOR ', ') AS program_names,
+                    PHASE.phase_name,
+                    GOODPRACTICE.item,
+                    GROUP_CONCAT(DISTINCT KEYWORD.onekeyword ORDER BY KEYWORD.onekeyword SEPARATOR ', ') AS keywords
+                FROM GOODPRACTICE
+                INNER JOIN PHASE ON GOODPRACTICE.phase_id = PHASE.phase_id
+                INNER JOIN GOODPRACTICE_PROGRAM ON GOODPRACTICE.goodpractice_id = GOODPRACTICE_PROGRAM.goodpractice_id
+                INNER JOIN PROGRAM ON GOODPRACTICE_PROGRAM.program_id = PROGRAM.program_id
+                INNER JOIN GOODPRACTICE_KEYWORD ON GOODPRACTICE.goodpractice_id = GOODPRACTICE_KEYWORD.goodpractice_id
+                INNER JOIN KEYWORD ON GOODPRACTICE_KEYWORD.keyword_id = KEYWORD.keyword_id
+                WHERE GOODPRACTICE.is_hidden = FALSE AND GOODPRACTICE_PROGRAM.is_hidden = FALSE
+            ";
+        } else {
+            $sql = "
+                SELECT 
+                    GOODPRACTICE.goodpractice_id,
+                    GOODPRACTICE.is_hidden AS goodpractice_is_hidden,
+                    GROUP_CONCAT(DISTINCT CONCAT(PROGRAM.program_name, ':', GOODPRACTICE_PROGRAM.is_hidden) ORDER BY PROGRAM.program_name SEPARATOR ', ') AS program_names,
+                    PHASE.phase_name,
+                    GOODPRACTICE.item,
+                    GROUP_CONCAT(DISTINCT KEYWORD.onekeyword ORDER BY KEYWORD.onekeyword SEPARATOR ', ') AS keywords
+                FROM GOODPRACTICE
+                INNER JOIN PHASE ON GOODPRACTICE.phase_id = PHASE.phase_id
+                INNER JOIN GOODPRACTICE_PROGRAM ON GOODPRACTICE.goodpractice_id = GOODPRACTICE_PROGRAM.goodpractice_id
+                INNER JOIN PROGRAM ON GOODPRACTICE_PROGRAM.program_id = PROGRAM.program_id
+                INNER JOIN GOODPRACTICE_KEYWORD ON GOODPRACTICE.goodpractice_id = GOODPRACTICE_KEYWORD.goodpractice_id
+                INNER JOIN KEYWORD ON GOODPRACTICE_KEYWORD.keyword_id = KEYWORD.keyword_id
+            ";
+        }
 
         $params = array(); // Array to store parameter values
 
         // Check for WHERE clause
         if ($whereIs !== NULL) {
-            $whereClause = " WHERE ";
+            if ($profile !== 'admin' && $profile !== 'superadmin') {
+                $whereClause .= " OR ";
+            } else {
+                $whereClause .= " WHERE ";
+            }
 
             foreach ($whereIs as $column => $filters) {
                 if (!empty($filters)) {
-                    $whereClause = replaceLastOccurrence($whereClause, 'OR', 'AND');
                     foreach ($filters as $index => $value) {
                         if (!empty($value)) {
                             $paramName = ":$column$index"; // Unique parameter name
@@ -183,9 +205,11 @@
                             $params[$paramName] = $value; // Store parameter value
                         }
                     }
+                    $whereClause = replaceLastOccurrence($whereClause, 'OR ', 'AND ');
+
                 }
             }
-            if ($whereClause != " WHERE ") {
+            if ($whereClause !== " OR " && $whereClause !== " WHERE ") {
                 switch (substr($whereClause, -4)) {
                     case 'AND ':
                         $whereClause = rtrim($whereClause, 'AND ');
@@ -230,8 +254,11 @@
         $stmt->closeCursor();
 
         if ($erasedPrograms !== NULL) {
-            foreach ($goodPractices as &$goodPractice) {
-                $goodPractice['program_names'] = EraseProgramNames($goodPractice['program_names'], $erasedPrograms['id'.$goodPractice['goodpractice_id']]);
+            foreach ($goodPractices as $key => &$goodPractice) {
+                $goodPractice['program_names'] = EraseProgramNames($goodPractice['program_names'], $erasedPrograms['id'.$goodPractice['goodpractice_id']], $profile);
+                if (empty($goodPractice['program_names'])) {
+                    unset($goodPractices[$key]);
+                }
             }
             unset($goodPractice);
         }
@@ -433,10 +460,18 @@
         }
     }
 
-    function EraseProgramNames(string $programNames, array $erasedProgramNames = NULL): string
+    function EraseProgramNames(string $programNames, array $erasedProgramNames = NULL, string $profile): string
     {
         if ($erasedProgramNames !== NULL) {
-            return Sanitize(implode(', ', array_diff(explode(', ', $programNames), $erasedProgramNames)));
+            if ($profile !== 'admin' && $profile !== 'superadmin') {
+                return Sanitize(implode(', ', array_diff(explode(', ', $programNames), $erasedProgramNames)));
+            } else {
+                $programArray = [];
+                foreach (explode(', ', $programNames) as $programName) {
+                    $programArray[$programName] = substr($programName, 0, -2);
+                }
+                return Sanitize(implode(', ',array_keys(array_diff($programArray, $erasedProgramNames))));
+            }
         } else {
             return Sanitize($programNames);
         }
@@ -488,5 +523,53 @@
             // Log or handle the exception as needed
             throw new Exception("Error deleting good practice: " . $e->getMessage());
         }
+    }
+
+    function DeleteOperatorGoodpractice(int $goodpracticeId, array $programNames = NULL): void
+    {
+        global $bd; // Assuming $bd is your PDO connection
+    
+        try {
+            $bd->beginTransaction();
+    
+            if (empty($programNames)) {
+                // If $programNames is empty, hide the good practice
+                $sql = "UPDATE GOODPRACTICE SET is_hidden = TRUE WHERE goodpractice_id = :goodpractice_id;";
+                $stmt = $bd->prepare($sql);
+                $stmt->bindValue(':goodpractice_id', $goodpracticeId, PDO::PARAM_INT);
+                $stmt->execute();
+                $stmt->closeCursor();
+            } else {
+                // If $programNames is not empty, delete rows based on goodpractice_id and program_id
+                $sql = "UPDATE GOODPRACTICE_PROGRAM SET is_hidden = TRUE WHERE goodpractice_id = :goodpractice_id AND program_id = :program_id";
+                foreach ($programNames as $programName) {
+                    $programId = GetProgramId($programName);
+                    $stmt = $bd->prepare($sql);
+                    $stmt->bindValue(':goodpractice_id', $goodpracticeId, PDO::PARAM_INT);
+                    $stmt->bindValue(':program_id', $programId, PDO::PARAM_INT);
+                    $stmt->execute();
+                    $stmt->closeCursor();
+                }
+            }
+    
+            $bd->commit();
+        } catch (PDOException $e) {
+            $bd->rollBack();
+            // Log or handle the exception as needed
+            throw new Exception("Error deleting good practice: " . $e->getMessage());
+        }
+    }
+
+    function RestoreGoodpractice(int $goodpracticeId): void
+    {
+        global $bd;
+        $sql = "
+            UPDATE GOODPRACTICE SET is_hidden = FALSE WHERE goodpractice_id = :goodpractice_id;
+            UPDATE GOODPRACTICE_PROGRAM SET is_hidden = FALSE WHERE goodpractice_id = :goodpractice_id;
+        ";
+        $stmt = $bd->prepare($sql);
+        $stmt->bindValue(':goodpractice_id', $goodpracticeId, PDO::PARAM_INT);
+        $stmt->execute();
+        $stmt->closeCursor();
     }
 ?>

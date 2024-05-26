@@ -1,5 +1,5 @@
 <?php session_start(); ?>
-<?php if (!isset($_SESSION['LOGGED_USER'])) { header('Location:index.php'); } ?>
+<?php if (!isset($_SESSION['LOGGED_USER'])) { header('Location:index..php'); } ?>
 <!DOCTYPE HTML>
 <html>
 	<head>
@@ -12,13 +12,7 @@
 
         <?php 
             if (isset($_SESSION['LOGGED_USER'])) {
-                if ($_SESSION['LOGGED_USER']['profile'] === 'admin' || $_SESSION['LOGGED_USER']['profile'] === 'superadmin') {
-                    require_once(__DIR__ . '/users_gestion.php');
-                    require_once(__DIR__ . '/users_print.php');
-                } else {
-                    header('Location:logout.php');
-                    exit();
-                }
+                require_once(__DIR__ . '/goodpractices_create_selection.php');
             } else {
                 header('Location:logout.php');
                 exit();
