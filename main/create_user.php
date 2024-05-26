@@ -1,5 +1,16 @@
-<?php session_start(); ?>
-<?php if (!isset($_SESSION['LOGGED_USER'])) { header('Location:index.php'); } ?>
+<?php 
+    session_start();
+    if (!isset($_SESSION['LOGGED_USER'])) { header('Location:index.php'); }
+
+    require_once(__DIR__ . '/database_connect.php');
+    require_once(__DIR__ . '/sql_functions.php');
+    require_once(__DIR__ . '/functions.php');
+
+    if (isset($_SESSION['CREATE_USER_MESSAGE'])) {
+        echo '<script>alert("'.Sanitize($_SESSION['CREATE_USER_MESSAGE']).'")</script>';
+    }
+    unset($_SESSION['CREATE_USER_MESSAGE']); 
+?>
 <!DOCTYPE HTML>
 <html>
 	<head>
@@ -9,18 +20,12 @@
 	</head>
 	<body>
         <?php require_once(__DIR__ . '/header.php'); ?>
+
         <section>
             <h2>Création d'un nouvel utilisateur</h2>
             <form class="create-user-form" action="submit_create_user.php" method="POST">
                 <div class="gestion">
                     <div class="create-user">
-                        <?php if (isset($_SESSION['CREATE_USER_MESSAGE']) && str_contains($_SESSION['CREATE_USER_MESSAGE'], 'Erreur')) : ?>
-                            <p class="red-error"><?= $_SESSION['CREATE_USER_MESSAGE'] ?></p>
-                        <?php else : ?>
-                            <p><?= $_SESSION['CREATE_USER_MESSAGE'] ?></p>
-                        <?php 
-                            unset($_SESSION['CREATE_USER_MESSAGE']); 
-                        endif; ?>
                         <h3>Veuillez remplir les informations du nouvel utilisateur</h3>
                         <div class="create-user-input-area">
                             <div class="create-user-input-line">
@@ -47,16 +52,22 @@
                         <ol>
                             <li>Ne doit pas contenir d'accent.</li>
                             <li>Ne doit pas contenir le nom d'utilisateur.</li>
-                            <?php
-                                require_once(__DIR__ . '/database_connect.php');
-                                require_once(__DIR__ . '/sql_functions.php');
-                                $parameters = PasswordSelect();
-                                echo "<li>Le mot de passe doit contenir au moins ".$parameters['n']." caractère(s) numérique(s) (entre “0” et “9”).</li>\n";
-                                echo "<li>Le mot de passe doit contenir au moins ".$parameters['p']." caractère(s) alphabétique(s) en minuscule (entre « a » et « z »).</li>\n";
-                                echo "<li>Le mot de passe doit contenir au moins ".$parameters['q']." caractère(s) alphabétique(s) en majuscule (entre « A » et « Z »).</li>\n";
-                                echo "<li>Le mot de passe doit contenir au moins ".$parameters['r']." caractère(s) spécial(aux) parmi ([!\"#$%&'*+,-./;<=>?@\^_`|}~]),{.</li>\n";
-                            ?>
+                            <?php $parameters = PasswordSelect(); ?>
+                            <?php if ($parameters['n'] > 0) : ?>
+                            <li>Le mot de passe doit contenir au moins <?= $parameters['n'] ?> chiffre<?= ($parameters['n'] > 1) ? 's' : '' ?>.</li>
+                            <?php endif; ?>
+                            <?php if ($parameters['p'] > 0) : ?>
+                            <li>Le mot de passe doit contenir au moins <?= $parameters['p'] ?> minuscule<?= ($parameters['p'] > 1) ? 's' : '' ?>.</li>
+                            <?php endif; ?>
+                            <?php if ($parameters['q'] > 0) : ?>
+                            <li>Le mot de passe doit contenir au moins <?= $parameters['q'] ?> majuscule<?= ($parameters['q'] > 1) ? 's' : '' ?>.</li>
+                            <?php endif; ?>
+                            <?php if ($parameters['r'] > 0) : ?>
+                            <li>Le mot de passe doit contenir au moins <?= $parameters['r'] ?> caractère<?= ($parameters['r'] > 1) ? 's' : '' ?> spécia<?= ($parameters['r'] > 1) ? 'ux' : 'l' ?>.</li>
+                            <?php endif; ?>
                         </ol>
+
+                        <h4>Renseignez votre mot de passe.</h4>
                         <div class="create-user-input-area">
                             <div class="create-user-input-line">
                                 <label for="password">Mot de passe : </label><input id="password" name="password" type="password" placeholder="Saisir le mot de passe" required />
@@ -72,5 +83,7 @@
                 </div>
             </form>
         </section>
+
+        <?php require_once(__DIR__ . '/footer.php'); ?>
     </body>
 </html>

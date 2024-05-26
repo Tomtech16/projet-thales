@@ -311,8 +311,11 @@
         return $keywords;
     }
 
-    function ValidateKeywordsSelection(string $keywordsSelection): array
-    {
+    function ValidateKeywordsSelection(string $keywordsSelection = NULL): array
+    {   
+        if ($keywordsSelection === NULL || empty($keywordsSelection)) {
+            return array(array(''),array(''));
+        }
         $keywordSelect = KeywordSelect();
         foreach ($keywordSelect as $keyword) {
             $keywords[] = $keyword[0];

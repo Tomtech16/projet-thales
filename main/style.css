@@ -24,29 +24,36 @@ header {
     color: #fff;
     display: flex;
     align-items: center;
+    height: 60px;
 }
 
 header img {
-    width: 100px;
-    height: 50px;
-    margin: 5px;
+    width: 120px;
+    height: 60px;
+    margin-left: 20px;
     margin-right: 50px;
 }
 
 header h1 {
+    width: 170px;
     font-size: large;
     color: var(--thales-color);
 }
 
 header nav {
-    margin-left: auto;
-    width: 50%;
+    width: 100%;
+}
+
+header ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-left: 2%;
+    margin-right: 2%;
 }
 
 header ul li {
-    display: inline;
     list-style-type: none;
-    margin-right: 20%;
 }
 
 header a {
@@ -56,6 +63,19 @@ header a {
 
 header .active {
     color: var(--thales-color);
+}
+
+.current-page, .page:hover {
+    color: var(--thales-color);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+#uca {
+    background-color: #fff;
+    height: 64px;
+    width: 150px;
+    margin: 0;
 }
 
 section {
@@ -136,7 +156,7 @@ section {
     width: 100%;
 }
 
-.programs-selection, .popup-programs-selection, .phases-and-order-selection, .keywords-selection, .users-order-selection, .password-update-selection, .create-user-selection, .create-user {
+.programs-selection, .popup-programs-selection, .phases-and-order-selection, .phase-selection, .keywords-selection, .write-goodpractice, .users-order-selection, .password-update-selection, .create-user-selection, .create-user {
     margin: 1%;
     padding-left: 10px;
     border: 1px solid var(--thales-gradient-2);
@@ -172,13 +192,31 @@ section {
     margin-bottom: 10px;
 }
 
-.programs-selection h3, .popup-programs-selection h4, .phases-and-order-selection h3, .keywords-selection h3, .users-order-selection h3, .password-update-selection h3, .create-user-selection h3, .create-user h3, .create-user h4 {
+.write-goodpractice {
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2%;
+}
+
+.write-goodpractice textarea {
+    height: 230px;
+    min-height: 230px;
+    width: 80%;
+    min-width: 50%;
+    max-width: 80%;
+    font-size:larger;
+    border: 2px solid var(--thales-color);
+}
+
+.programs-selection h3, .popup-programs-selection h4, .phases-and-order-selection h3, .phase-selection h3, .keywords-selection h3, .write-goodpractice h3, .users-order-selection h3, .password-update-selection h3, .create-user-selection h3, .create-user h3, .create-user h4 {
     color: var(--thales-color);
     margin-bottom: 10px;
     margin-top: 10px;
 }
 
-.create-user h3, .create-user h4 {
+.create-user h3, .create-user h4, .write-goodpractice h3 {
     margin-bottom: 20px;
 }
 
@@ -237,7 +275,7 @@ section {
     width: 20%;
 }
 
-.programs-selection .checkbox, .popup-programs-selection .popup-programs-checkbox, .phases-and-order-selection .checkbox, .password-input-line label, .create-user-selection label {
+.programs-selection .checkbox, .popup-programs-selection .popup-programs-checkbox, .phases-and-order-selection .checkbox, .phase-selection label, .password-input-line label, .create-user-selection label {
     margin-right: 5px;
 }
 
@@ -268,13 +306,17 @@ label {
 }
 
 .users-order-selection .selection-button, .password-update-selection .selection-button {
-    height: 30px;
+    height: 35px;
     align-items: baseline;
 }
 
 .goodpractices-selection .selection-button {
     width: 80%;
     height: 60px;
+}
+
+#create-goodpractice-selection-button {
+    width: 60%;
 }
 
 button {
@@ -301,6 +343,7 @@ button {
     margin-right: auto;
     width: 200px;
     opacity: 0.9;
+    font-size: 100%;
 }
 
 .users-order-selection button {
@@ -318,7 +361,6 @@ button {
 .create-user-button button {
     width: 300px;
     height: 60px;
-    font-weight: bold;
 }
 
 button:hover {
@@ -329,7 +371,7 @@ h2, h3, h4 {
     color: var(--thales-gradient-3);
 }
 
-#deleteForm h3, .userDeleteForm h3, .red-error {
+#deleteForm h3, .userDeleteForm h3 {
     color: red;
 }
 
@@ -339,12 +381,16 @@ h2, h3, h4 {
     padding: 2px;
 }
 
-/* Tableau */
+ol li {
+    margin-bottom: 5px;
+}
+
+/* Table */
 .table-container {
-    max-height: 500px; /* Hauteur maximale du tableau */
-    overflow: hidden; /* Masque le débordement du tableau */
-    border: 1px solid var(--thales-gradient-2); /* Bordure pour une séparation nette */
-    border-radius: 10px; /* Coins arrondis pour l'encadré */
+    max-height: 500px;
+    overflow: hidden;
+    border: 1px solid var(--thales-gradient-2);
+    border-radius: 10px;
 }
 
 table {
@@ -352,8 +398,8 @@ table {
     border-collapse: collapse;
     border-radius: 10px;
     overflow: hidden; 
-    display: grid; /* Utilisation de CSS Grid pour la structure du tableau */
-    grid-template-rows: auto 1fr; /* Première ligne automatique pour thead, seconde ligne extensible pour tbody */
+    display: grid;
+    grid-template-rows: auto 1fr;
 }
 
 th, td {
@@ -407,7 +453,6 @@ tbody tr:nth-child(even) {
     background-color: var(--thales-gradient-3-light);
 }
 
-/* Boutons d'action */
 .action-btn-container {
     display: flex;
     justify-content: center;
@@ -428,7 +473,6 @@ tbody tr:nth-child(even) {
     opacity: 1;
 }
 
-/* Bouton d'avertissement */
 .btn-warning {
     background-color: darkred;
     color: #fff;
@@ -445,10 +489,9 @@ tbody tr:nth-child(even) {
     opacity: 1;
 }
 
-/* Forme Popup */
 .form-popup {
     display: none;
-    position: fixed; /* Utiliser une position fixe */
+    position: fixed;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
@@ -495,13 +538,14 @@ tbody tr:nth-child(even) {
     opacity: 1;
 }
 
-/* Footer */
 footer {
-    position: fixed; /* Fixé en bas de la page */
+    position: fixed;
     bottom: 0;
     width: 100%;
+    height: 40px;
     background-color: var(--thales-header);
     color: #fff;
+    font-size: small;
     display: flex;
     justify-content: space-around;
     margin-top: 1%;

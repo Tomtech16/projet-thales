@@ -27,6 +27,7 @@
     } elseif ($postData['submit'] === 'reset') {
         unset($_SESSION['GOODPRACTICES_SELECTION']);
         unset($_SESSION['GOODPRACTICES_ORDER']);
+        unset($_SESSION['GOODPRACTICES_KEYWORDS_SELECTION_MESSAGE']);
     } elseif ($postData['submit'] === 'create') {
         header('Location:create_goodpractice.php');
         exit();
