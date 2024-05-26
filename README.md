@@ -11,6 +11,7 @@
 - floriandelbreil --> DELBREIL Florian florian.delbreil@etu.unice.fr
 - TimLLORET --> LLORET Timothée timothee.lloret@etu.univ-cotedazur.fr
 
+---
 
 ## Projet Thales description :
 
