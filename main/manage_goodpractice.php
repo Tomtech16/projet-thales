@@ -28,15 +28,17 @@
             $programNames = $postData['programNames'];
             DeleteOperatorGoodpractice($goodpracticeId, $programNames);
         }
-    } elseif ($postData['submit'] === 'delete') {
-        if (!isset($postData['programNames'])) {
-            DeleteGoodpractice($goodpracticeId);
-        } else {
-            $programNames = $postData['programNames'];
-            DeleteGoodpractice($goodpracticeId, $programNames);
+    } elseif ($_SESSION['LOGGED_USER']['profile'] === 'admin' || $_SESSION['LOGGED_USER']['profile'] === 'superadmin') {
+        if ($postData['submit'] === 'delete') {
+            if (!isset($postData['programNames'])) {
+                DeleteGoodpractice($goodpracticeId);
+            } else {
+                $programNames = $postData['programNames'];
+                DeleteGoodpractice($goodpracticeId, $programNames);
+            }
+        } elseif ($postData['submit'] === 'restore') {
+            RestoreGoodpractice($goodpracticeId);
         }
-    } elseif ($postData['submit'] === 'restore') {
-        RestoreGoodpractice($goodpracticeId);
     }
     header('Location:index.php');
 ?>

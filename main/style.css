@@ -40,6 +40,14 @@ header h1 {
     color: var(--thales-color);
 }
 
+header h1:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.8;
+    transition: opacity 0.75s, text-decoration 0.75s;
+    
+}
+
 header nav {
     width: 100%;
 }
@@ -57,18 +65,16 @@ header ul li {
 }
 
 header a {
+    font-size: .875rem;
     color: #fff;
     text-decoration: none;
-}
-
-header .active {
-    color: var(--thales-color);
 }
 
 .current-page, .page:hover {
     color: var(--thales-color);
     text-decoration: underline;
     text-underline-offset: 3px;
+    transition: color 0.75s, text-decoration 0.75s;
 }
 
 #uca {
@@ -115,9 +121,11 @@ section {
 }
 
 .welcome button, .login button {
-    margin-top:10%;
+    margin-top: 50px;
     background-color: var(--thales-color);
-    color: black;
+    font-size: 100%;
+    min-height: 50px;
+    min-width: 200px;
 }
 
 .login .input-line {
@@ -156,7 +164,7 @@ section {
     width: 100%;
 }
 
-.programs-selection, .popup-programs-selection, .phases-and-order-selection, .phase-selection, .keywords-selection, .write-goodpractice, .users-order-selection, .password-update-selection, .create-user-selection, .create-user {
+.programs-selection, .popup-programs-selection, .phases-and-order-selection, .phase-selection, .keywords-selection, .write-goodpractice, .users-order-selection, .password-update-selection, .create-user-selection, .logs-selection, .create-user, .reset-user-password {
     margin: 1%;
     padding-left: 10px;
     border: 1px solid var(--thales-gradient-2);
@@ -167,24 +175,20 @@ section {
     color: #fff;
 }
 
-.users-order-selection, .password-update-selection, .create-user-selection {
+.users-order-selection, .password-update-selection, .create-user-selection, .logs-selection {
     height: 180px;
 }
 
-.create-user {
+.create-user, .reset-user-password {
     height: 100%;
 }
 
-.users-order-selection {
+.users-order-selection, .create-user-selection, .logs-selection {
     width: 25%;
 }
 
 .password-update-selection {
     width: 50%;
-}
-
-.create-user-selection {
-    width: 25%;
 }
 
 .popup-programs-selection {
@@ -206,17 +210,24 @@ section {
     width: 80%;
     min-width: 50%;
     max-width: 80%;
-    font-size:larger;
+    font-size: larger;
     border: 2px solid var(--thales-color);
+    background-color: #fff;
+    opacity: 0.9;
 }
 
-.programs-selection h3, .popup-programs-selection h4, .phases-and-order-selection h3, .phase-selection h3, .keywords-selection h3, .write-goodpractice h3, .users-order-selection h3, .password-update-selection h3, .create-user-selection h3, .create-user h3, .create-user h4 {
+.write-goodpractice textarea:focus {
+    opacity: 1;
+    transition: opacity 0.75s;
+}
+
+.programs-selection h3, .popup-programs-selection h4, .phases-and-order-selection h3, .phase-selection h3, .keywords-selection h3, .write-goodpractice h3, .users-order-selection h3, .password-update-selection h3, .create-user-selection h3, .logs-selection h3, .create-user h3, .create-user h4, .reset-user-password h4 {
     color: var(--thales-color);
     margin-bottom: 10px;
     margin-top: 10px;
 }
 
-.create-user h3, .create-user h4, .write-goodpractice h3 {
+.create-user h3, .create-user h4, .reset-user-password h4, .write-goodpractice h3 {
     margin-bottom: 20px;
 }
 
@@ -243,15 +254,21 @@ section {
     flex-wrap: wrap;
     gap: 10px;
     max-height: 100px;
-    overflow-y: auto;
+    overflow-y: scroll;
 }
 
 .users-order-selection .radio-area, .user-create-input-area {
     display: block;
 }
 
-.users-order-selection .radio-line, .create-user-input-line {
+.users-order-selection .radio-line {
     margin-bottom: 10px;
+}
+
+.create-user-input-line input, .reset-user-password-input-line input {
+    height: 22px;
+    margin-bottom: 20px;
+    min-width: 200px;
 }
 
 .checkbox-line, .popup-checkbox-line, .password-input-line  {
@@ -275,11 +292,11 @@ section {
     width: 20%;
 }
 
-.programs-selection .checkbox, .popup-programs-selection .popup-programs-checkbox, .phases-and-order-selection .checkbox, .phase-selection label, .password-input-line label, .create-user-selection label {
+.programs-selection .checkbox, .popup-programs-selection .popup-programs-checkbox, .phases-and-order-selection .checkbox, .phase-selection label, .password-input-line label, .create-user-selection label, .logs-selection label {
     margin-right: 5px;
 }
 
-.programs-selection label, .popup-programs-selection label , .phases-and-order-selection label, .users-order-selection label, .create-user-selection label, .create-user label {
+.programs-selection label, .popup-programs-selection label , .phases-and-order-selection label, .users-order-selection label, .create-user-selection label, .logs-selection label, .create-user label, .reset-user-password label {
     color: #fff;
     cursor: pointer;
 }
@@ -336,7 +353,7 @@ button {
     margin: 5%;
 }
 
-.users-order-selection button, .password-update-selection button, .create-user-selection button, .create-user-button button {
+.users-order-selection button, .password-update-selection button, .create-user-selection button, .logs-selection button, .create-user-button button {
     background-color: var(--thales-color);
     margin: 0%;
     margin-left: auto;
@@ -354,7 +371,7 @@ button {
     margin-top: 10px;
 }
 
-.create-user-selection button {
+.create-user-selection button, .logs-selection button {
     margin-top: 60px;
 }
 
@@ -365,14 +382,11 @@ button {
 
 button:hover {
     opacity: 1;
+    transition: opacity 0.75s;
 }
 
 h2, h3, h4 {
     color: var(--thales-gradient-3);
-}
-
-#deleteForm h3, .userDeleteForm h3 {
-    color: red;
 }
 
 .darkred {
@@ -394,12 +408,20 @@ ol li {
 }
 
 table {
-    width: 1731x;
+    width: 1800px;
     border-collapse: collapse;
-    border-radius: 10px;
     overflow: hidden; 
     display: grid;
     grid-template-rows: auto 1fr;
+}
+
+tr#self-admin {
+    height: 50px;
+    background-color: var(--thales-color);
+}
+
+tr.blocked {
+    color: #c80815;
 }
 
 th, td {
@@ -409,7 +431,7 @@ th, td {
 }
 
 .programs-column, .keywords-column {
-    width: 300px;
+    width: 290px;
 }
 .phase-column {
     width: 100px;
@@ -471,6 +493,7 @@ tbody tr:nth-child(even) {
 
 .action-btn:hover {
     opacity: 1;
+    transition: 0.75s;
 }
 
 .btn-warning {
@@ -487,6 +510,7 @@ tbody tr:nth-child(even) {
 
 .btn-warning:hover {
     opacity: 1;
+    transition: 0.75s;
 }
 
 .form-popup {
@@ -495,32 +519,29 @@ tbody tr:nth-child(even) {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    border: 2px solid #666;
+    border: 1px solid var(--thales-gradient-3);
     padding: 20px;
     background-color: #fff;
     z-index: 999;
     color: var(--thales-gradient-1);
+    width: 20%;
 }
 
 .form-popup li {
     margin-bottom: 10px;
 }
 
-.form-container {
-    max-width: 300px;
+input {
+    border: 2px solid var(--thales-color);
+    background-color: #fff;
+    opacity: 0.9;
+    border-radius: 5px;
 }
 
-.form-container input[type="text"] {
-    width: calc(100% - 20px);
-    padding: 10px;
-    margin: 5px 0 22px 0;
-    border: none;
-    background: #eee;
-}
-
-.form-container input[type="text"]:focus {
-    background-color: #ddd;
+input:focus {
     outline: none;
+    opacity: 1;
+    transition: opacity 0.75s;
 }
 
 .form-container .btn {
@@ -536,6 +557,32 @@ tbody tr:nth-child(even) {
 
 .form-container .btn:hover {
     opacity: 1;
+    transition: 0.75s;
+}
+
+.log {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: scroll;
+    background-color: var(--thales-gradient-3);
+    border: 1px solid var(--thales-gradient-1);
+    border-radius: 10px;
+    height: 700px;
+    padding: 2%;
+    font-size: large;
+}
+
+.information {
+    color: #1e90ff;
+}
+
+.warning {
+    color: #eee600;
+}
+
+.alarm {
+    color: red;
 }
 
 footer {

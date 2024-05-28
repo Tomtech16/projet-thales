@@ -24,17 +24,16 @@
                         'lastname' => $user['lastname'],
                         'profile' => $user['profile'],
                         ];
-                        UserAttempts($user['userkey'], 'reset');
+                        UserAttempts($user['user_id'], 'reset');
                         header('Location:index.php');
                         break;
                     } else {
                         $_SESSION['LOGIN_MESSAGE'] = 'Utilisateur bloqué.';
                         break;
                     }
-                    
                 } else {
                     if ($user['profile'] !== 'superadmin') {
-                        UserAttempts($user['userkey'],'increment');
+                        UserAttempts($user['user_id'], 'increment');
                         break;
                     }
                 }

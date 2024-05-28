@@ -1,12 +1,17 @@
 <?php 
     session_start();   
-    if (!isset($_SESSION['LOGGED_USER'])) { header('Location:index.php'); }
+    if (!isset($_SESSION['LOGGED_USER']) || ($_SESSION['LOGGED_USER']['profile'] !== 'admin' && $_SESSION['LOGGED_USER']['profile'] !== 'superadmin')) { header('Location: logout.php'); exit(); }
     require_once(__DIR__ . '/database_connect.php');
-    require_once(__DIR__ . '/functions.php');
     require_once(__DIR__ . '/sql_functions.php');
 
+    $passwordParameters = PasswordSelect();
+    $n = Sanitize($passwordParameters['n']);
+    $p = Sanitize($passwordParameters['p']);
+    $q = Sanitize($passwordParameters['q']);
+    $r = Sanitize($passwordParameters['r']);
     $usersSelectionOrder = $_SESSION['USERS_SELECTION_ORDER'];
-    $users = UsersSelect($usersSelectionOrder);
+    $profile = Sanitize($_SESSION['LOGGED_USER']['profile']);
+    $users = UsersSelect($usersSelectionOrder, $profile);
 ?>
 
 <section>
@@ -27,23 +32,33 @@
             </div>
             <div class="grid-container">
                 <tbody class="scrollable-tbody">
+                    <?php if ($_SESSION['LOGGED_USER']['profile'] === 'admin' || $_SESSION['LOGGED_USER']['profile'] === 'superadmin') : ?>
+                        <tr id="self-admin">
+                            <td class="username-column"><?= Sanitize($_SESSION['LOGGED_USER']['username']) ?></td>
+                            <td class="firstname-column"><?= Sanitize($_SESSION['LOGGED_USER']['firstname']) ?></td>
+                            <td class="lastname-column"><?= Sanitize($_SESSION['LOGGED_USER']['lastname']) ?></td>
+                            <td class="profile-column"><?= Sanitize($_SESSION['LOGGED_USER']['profile']) ?></td>
+                            <td class="attempts-column"></td>
+                            <td class="actions-column"></td>
+                        </tr>
+                    <?php endif; ?>
                     <?php foreach ($users as $user) { ?>
-                        <tr>
+                        <tr <?= (UserIsBlocked(Sanitize($user['attempts']))) ? 'class="blocked"' : '' ?>>
                             <td class="username-column"><?= Sanitize($user['username']) ?></td>
                             <td class="firstname-column"><?= Sanitize($user['firstname']) ?></td>
                             <td class="lastname-column"><?= Sanitize($user['lastname']) ?></td>
                             <td class="profile-column"><?= Sanitize($user['profile']) ?></td>
-                            <?php 
-                                if (UserIsBlocked(Sanitize($user['attempts']))) {
-                                    echo '<td class="attempts-column">Compte bloqué</td>';
-                                } else {
-                                    echo '<td class="attempts-column">'.Sanitize($user['attempts']).'</td>';
-                                }
-                            ?>
+                            <?php if (UserIsBlocked(Sanitize($user['attempts']))) : ?>
+                                <td class="attempts-column">Compte bloqué</td>
+                            <?php else : ?>
+                                <td class="attempts-column"><?= Sanitize($user['attempts'])?></td>
+                            <?php endif; ?>
                             <td class="actions-column">
-                                <div class="action-btn-container">
-                                    <button class="action-btn" onclick="openUserForm(<?= Sanitize($user['user_id']) ?>)">Supprimer</button>
-                                </div>
+                                <?php if ($user['profile'] !== 'superadmin') : ?>
+                                        <div class="action-btn-container">
+                                            <button class="action-btn" onclick="openUserForm(<?= Sanitize($user['user_id']) ?>, <?= (UserIsBlocked(Sanitize($user['attempts']))) ? 1 : 0 ?>, <?= $n ?>, <?= $p ?>, <?= $q ?>, <?= $r ?>)">Gérer</button>
+                                        </div>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php } ?>
@@ -52,64 +67,105 @@
         </table>
     </div>
 
-    <?php if (UserIsBlocked(Sanitize($user['attempts']))) : ?>
-        <button class="action-button" onclick="openUserResetPasswordForm(<?= Sanitize($user['user_id']) ?>)">Changer le mot de passe</button>
-    <?php endif; ?>
-
     <div class="form-popup" id="userForm">
-        <form action="delete_user.php" class="form-container" method="POST">
-            <h3>Supprimer l'utilisateur</h3>
-            <p>Êtes-vous sûr de vouloir supprimer cet utilisateur ?</p>
-            <input type="hidden" id="deleteUserId" name="deleteUserId" value="">
-            <button type="submit" class="btn-warning" >Confirmer</button>
-            <button type="button" class="btn" onclick="closeUserDeleteForm()">Annuler</button>
+        <form action="manage_user.php" class="form-container" method="POST">
+            <h3>Administration de l'utilisateur</h3>
+            <p>Vous pouvez : </p>
+            <ul>
+                <li>Supprimer l'utilisateur.</li>
+                <li>Réinitialiser le mot de passe d'un utilisateur bloqué.</li>
+            </ul>
+            <input type="hidden" id="userId" name="userId" value="">
+            <button type="submit" class="btn-warning" name="submit" value="delete-user">Supprimer</button>
+            <button id="cancel" type="button" class="btn" onclick="closeUserForm()">Annuler</button>
         </form>
     </div>
-
-    <div class="form-popup" id="deleteUserForm">
-        <form action="delete_user.php" class="form-container" method="POST">
-            <h3>Supprimer l'utilisateur</h3>
-            <p>Êtes-vous sûr de vouloir supprimer cet utilisateur ?</p>
-            <input type="hidden" id="deleteUserId" name="deleteUserId" value="">
-            <button type="submit" class="btn-warning" >Confirmer</button>
-            <button type="button" class="btn" onclick="closeUserDeleteForm()">Annuler</button>
-        </form>
-    </div>
-    
-    <?php if (UserIsBlocked(Sanitize($user['attempts']))) : ?>
-        <div class="form-popup" id="resetUSerPasswordForm">
-            <form action="reset_user_password.php" class="form-container" method="POST">
-                <h3>Redéfinir le mot de passe</h3>
-                <input type="hidden" id="resetUserPasswordId" name="resetUserPasswordId" value="">
-                <button type="submit" class="btn">Dupliquer</button>
-                <button type="button" class="btn" onclick="closeUserResetPasswordForm()">Annuler</button>
-            </form>
-        </div>
-
-        <script>
-            function openResetUserPasswordForm(userId) {
-                document.getElementById("resetUserPasswordId").value = userId;
-                document.getElementById("resetUserPasswordForm").style.display = "block";
-                document.getElementById("deleteUserForm").style.display = "none";
-            }
-
-            function closeResetUserPasswordForm() {
-                document.getElementById("resetUserPasswordForm").style.display = "none";
-            }
-        </script>
-    <?php endif; ?>
-
-
 </section>
 
 <script>
-    function openUserDeleteForm(userId) {
-        document.getElementById("deleteUserId").value = userId;
-        document.getElementById("deleteUserForm").style.display = "block";
-        document.getElementById("resetUserPasswordForm").style.display = "none";
+
+function openUserForm(userId, userIsBlocked, n, p, q, r) {
+    document.getElementById("userId").value = userId;
+
+    if (userIsBlocked) {
+        if (!document.getElementById('reset-password-button')) {
+            const deleteButton = document.querySelector('button[value="delete-user"]');
+            const cancelButton = document.querySelector('button[id="cancel"]');
+
+            const resetButton = document.createElement('button');
+            resetButton.type = 'submit';
+            resetButton.id = 'reset-password-button';
+            resetButton.className = 'btn';
+            resetButton.name = 'submit';
+            resetButton.value = 'reset-password';
+            resetButton.textContent = 'Réinitialiser le mot de passe';
+
+            deleteButton.parentNode.insertBefore(resetButton, cancelButton);
+        }
+
+        if (!document.getElementById('password-rules')) {
+            const form = document.querySelector("#userForm form");
+            const deleteButton = document.querySelector('button[value="delete-user"]');
+            const passwordRulesDiv = document.createElement('div');
+            passwordRulesDiv.id = 'password-rules';
+
+            let passwordRulesHTML = `
+                <div class="gestion">
+                        <div class="reset-user-password">
+                            <h4>Règles de configuration du mot de passe : </h4>
+                            <ol>
+                                <li>Ne doit pas contenir d'accent.</li>
+                                <li>Ne doit pas contenir le nom d'utilisateur.</li>
+            `;
+            if (n > 0) {
+                passwordRulesHTML += `<li>Doit contenir au moins ${n} chiffre${n > 1 ? 's' : ''}.</li>`;
+            }
+            if (p > 0) {
+                passwordRulesHTML += `<li>Doit contenir au moins ${p} minuscule${p > 1 ? 's' : ''}.</li>`;
+            }
+            if (q > 0) {
+                passwordRulesHTML += `<li>Doit contenir au moins ${q} majuscule${q > 1 ? 's' : ''}.</li>`;
+            }
+            if (r > 0) {
+                passwordRulesHTML += `<li>Doit contenir au moins ${r} caractère${r > 1 ? 's' : ''} spécia${r > 1 ? 'ux' : 'l'}.</li>`;
+            }
+            passwordRulesHTML += `
+                        </ol>
+                        <h4>Renseignez le nouveau mot de passe.</h4>
+                        <div class="reset-user-password-input-area">
+                            <div class="reset-user-password-input-line">
+                                <label for="password">Mot de passe : </label>
+                                <input id="password" name="password" type="password" placeholder="Saisir le mot de passe" required autofocus/>
+                            </div>
+                            <div class="reset-user-password-input-line">
+                                <label for="password2">Mot de passe : </label>
+                                <input id="password2" name="password2" type="password" placeholder="Ressaisir le mot de passe" required/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            passwordRulesDiv.innerHTML = passwordRulesHTML;
+            form.insertBefore(passwordRulesDiv, deleteButton);
+        }
+    } else {
+        const existingResetButton = document.getElementById('reset-password-button');
+        if (existingResetButton) {
+            existingResetButton.parentNode.removeChild(existingResetButton);
+        }
+
+        const passwordRulesDiv = document.getElementById('password-rules');
+        if (passwordRulesDiv) {
+            passwordRulesDiv.parentNode.removeChild(passwordRulesDiv);
+        }
     }
 
-    function closeUserDeleteForm() {
-        document.getElementById("deleteUserForm").style.display = "none";
+    document.getElementById("userForm").style.display = "block";
+}
+
+
+
+    function closeUserForm() {
+        document.getElementById("userForm").style.display = "none";
     }
 </script>

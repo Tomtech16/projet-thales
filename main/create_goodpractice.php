@@ -12,14 +12,8 @@
     }
 ?>
 
-<!DOCTYPE HTML>
-<html>
-	<head>
-		<meta charset="utf-8" />
-		<link rel="stylesheet" href="./style.css" />
-		<title>Thales - Checklist</title>
-	</head>
-	<body>
+
+
         <?php require_once(__DIR__ . '/header.php'); ?>
 
         <?php
@@ -44,7 +38,7 @@
         ?>
 
         <section class="goodpractices-selection">
-            <h2>Interface de création de bonne pratique</h2>
+            <h2>Interface de création de bonnes pratiques</h2>
             <form class="selection-form" id="goodpractice-creation-form" action="submit_create_goodpractice.php" method="POST">
                 <div class="gestion">
                     <div class="programs-selection">
@@ -83,7 +77,7 @@
                 <div class="gestion">
                     <div class="write-goodpractice">
                         <h3>Ecriture de la nouvelle bonne pratique</h3>
-                        <textarea id="write-area" name="goodpractice" placeholder="Ecrivez la nouvelle bonne pratique" required><?= (isset($_SESSION['GOODPRACTICE_TEXT']) && !empty($_SESSION['GOODPRACTICE_TEXT'])) ? $_SESSION['GOODPRACTICE_TEXT'] : NULL ?></textarea>
+                        <textarea id="write-area" name="goodpractice" placeholder="Ecrivez la nouvelle bonne pratique" required autofocus><?= (isset($_SESSION['GOODPRACTICE_TEXT']) && !empty($_SESSION['GOODPRACTICE_TEXT'])) ? $_SESSION['GOODPRACTICE_TEXT'] : NULL ?></textarea>
                     </div>
                 </div>
 
@@ -95,8 +89,7 @@
         </section>
 
         <?php require_once(__DIR__ . '/footer.php'); ?>
-	</body>
-</html>
+
 
 <script>
     document.getElementById('goodpractice-creation-form').addEventListener('submit', function(event) {

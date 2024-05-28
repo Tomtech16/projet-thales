@@ -28,10 +28,10 @@
                 InsertGoodpractice($programNames, $phaseName, $item, $keywordsSelection);
                 $_SESSION['GOODPRACTICE_CREATION_MESSAGE'] = 'Succès !\n\nLa bonne pratique : \n\n'.$item.'\n\nA bien été créée.';
             } else {
-                $_SESSION['GOODPRACTICE_CREATION_MESSAGE'] = 'Erreur : La bonne pratique ne doit pas être vide.';
+                $_SESSION['GOODPRACTICE_CREATION_MESSAGE'] = 'Erreur !\n\nLa bonne pratique ne doit pas être vide.';
             }
         } else {
-            $_SESSION['GOODPRACTICE_CREATION_MESSAGE'] = 'Erreur : Veuillez sélectionner au moins un programme pour la bonne pratique.';
+            $_SESSION['GOODPRACTICE_CREATION_MESSAGE'] = 'Erreur !\n\nVeuillez sélectionner au moins un programme pour la bonne pratique.';
         }
     } elseif ($postData['submit'] === 'reset') {
         $item = rtrim(Sanitize($postData['goodpractice']));

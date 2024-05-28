@@ -11,7 +11,7 @@ CREATE TABLE USERS (
   lastname VARCHAR(100) NOT NULL, 
   `profile` CHAR(10) NOT NULL, 
   `password` CHAR(60) NOT NULL, 
-  attempts INT NOT NULL, 
+  attempts INT NOT NULL,
   UNIQUE (username)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 

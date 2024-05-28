@@ -1,6 +1,7 @@
 <?php 
     session_start();
-    if (!isset($_SESSION['LOGGED_USER'])) { header('Location:index.php'); }
+    if (!isset($_SESSION['LOGGED_USER']) || ($_SESSION['LOGGED_USER']['profile'] !== 'admin' && $_SESSION['LOGGED_USER']['profile'] !== 'superadmin')) { header('Location: logout.php'); exit(); }
+
 
     require_once(__DIR__ . '/database_connect.php');
     require_once(__DIR__ . '/sql_functions.php');
@@ -11,18 +12,12 @@
     }
     unset($_SESSION['CREATE_USER_MESSAGE']); 
 ?>
-<!DOCTYPE HTML>
-<html>
-	<head>
-		<meta charset="utf-8" />
-		<link rel="stylesheet" href="./style.css" />
-		<title>Thales - Checklist</title>
-	</head>
-	<body>
+
+
         <?php require_once(__DIR__ . '/header.php'); ?>
 
         <section>
-            <h2>Création d'un nouvel utilisateur</h2>
+            <h2>Interface de création d'utilisateurs</h2>
             <form class="create-user-form" action="submit_create_user.php" method="POST">
                 <div class="gestion">
                     <div class="create-user">
@@ -54,16 +49,16 @@
                             <li>Ne doit pas contenir le nom d'utilisateur.</li>
                             <?php $parameters = PasswordSelect(); ?>
                             <?php if ($parameters['n'] > 0) : ?>
-                            <li>Le mot de passe doit contenir au moins <?= $parameters['n'] ?> chiffre<?= ($parameters['n'] > 1) ? 's' : '' ?>.</li>
+                            <li>Doit contenir au moins <?= $parameters['n'] ?> chiffre<?= ($parameters['n'] > 1) ? 's' : '' ?>.</li>
                             <?php endif; ?>
                             <?php if ($parameters['p'] > 0) : ?>
-                            <li>Le mot de passe doit contenir au moins <?= $parameters['p'] ?> minuscule<?= ($parameters['p'] > 1) ? 's' : '' ?>.</li>
+                            <li>Doit contenir au moins <?= $parameters['p'] ?> minuscule<?= ($parameters['p'] > 1) ? 's' : '' ?>.</li>
                             <?php endif; ?>
                             <?php if ($parameters['q'] > 0) : ?>
-                            <li>Le mot de passe doit contenir au moins <?= $parameters['q'] ?> majuscule<?= ($parameters['q'] > 1) ? 's' : '' ?>.</li>
+                            <li>Doit contenir au moins <?= $parameters['q'] ?> majuscule<?= ($parameters['q'] > 1) ? 's' : '' ?>.</li>
                             <?php endif; ?>
                             <?php if ($parameters['r'] > 0) : ?>
-                            <li>Le mot de passe doit contenir au moins <?= $parameters['r'] ?> caractère<?= ($parameters['r'] > 1) ? 's' : '' ?> spécia<?= ($parameters['r'] > 1) ? 'ux' : 'l' ?>.</li>
+                            <li>Doit contenir au moins <?= $parameters['r'] ?> caractère<?= ($parameters['r'] > 1) ? 's' : '' ?> spécia<?= ($parameters['r'] > 1) ? 'ux' : 'l' ?>.</li>
                             <?php endif; ?>
                         </ol>
 

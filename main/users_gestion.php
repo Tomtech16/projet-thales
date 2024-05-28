@@ -1,10 +1,8 @@
 <?php 
     session_start();
-    if (!isset($_SESSION['LOGGED_USER'])) { header('Location:index.php'); }
-
+    if (!isset($_SESSION['LOGGED_USER']) || ($_SESSION['LOGGED_USER']['profile'] !== 'admin' && $_SESSION['LOGGED_USER']['profile'] !== 'superadmin')) { header('Location: logout.php'); exit(); }
     require_once(__DIR__ . '/database_connect.php');
     require_once(__DIR__ . '/sql_functions.php');
-    require_once(__DIR__ . '/functions.php');
 
     $password = PasswordSelect();
     $orderType = isset($_SESSION['USERS_SELECTION_ORDER'][0]) ? $_SESSION['USERS_SELECTION_ORDER'][0] : '';
@@ -70,6 +68,12 @@
                 <h3>Créer un nouvel utilisateur</h3>
                 <div class="selection-button">
                     <button id="submit" type="submit" name="submit" value="create-user">Créer</button>
+                </div>
+            </div>
+            <div class="logs-selection">
+                <h3>Visualiser les logs</h3>
+                <div class="selection-button">
+                    <button id="submit" type="submit" name="submit" value="to-logs">Visualiser</button>
                 </div>
             </div>
         </div>

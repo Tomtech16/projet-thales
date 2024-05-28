@@ -1,10 +1,12 @@
-<footer>
-    <p> © 2024 Thales Alenia Space </p>
-    <p> | </p>
-    <p> © 2024 Université Nice Côte-d'Azur - IUT Réseaux et Télécommunications - Sophia Antipolis</p>
-    <p> | </p>
-    <p> © 2024 CHECKLIST - Groupe 6</p>
-</footer>
+        <footer>
+            <p> © 2024 Thales Alenia Space </p>
+            <p> | </p>
+            <p> © 2024 Université Nice Côte-d'Azur - IUT Réseaux et Télécommunications - Sophia Antipolis</p>
+            <p> | </p>
+            <p> © 2024 CHECKLIST - Groupe 6</p>
+        </footer>
+    </body>
+</html>
 
 <script>
     window.addEventListener('DOMContentLoaded', (event) => {

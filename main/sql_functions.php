@@ -33,13 +33,19 @@
         $stmt->execute();
     }
 
-    function UsersSelect(array $orderBy = NULL): array
+    function UsersSelect(array $orderBy = NULL, string $profile = NULL): array
     {
         // Return data of USER table
         global $bd;
-        
-        $sql = "SELECT * FROM USERS";
-    
+
+        if ($profile === 'admin') {
+            $sql = "SELECT * FROM USERS WHERE profile != 'superadmin' AND profile != 'admin'";
+        } elseif ($profile === 'superadmin') {
+            $sql = "SELECT * FROM USERS WHERE profile != 'superadmin'";
+        } else {
+            $sql = "SELECT * FROM USERS";
+        }
+
         if ($orderBy !== NULL) {
             $order = $orderBy[0];
             $direction = $orderBy[1];
@@ -56,7 +62,7 @@
         return $users;
     }    
 
-    function UserAttempts(int $primaryKey, string $option): void 
+    function UserAttempts(int $userId, string $option): void 
     {
         /*  Option -->
                 If $option === 'reset' : reset login attempts.
@@ -71,9 +77,9 @@
         } elseif ($option === 'increment') {
             $sql .= "set attempts = attempts + 1 ";
         }   
-        $sql .= "where userkey = :primarykey";
+        $sql .= "where user_id = :userId";
         $stmt = $bd->prepare($sql);
-        $marqueurs = array('primarykey' => $primaryKey);
+        $marqueurs = array('userId' => $userId);
         $stmt->execute($marqueurs) or die(print_r($stmt->errorInfo()));
         $stmt->closeCursor();
     }
@@ -88,7 +94,6 @@
             } 
         }
         return FALSE;
-
     }
 
     function UserAppend(string $username, string $firstname, string $lastname, string $password, string $profile = NULL): bool
@@ -113,6 +118,50 @@
         } else {
             return FALSE;
         }
+    }
+
+    function UserWhatIsName(int $userId): string
+    {
+        global $bd;
+
+        $sql = "SELECT username FROM USERS WHERE user_id = :userId;";
+        $stmt = $bd->prepare($sql);
+        $marqueurs['userId'] = Sanitize($userId);
+        $stmt->execute($marqueurs) or die(print_r($stmt->errorInfo()));
+        $username = $stmt->fetch();
+        $stmt->closeCursor();
+        return Sanitize($username[0]);
+    }
+
+    function UserDelete(int $userId, string $profile): void
+    {   
+        global $bd;
+
+        if ($profile === 'superadmin') {
+            $sql = "DELETE FROM USERS WHERE user_id = :userId AND profile != 'superadmin'";
+        } elseif ($profile === 'admin') {
+            $sql = "DELETE FROM USERS WHERE user_id = :userId AND profile = 'operator'";
+        }
+        $stmt = $bd->prepare($sql);
+        $marqueurs['userId'] = Sanitize($userId);
+        $stmt->execute($marqueurs) or die(print_r($stmt->errorInfo()));
+        $stmt->closeCursor();
+    }
+
+    function UserResetPassword(int $userId, string $newPassword, string $profile): void
+    {
+        global $bd;
+        
+        $newHash = password_hash(Sanitize($newPassword), PASSWORD_BCRYPT);
+        if ($profile === 'superadmin') {
+            $sql = "UPDATE USERS SET password = :newHash, attempts = 0 WHERE user_id = :userId AND profile != 'superadmin'";
+        } elseif ($profile === 'admin') {
+            $sql = "UPDATE USERS SET password = :newHash, attempts = 0 WHERE user_id = :userId AND profile = 'operator'";
+        }
+        $stmt = $bd->prepare($sql);
+        $marqueurs = array('newHash' => $newHash, 'userId' => Sanitize($userId));
+        $stmt->execute($marqueurs) or die(print_r($stmt->errorInfo()));
+        $stmt->closeCursor();
     }
 
     function GoodPracticesSelect(array $whereIs = NULL, array $orderBy = NULL, array $erasedGoodpractices = NULL, array $erasedPrograms = NULL, string $profile): array
