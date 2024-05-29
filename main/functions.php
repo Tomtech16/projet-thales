@@ -1,4 +1,9 @@
 <?php
+    session_start();
+    $path = $_SERVER['PHP_SELF'];
+    $file = basename($path);
+    if (!isset($_SESSION['LOGGED_USER']) && !isset($_SESSION['LOGIN_TENTATIVE'])) { Logger(NULL, NULL, 2, 'Unauthorized access attempt to '.$file); header('Location:logout.php'); exit(); }
+    
     function P($var) {
         echo "<pre>";
         print_r($var);
@@ -31,10 +36,10 @@
                         $errorMessage = 'Erreur !\n\nLe mot de passe ne respecte pas les paramètres de configuration.';
                     }
                 } else {
-                    $errorMessage = 'Erreur !\n\nLe mot de passe ne doit pas contenir le nom d\'utilisateur.';
+                    $errorMessage = 'Erreur !\n\nLe mot de passe ne doit pas contenir le nom d utilisateur.';
                 }
             } else {
-                $errorMessage = 'Erreur !\n\nLe mot de passe ne doit pas contenir d\'accent.';
+                $errorMessage = 'Erreur !\n\nLe mot de passe ne doit pas contenir d accent.';
             }
         } else {
             $errorMessage = 'Erreur !\n\nLes deux mots de passe sont différents.';
@@ -108,25 +113,29 @@
         return 'UNKNOWN';
     }
 
-    function Logger(string $username, string $profile, int $evenementType, string $description): void
+    function Logger(string $username = NULL, string $profile = NULL, int $evenementType, string $description): void
     {
+        $u = 0;
         $ip = Sanitize(getUserIP());
-        $log = 'Client IP Address ['.$ip.'] ';
-        $log .= 'Username ['.Sanitize($username).'] ';
-        $log .= 'Profile ['.Sanitize($profile).'] ';
+        $log = '['.$ip.'] ';
+        if ($username !== NULL && $profile !== NULL) {
+            $log .= '['.Sanitize($username).'] ';
+            $log .= '['.Sanitize($profile).'] ';
+        } else {
+            $log .= '[Unauthenticated user] ';
+        }
         switch ($evenementType) {
             case 0 :
-                $log .= 'Information [';
+                $log .= '[Information] ';
                 break;
             case 1 :
-                $log .= 'Warning [';
+                $log .= '[Warning] ';
                 break;
             case 2 :
-                $log .= 'Alarm [';
+                $log .= '[Alarm] ';
                 break;
         }
-        $log .= Sanitize($description);
-        $log .= ']';
+        $log .= '['.Sanitize($description).']';
         ini_set("error_log", "./log/log.txt");
         error_log($log);
     }

@@ -1,8 +1,11 @@
 <?php 
     session_start();   
-    if (!isset($_SESSION['LOGGED_USER'])) { header('Location:index.php'); }
-    require_once(__DIR__ . '/database_connect.php');
+    $path = $_SERVER['PHP_SELF'];
+    $file = basename($path);
     require_once(__DIR__ . '/functions.php');
+    if (!isset($_SESSION['LOGGED_USER'])) { Logger(NULL, NULL, 2, 'Unauthorized access attempt to '.$file); header('Location:logout.php'); exit(); }
+
+    require_once(__DIR__ . '/database_connect.php');
     require_once(__DIR__ . '/sql_functions.php');
 
     $whereIs = $_SESSION['GOODPRACTICES_SELECTION'];
