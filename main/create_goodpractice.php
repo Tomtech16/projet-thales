@@ -71,7 +71,7 @@
             <div class="keywords-selection">
                 <h3>Sélection des mots-clés</h3>
                 <input class="search-input" type="text" id="keywordSearch" name="keywordSearch" placeholder="Mots-clés séparés par des virgules" value="<?= $keywordsSelectionChain ?>">
-                <p><?= $_SESSION['GOODPRACTICES_KEYWORDS_CREATION_MESSAGE'] ?></p>
+                <p><?= Sanitize($_SESSION['GOODPRACTICES_KEYWORDS_CREATION_MESSAGE']) ?></p>
             </div>
         </div>
 

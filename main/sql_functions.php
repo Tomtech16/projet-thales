@@ -257,7 +257,7 @@
                             $params[$paramName] = $value; // Store parameter value
                         }
                     }
-                    $whereClause = replaceLastOccurrence($whereClause, 'OR ', 'AND ');
+                    $whereClause = ReplaceLastOccurrence($whereClause, 'OR ', 'AND ');
 
                 }
             }

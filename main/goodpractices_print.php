@@ -12,7 +12,7 @@
     $orderBy = $_SESSION['GOODPRACTICES_ORDER'];
     $erased = $_SESSION['ERASED_GOODPRACTICES'];
     $erasedPrograms = $_SESSION['ERASED_GOODPRACTICES_PROGRAMS'];
-    $profile = $_SESSION['LOGGED_USER']['profile'];
+    $profile = Sanitize($_SESSION['LOGGED_USER']['profile']);
     $goodPractices = GoodPracticesSelect($whereIs, $orderBy, $erased, $erasedPrograms, $profile);
     $_SESSION['GOODPRACTICES'] = $goodPractices;
 ?>

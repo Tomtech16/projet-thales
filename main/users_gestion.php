@@ -74,7 +74,7 @@
                     <button id="submit" type="submit" name="submit" value="create-user">Créer</button>
                 </div>
             </div>
-            <div class="logs-selection">
+            <div class="log-selection" id="to-log">
                 <h3>Visualiser les logs</h3>
                 <div class="selection-button">
                     <button id="submit" type="submit" name="submit" value="to-logs">Visualiser</button>

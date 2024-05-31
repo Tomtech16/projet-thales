@@ -22,18 +22,26 @@
         }
 
         $passwordValidationResult = PasswordIsValid($username, $password, $password2);
-        if ($passwordValidationResult === NULL) {
-            if (UserAppend($username, $firstname, $lastname, $password, $profile)) {
-                $_SESSION['CREATE_USER_MESSAGE'] = 'Utilisateur créé avec succès !\n\nVous pouvez en ajouter un nouveau.';
-                Logger(Sanitize($_SESSION['LOGGED_USER']['username']), Sanitize($_SESSION['LOGGED_USER']['profile']), 1, 'Successfully create an user with username : '.$username);
+        if (!empty($username) && !empty($firstname) && !empty($lastname)) {
+            if ($passwordValidationResult === NULL) {
+                if (str_contains(strtolower($username), 'operator') || str_contains(strtolower($username), 'admin') || str_contains(strtolower($username), 'unauthenticated')) {
+                    $_SESSION['CREATE_USER_MESSAGE'] = 'Erreur !\n\nNom d utilisateur indisponible : '.$username.'.';
+                    Logger(Sanitize($_SESSION['LOGGED_USER']['username']), Sanitize($_SESSION['LOGGED_USER']['profile']), 2, 'Failed to create an user with username : '.$username.', username invalid');
+                } elseif (UserAppend($username, $firstname, $lastname, $password, $profile)) {
+                    $_SESSION['CREATE_USER_MESSAGE'] = 'Utilisateur créé avec succès !\n\nVous pouvez en ajouter un nouveau.';
+                    Logger(Sanitize($_SESSION['LOGGED_USER']['username']), Sanitize($_SESSION['LOGGED_USER']['profile']), 1, 'Successfully create an user with username : '.$username);
+                } else {
+                    $_SESSION['CREATE_USER_MESSAGE'] = 'Erreur !\n\nNom d utilisateur indisponible : '.$username.'.';
+                    Logger(Sanitize($_SESSION['LOGGED_USER']['username']), Sanitize($_SESSION['LOGGED_USER']['profile']), 1, 'Failed to create an user with username : '.$username.', username unavailable');
+                }
             } else {
-                $_SESSION['CREATE_USER_MESSAGE'] = 'Erreur !\n\nNom d utilisateur indisponible.';
-                Logger(Sanitize($_SESSION['LOGGED_USER']['username']), Sanitize($_SESSION['LOGGED_USER']['profile']), 1, 'Failed to create an user with username : '.$username.', username unavailable');
+                $_SESSION['CREATE_USER_MESSAGE'] = $passwordValidationResult;
+                Logger(Sanitize($_SESSION['LOGGED_USER']['username']), Sanitize($_SESSION['LOGGED_USER']['profile']), 1, 'Failed to create an user with username : '.$username.', password issue');
             }
         } else {
-            $_SESSION['CREATE_USER_MESSAGE'] = $passwordValidationResult;
-            Logger(Sanitize($_SESSION['LOGGED_USER']['username']), Sanitize($_SESSION['LOGGED_USER']['profile']), 1, 'Failed to create an user with username : '.$username.', password issue');
-        }
+            $_SESSION['CREATE_USER_MESSAGE'] = 'Erreur !\n\nAucune information ne doit être laissée vide.';
+            Logger(Sanitize($_SESSION['LOGGED_USER']['username']), Sanitize($_SESSION['LOGGED_USER']['profile']), 0, 'Failed to create an user with username : '.$username.', empty information');
+        } 
     }
 
     header('Location:create_user.php');

@@ -81,14 +81,14 @@
             
             <div class="keywords-selection">
                 <h3>Recherche de mot(s)-clé(s)</h3>
-                <input class="search-input" type="text" id="keywordSearch" name="keywordSearch" placeholder="Mots-clés séparés par des virgules" value="<?= $keywordsSelectionChain ?>">
-                <p><?= $_SESSION['GOODPRACTICES_KEYWORDS_SELECTION_MESSAGE'] ?></p>
+                <input class="search-input" type="search" id="keywordSearch" name="keywordSearch" placeholder="Mots-clés séparés par des virgules" value="<?= $keywordsSelectionChain ?>">
+                <p><?= Sanitize($_SESSION['GOODPRACTICES_KEYWORDS_SELECTION_MESSAGE']) ?></p>
             </div>
         </div>
 
         <div class="selection-button">
-            <button id="reset" type="submit" name="submit" value="reset">Effacer les filtres</button>
             <button id="submit" type="submit" name="submit" value="submit">Appliquer</button>
+            <button id="reset" type="submit" name="submit" value="reset">Effacer les filtres</button>
             <button id="create" type="submit" name="submit" value="create">Créer une bonne pratique</button>
             <button id="export" type="submit" name="submit" value="export">Télécharger la checklist</button>
         </div>

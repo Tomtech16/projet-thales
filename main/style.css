@@ -164,7 +164,7 @@ section {
     width: 100%;
 }
 
-.programs-selection, .popup-programs-selection, .phases-and-order-selection, .phase-selection, .keywords-selection, .write-goodpractice, .users-order-selection, .password-update-selection, .create-user-selection, .logs-selection, .create-user, .reset-user-password {
+.programs-selection, .popup-programs-selection, .phases-and-order-selection, .phase-selection, .keywords-selection, .write-goodpractice, .users-order-selection, .password-update-selection, .create-user-selection, .log-selection, .create-user, .reset-user-password {
     margin: 1%;
     padding-left: 10px;
     border: 1px solid var(--thales-gradient-2);
@@ -175,7 +175,7 @@ section {
     color: #fff;
 }
 
-.users-order-selection, .password-update-selection, .create-user-selection, .logs-selection {
+.users-order-selection, .password-update-selection, .create-user-selection, .log-selection {
     height: 180px;
 }
 
@@ -183,7 +183,7 @@ section {
     height: 100%;
 }
 
-.users-order-selection, .create-user-selection, .logs-selection {
+.users-order-selection, .create-user-selection, .log-selection {
     width: 25%;
 }
 
@@ -222,7 +222,7 @@ section {
     transition: opacity 0.75s;
 }
 
-.programs-selection h3, .popup-programs-selection h4, .phases-and-order-selection h3, .phase-selection h3, .keywords-selection h3, .write-goodpractice h3, .users-order-selection h3, .password-update-selection h3, .create-user-selection h3, .logs-selection h3, .create-user h3, .create-user h4, .reset-user-password h4 {
+.programs-selection h3, .popup-programs-selection h4, .phases-and-order-selection h3, .phase-selection h3, .keywords-selection h3, .write-goodpractice h3, .users-order-selection h3, .password-update-selection h3, .create-user-selection h3, .log-selection h3, .create-user h3, .create-user h4, .reset-user-password h4 {
     color: var(--thales-color);
     margin-bottom: 10px;
     margin-top: 10px;
@@ -289,15 +289,15 @@ section {
     margin-bottom: 0%;
 }
 
-.password-input-line input {
+.password-input-line input, #log-date-day, #log-date-year {
     width: 20%;
 }
 
-.programs-selection .checkbox, .popup-programs-selection .popup-programs-checkbox, .phases-and-order-selection .checkbox, .phase-selection label, .password-input-line label, .create-user-selection label, .logs-selection label {
+.programs-selection .checkbox, .popup-programs-selection .popup-programs-checkbox, .phases-and-order-selection .checkbox, .phase-selection label, .password-input-line label, .create-user-selection label, .log-selection label {
     margin-right: 5px;
 }
 
-.programs-selection label, .popup-programs-selection label , .phases-and-order-selection label, .users-order-selection label, .create-user-selection label, .logs-selection label, .create-user label, .reset-user-password label {
+.programs-selection label, .popup-programs-selection label , .phases-and-order-selection label, .users-order-selection label, .create-user-selection label, .log-selection label, .create-user label, .reset-user-password label {
     color: #fff;
     cursor: pointer;
 }
@@ -354,7 +354,7 @@ button {
     margin: 5%;
 }
 
-.users-order-selection button, .password-update-selection button, .create-user-selection button, .logs-selection button, .create-user-button button {
+.users-order-selection button, .password-update-selection button, .create-user-selection button, .log-selection button, .create-user-button button {
     background-color: var(--thales-color);
     margin: 0%;
     margin-left: auto;
@@ -372,7 +372,7 @@ button {
     margin-top: 10px;
 }
 
-.create-user-selection button, .logs-selection button {
+.create-user-selection button, .log-selection button {
     margin-top: 60px;
 }
 
@@ -402,7 +402,6 @@ ol li {
 
 /* Table */
 .table-container {
-    max-height: 500px;
     overflow: hidden;
     border: 1px solid var(--thales-gradient-2);
     border-radius: 10px;
@@ -468,8 +467,12 @@ thead {
 }
 
 tbody {
-    max-height: 350px;
+    max-height: 370px;
     overflow-y: scroll;
+}
+
+#users-tbody {
+    max-height: 430px;
 }
 
 tbody tr:nth-child(even) {
@@ -569,9 +572,37 @@ input:focus {
     background-color: var(--thales-gradient-3);
     border: 1px solid var(--thales-gradient-1);
     border-radius: 10px;
-    height: 700px;
+    height: 350px;
     padding: 2%;
     font-size: large;
+}
+
+.log-selection {
+    height: 150px;
+}
+
+#to-log {
+    height: 180px;
+}
+
+#log-date-day, #log-date-month, #log-date-year {
+    margin-bottom: 10px;
+}
+
+#log-date-selection-sa, #log-evenement-type-selection-sa, #log-user-profile-selection-sa, #log-search-selection-sa {
+    width: 25%;
+}
+
+#log-date-selection-a, #log-evenement-type-selection-a, #log-search-selection-a {
+    width: 33%;
+}
+
+#log-date-selection-a .checkbox-line, .log-date-selection-sa .checkbox-line, #log-evenement-type-selection-a .checkbox-line, .log-evenement-type-selection-sa .checkbox-line, #log-evenement-type-selection-a .checkbox-line, #log-evenement-type-selection-sa .checkbox-line {
+    width: 200px;
+}
+
+#log-user-profile-selection-sa .checkbox-line {
+    width: 250px;
 }
 
 .information {

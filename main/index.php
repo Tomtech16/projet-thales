@@ -1,5 +1,9 @@
-<?php session_start(); ?>
-<?php require_once(__DIR__ . '/header.php'); ?>
+<?php 
+    session_start();
+    if (isset($_SESSION['LOGOUT_TENTATIVE'])) { unset($_SESSION['LOGOUT_TENTATIVE']); }
+
+    require_once(__DIR__ . '/header.php'); 
+?>
 
 <?php if (!isset($_SESSION['LOGGED_USER'])) : ?>
     <section class="welcome">

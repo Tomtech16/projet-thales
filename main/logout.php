@@ -1,5 +1,6 @@
 <?php
     session_start();
+    $_SESSION['LOGOUT_TENTATIVE'] = TRUE;
     require_once(__DIR__ . '/functions.php');
     if (isset($_SESSION['LOGGED_USER'])) { 
         $lm = 1;

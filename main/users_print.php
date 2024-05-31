@@ -35,7 +35,7 @@
                 </thead>
             </div>
             <div class="grid-container">
-                <tbody class="scrollable-tbody">
+                <tbody class="scrollable-tbody" id="users-tbody">
                     <?php if ($_SESSION['LOGGED_USER']['profile'] === 'admin' || $_SESSION['LOGGED_USER']['profile'] === 'superadmin') : ?>
                         <tr id="self-admin">
                             <td class="username-column"><?= Sanitize($_SESSION['LOGGED_USER']['username']) ?></td>
