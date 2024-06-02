@@ -58,7 +58,7 @@
     }
 
     function Desanitize($input) {
-        return htmlspecialchars_decode($input, ENT_QUOTES, 'UTF-8');
+        return htmlspecialchars_decode($input, ENT_QUOTES);
     }
 
     function StrContainsAnySubstring(string $haystack, array $needles): bool
@@ -88,8 +88,8 @@
         return FALSE;
     }
 
-    function ReplaceLastOccurrence($string, $patternToSearch, $replacement): string
-    {
+    function ReplaceLastOccurrence($patternToSearch, $replacement, $string): string
+    {   
         $position = strrpos($string, $patternToSearch);
         if ($position !== false) {
             $string = substr_replace($string, $replacement, $position, strlen($patternToSearch));

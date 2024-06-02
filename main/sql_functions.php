@@ -243,13 +243,13 @@
         // Check for WHERE clause
         if ($whereIs !== NULL) {
             if ($profile !== 'admin' && $profile !== 'superadmin') {
-                $whereClause .= " OR ";
+                $whereClauseStart .= " AND ( ";
             } else {
-                $whereClause .= " WHERE ";
+                $whereClauseStart .= " WHERE ( ";
             }
-
+            $whereClause = '';
             foreach ($whereIs as $column => $filters) {
-                if (!empty($filters)) {
+                if (!empty($column[0]) && !empty($filters[0])) {
                     foreach ($filters as $index => $value) {
                         if (!empty($value)) {
                             $paramName = ":$column$index"; // Unique parameter name
@@ -257,19 +257,13 @@
                             $params[$paramName] = $value; // Store parameter value
                         }
                     }
-                    $whereClause = ReplaceLastOccurrence($whereClause, 'OR ', 'AND ');
-
-                }
+                    $whereClause = ReplaceLastOccurrence('OR ', '', $whereClause);
+                    $whereClause .= (') AND ( ');
+                } 
             }
-            if ($whereClause !== " OR " && $whereClause !== " WHERE ") {
-                switch (substr($whereClause, -4)) {
-                    case 'AND ':
-                        $whereClause = rtrim($whereClause, 'AND ');
-                        break;
-                    case ' OR ':
-                        $whereClause = rtrim($whereClause, 'OR ');
-                        break;
-                }
+            $whereClause = ReplaceLastOccurrence(' AND ( ', '', $whereClause);
+            $whereClause = $whereClauseStart.$whereClause;
+            if ($whereClause !== ' AND ( ' && $whereClause !== ' WHERE ( ') {
                 $sql .= $whereClause;
             }
         }
@@ -291,12 +285,9 @@
                 $sql .= " ORDER BY {$order} {$direction}";
             }
         }
-
         $sql .= ";";
-
         // Prepare and execute the SQL query
         $stmt = $bd->prepare($sql);
-
         // Bind values to parameters
         foreach ($params as $paramName => $value) {
             $stmt->bindValue($paramName, $value);

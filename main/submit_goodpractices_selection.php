@@ -9,8 +9,23 @@
     require_once(__DIR__ . '/sql_functions.php');
 
     $postData = $_POST;
-    if ($postData['submit'] === 'submit') {
+    if ($postData['submit'] === 'select-all-programs') {
+        if ($_SESSION['SELECT_ALL_PROGRAMS']) {
+            $_SESSION['SELECT_ALL_PROGRAMS'] = 0;
+            unset($_SESSION['SELECT_ALL_PROGRAMS_CHECK']);
+        } else {
+            $_SESSION['SELECT_ALL_PROGRAMS'] = 1;
+        }
+        $_SESSION['PHASE_CHECK'] = $postData['phasesSelection'];
+        if (isset($_SESSION['GOODPRACTICES_SELECTION']['onekeyword'])) {
+            $keywordsSelectionChain = Sanitize(implode(', ', $_SESSION['GOODPRACTICES_SELECTION']['onekeyword']));
+        } else {
+            $keywordsSelectionChain = '';
+        }
+        $_SESSION['KEYWORDS_CHECK'] = str_replace($keywordsSelectionChain, '', Sanitize($postData['keywordSearch']));
+    } elseif ($postData['submit'] === 'submit') {
         $_SESSION['GOODPRACTICES_SELECTION']['program_name'] = $postData['programsSelection'];
+        $_SESSION['SELECT_ALL_PROGRAMS_CHECK'] = $postData['programsSelection'];
         $_SESSION['GOODPRACTICES_SELECTION']['phase_name'] = $postData['phasesSelection'];
         $validateKeywordsSelection = ValidateKeywordsSelection($postData['keywordSearch']);
         $keywordsSelection = $validateKeywordsSelection[0];
@@ -27,10 +42,15 @@
             $orderDirection = Sanitize($postData['order']['direction']);
             $_SESSION['GOODPRACTICES_ORDER'] = array($orderType, $orderDirection);
         }
+        unset($_SESSION['PHASE_CHECK']);
+        unset($_SESSION['KEYWORDS_CHECK']);
     } elseif ($postData['submit'] === 'reset') {
         unset($_SESSION['GOODPRACTICES_SELECTION']);
         unset($_SESSION['GOODPRACTICES_ORDER']);
         unset($_SESSION['GOODPRACTICES_KEYWORDS_SELECTION_MESSAGE']);
+        unset($_SESSION['PHASE_CHECK']);
+        unset($_SESSION['KEYWORDS_CHECK']);
+        $_SESSION['SELECT_ALL_PROGRAMS'] = 0;
     } elseif ($postData['submit'] === 'create') {
         header('Location:create_goodpractice.php');
         exit();

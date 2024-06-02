@@ -26,15 +26,32 @@
     } else {
         $programsSelectionChain = '';
     }
+    if (!isset($_SESSION['CREATE_ALL_PROGRAMS'])) {
+        $_SESSION['CREATE_ALL_PROGRAMS'] = 0;
+    }
     if (isset($_SESSION['GOODPRACTICES_CREATION']['phase_name'])) {
         $phaseSelectionChain = Sanitize($_SESSION['GOODPRACTICES_CREATION']['phase_name']);
     } else {
         $phaseSelectionChain = '';
     }
+    if (isset($_SESSION['CREATE_PHASE_CHECK'])) {
+        $phaseSelectionChain = Sanitize($_SESSION['CREATE_PHASE_CHECK']);
+    }
     if (isset($_SESSION['GOODPRACTICES_CREATION']['onekeyword'])) {
         $keywordsSelectionChain = Sanitize(implode(', ', $_SESSION['GOODPRACTICES_CREATION']['onekeyword']));
     } else {
         $keywordsSelectionChain = '';
+    }
+    if (isset($_SESSION['CREATE_KEYWORDS_CHECK'])) {
+        $keywordsSelectionChain .= Sanitize($_SESSION['CREATE_KEYWORDS_CHECK']);
+    }
+    if (isset($_SESSION['GOODPRACTICES_CREATION']['addOnekeyword'])) {
+        $addKeywordsSelectionChain = Sanitize($_SESSION['GOODPRACTICES_CREATION']['addOnekeyword']);
+    } else {
+        $addKeywordsSelectionChain = '';
+    }
+    if (isset($_SESSION['CREATE_ADD_KEYWORDS_CHECK'])) {
+        $addKeywordsSelectionChain .= Sanitize($_SESSION['CREATE_ADD_KEYWORDS_CHECK']);
     }
 ?>
 
@@ -43,11 +60,14 @@
     <form class="selection-form" id="goodpractice-creation-form" action="submit_create_goodpractice.php" method="POST">
         <div class="gestion">
             <div class="programs-selection">
-                <h3>Sélection des programmes</h3>
+                <div id="programs-selection-title-and-button">
+                    <h3>Sélection des programmes</h3>
+                    <button id="select-all-programs" type="submit" name="submit" value="select-all-programs"><?= $_SESSION['CREATE_ALL_PROGRAMS'] ? 'Tout désélectionner' : 'Tout sélectionner' ?></button>
+                </div>
                 <div class="checkbox-area">
                     <?php foreach ($programs as $program): ?>
                         <div class="checkbox-line">
-                            <input class="checkbox" type="checkbox" id="id<?= $program[0] ?>" name="programsSelection[]" value="<?= $program[0] ?>" <?= (str_contains($programsSelectionChain, $program[0]) ? 'checked' : '') ?>>
+                            <input class="checkbox" type="checkbox" id="id<?= $program[0] ?>" name="programsSelection[]" value="<?= $program[0] ?>" <?= (str_contains($programsSelectionChain, $program[0]) || $_SESSION['CREATE_ALL_PROGRAMS'] ? 'checked' : '') ?>>
                             <label for="id<?= $program[0] ?>"><?= $program[0] ?></label>
                         </div>
                     <?php endforeach; ?>   
@@ -73,6 +93,11 @@
                 <input class="search-input" type="text" id="keywordSearch" name="keywordSearch" placeholder="Mots-clés séparés par des virgules" value="<?= $keywordsSelectionChain ?>">
                 <p><?= Sanitize($_SESSION['GOODPRACTICES_KEYWORDS_CREATION_MESSAGE']) ?></p>
             </div>
+
+            <div class="keywords-selection">
+                <h3>Nouveaux mots-clés</h3>
+                <input class="search-input" type="text" id="keywordSearch" name="addKeyword" placeholder="Mots-clés séparés par des virgules" value="<?= $addKeywordsSelectionChain ?>">
+            </div>
         </div>
 
         <div class="gestion">
@@ -83,8 +108,8 @@
         </div>
 
         <div class="selection-button" id="create-goodpractice-selection-button">
-            <button id="reset" type="submit" name="submit" value="reset">Effacer la sélection</button>
             <button id="submit" type="submit" name="submit" value="submit">Créer la bonne pratique</button>
+            <button id="reset" type="submit" name="submit" value="reset">Effacer la sélection</button>
         </div>
     </form> 
 </section>

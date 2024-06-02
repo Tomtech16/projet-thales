@@ -14,33 +14,44 @@
     $orderType = Sanitize($_SESSION['GOODPRACTICES_ORDER'][0]);
     $orderDirection = Sanitize($_SESSION['GOODPRACTICES_ORDER'][1]);
 
-    if (isset($_SESSION['GOODPRACTICES_SELECTION']['program_name'])) {
-        $programsSelectionChain = Sanitize(implode(', ', $_SESSION['GOODPRACTICES_SELECTION']['program_name']));
+    if (isset($_SESSION['SELECT_ALL_PROGRAMS_CHECK'])) {
+        $programsSelectionChain = Sanitize(implode(', ', $_SESSION['SELECT_ALL_PROGRAMS_CHECK']));
     } else {
         $programsSelectionChain = '';
+    }
+    if (!isset($_SESSION['SELECT_ALL_PROGRAMS'])) {
+        $_SESSION['SELECT_ALL_PROGRAMS'] = 0;
     }
     if (isset($_SESSION['GOODPRACTICES_SELECTION']['phase_name'])) {
         $phasesSelectionChain = Sanitize(implode(', ', $_SESSION['GOODPRACTICES_SELECTION']['phase_name']));
     } else {
         $phasesSelectionChain = '';
+    }  
+    if (isset($_SESSION['PHASE_CHECK'])) {
+        $phasesSelectionChain .= Sanitize(implode(', ', $_SESSION['PHASE_CHECK']));
     }
     if (isset($_SESSION['GOODPRACTICES_SELECTION']['onekeyword'])) {
         $keywordsSelectionChain = Sanitize(implode(', ', $_SESSION['GOODPRACTICES_SELECTION']['onekeyword']));
     } else {
         $keywordsSelectionChain = '';
     }
+    if (isset($_SESSION['KEYWORDS_CHECK'])) {
+        $keywordsSelectionChain .= Sanitize($_SESSION['KEYWORDS_CHECK']);
+    }
 ?>
 <section class="goodpractices-selection">
     <h2>Interface de filtrage des bonnes pratiques</h2>
     <form class="selection-form" action="submit_goodpractices_selection.php" method="POST">
         <div class="gestion">
-
             <div class="programs-selection">
-                <h3>Recherche de programme(s)</h3>
+                <div id="programs-selection-title-and-button">
+                    <h3>Recherche de programme(s)</h3>
+                    <button id="select-all" type="submit" name="submit" value="select-all-programs"><?= $_SESSION['SELECT_ALL_PROGRAMS'] ? 'Tout désélectionner' : 'Tout sélectionner' ?></button>
+                </div>
                 <div class="checkbox-area">
                     <?php foreach ($programs as $program): ?>
                         <div class="checkbox-line">
-                            <input class="checkbox" type="checkbox" id="id<?= $program[0] ?>" name="programsSelection[]" value="<?= $program[0] ?>" <?= (str_contains($programsSelectionChain, $program[0]) ? 'checked' : '') ?>>
+                            <input class="checkbox" type="checkbox" id="id<?= $program[0] ?>" name="programsSelection[]" value="<?= $program[0] ?>" <?= (str_contains($programsSelectionChain, $program[0]) || $_SESSION['SELECT_ALL_PROGRAMS'] ? 'checked' : '') ?>>
                             <label for="id<?= $program[0] ?>"><?= $program[0] ?></label>
                         </div>
                     <?php endforeach; ?>   

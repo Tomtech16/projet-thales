@@ -196,6 +196,18 @@ section {
     margin-bottom: 10px;
 }
 
+#goodpractice-creation-form .programs-selection {
+    width: 33%;
+}
+
+#goodpractice-creation-form .phase-selection {
+    width: 17%;
+}
+
+#goodpractice-creation-form .keywords-selection {
+    width: 25%;
+}
+
 .write-goodpractice {
     height: 300px;
     display: flex;
@@ -615,6 +627,24 @@ input:focus {
 
 .alarm {
     color: red;
+}
+
+#programs-selection-title-and-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#programs-selection-title-and-button button {
+    background-color: var(--thales-color);
+    opacity: 0.9;
+    padding: 1%;
+    margin: 1%;
+}
+
+#programs-selection-title-and-button button:hover {
+    opacity: 1;
+    transition: opacity 0.75s;
 }
 
 footer {
