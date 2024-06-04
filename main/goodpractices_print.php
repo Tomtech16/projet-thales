@@ -13,8 +13,11 @@
     $erased = $_SESSION['ERASED_GOODPRACTICES'];
     $erasedPrograms = $_SESSION['ERASED_GOODPRACTICES_PROGRAMS'];
     $profile = Sanitize($_SESSION['LOGGED_USER']['profile']);
-    $goodPractices = GoodPracticesSelect($whereIs, $orderBy, $erased, $erasedPrograms, $profile);
-    $_SESSION['GOODPRACTICES'] = $goodPractices;
+    $goodPracticesSelect = GoodPracticesSelect($whereIs, $orderBy, $erased, $erasedPrograms, $profile);
+    $goodPractices = $goodPracticesSelect[0];
+    $_SESSION['GOODPRACTICES_PARAMETERS']['SQL'] = $goodPracticesSelect[1];
+    $_SESSION['GOODPRACTICES_PARAMETERS']['MARKERS'] = $goodPracticesSelect[2];
+    $_SESSION['GOODPRACTICES_PARAMETERS']['ERASED_PROGRAMS'] = $erasedPrograms;
 ?>
 
 <section>

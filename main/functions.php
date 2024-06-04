@@ -97,26 +97,29 @@
         return $string;
     }
 
-    function DownloadChecklist(array $goodpractices)
+    function DownloadChecklist(array $goodpracticesParameters, string $username, string $profile): string
     {
-        if ($erasedPrograms !== NULL) {
-            foreach ($goodPractices as $key => &$goodPractice) {
-                unset($goodPractice['goodpractice_id']);
-            }
-            unset($goodPractice);
-        }
-        
-        $jsonGoodpractices = json_encode($goodpractices);
+        $jsonData = json_encode($goodpracticesParameters);
 
         if ($jsonGoodpractices === false) {
-            return 'Erreur lors de l\'encodage JSON des bonnes pratiques.';
+            Logger(Sanitize($username), Sanitize($profile), 2, 'Failed to generate checklist, failed to json encode python parameters');
+            return "Erreur !\n\nL'encodage JSON des paramètres du programme python a échouée.";
+        } else {
+            $file = './json/python_parameters.json';
+            if (file_put_contents($file, $jsonData)) {
+                $output =  shell_exec('/usr/bin/python3 checklist_generator.py');
+                if (!$output) {
+                    Logger(Sanitize($username), Sanitize($profile), 0, 'Successfuly generate checklist');
+                    return "Succès !\n\nLa checklist a bien été générée.";
+                } else {
+                    Logger(Sanitize($username), Sanitize($profile), 2, $output);
+                    return "Erreur !\n\nLe programme python n'a pas réussi à générer la checklist.";
+                }
+            } else {
+                Logger(Sanitize($username), Sanitize($profile), 2, 'Failed to generate checklist, failed to write python parameters in json file');
+                return "Erreur !\n\nL'écriture des paramètres python dans le fichier json a échouée.";
+            }
         }
-
-        $jsonVarEscaped = escapeshellarg($jsonVar);
-        $command = "/usr/bin/python3 checklist_creator.py $jsonVarEscaped";
-        $output = shell_exec($command);
-
-        return $output;
     }
 
     function getUserIP() {
