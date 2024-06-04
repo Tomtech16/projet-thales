@@ -1,1 +1,1 @@
-install reportlab
+pip install reportlab

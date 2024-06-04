@@ -13,6 +13,7 @@ json_dir = '../json'
 json_filename = 'bonne_pratique.json'
 json_path = os.path.join(json_dir, json_filename)
 
+
 def wait_for_json_file(filepath, timeout=300, check_interval=5):
     """Wait for a JSON file to appear in the specified directory."""
     start_time = time.time()
