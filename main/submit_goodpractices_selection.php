@@ -55,12 +55,7 @@
         header('Location:create_goodpractice.php');
         exit();
     } elseif ($postData['submit'] === 'export') {
-        $_SESSION['CHECKLIST_CREATION_OUTPUT'] = Sanitize(DownloadChecklist($_SESSION['GOODPRACTICES']));
-        if (str_contains(Sanitize($_SESSION['CHECKLIST_CREATION_OUTPUT']), 'Succès !')) {
-            Logger(Sanitize($_SESSION['LOGGED_USER']['username']), Sanitize($_SESSION['LOGGED_USER']['profile']), 0, 'Successfully create a checklist');
-        } else {
-            Logger(Sanitize($_SESSION['LOGGED_USER']['username']), Sanitize($_SESSION['LOGGED_USER']['profile']), 1, 'Failed to create a checklist');
-        }
+        $_SESSION['CHECKLIST_CREATION_OUTPUT'] = Sanitize(DownloadChecklist($_SESSION['GOODPRACTICES_PARAMETERS'], Sanitize($_SESSION['username']), Sanitize($_SESSION['profile'])));
     }
     header('Location:index.php');
 ?>

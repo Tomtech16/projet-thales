@@ -222,7 +222,7 @@
             ";
         } else {
             $sql = "
-                SELECT 
+                SELECT
                     GOODPRACTICE.goodpractice_id,
                     GOODPRACTICE.is_hidden AS goodpractice_is_hidden,
                     GROUP_CONCAT(DISTINCT CONCAT(PROGRAM.program_name, ':', GOODPRACTICE_PROGRAM.is_hidden) ORDER BY PROGRAM.program_name SEPARATOR ', ') AS program_names,
@@ -306,7 +306,7 @@
             unset($goodPractice);
         }
 
-        return $goodPractices;
+        return array($goodPractices, $sql, $params);
     }
 
     function ProgramSelect(string $all = NULL): array
