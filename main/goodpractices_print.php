@@ -1,15 +1,20 @@
 <?php 
     session_start();   
-    if (!isset($_SESSION['LOGGED_USER'])) { header('Location:index.php'); }
-    require_once(__DIR__ . '/database_connect.php');
+    $path = $_SERVER['PHP_SELF'];
+    $file = basename($path);
     require_once(__DIR__ . '/functions.php');
+    if (!isset($_SESSION['LOGGED_USER'])) { Logger(NULL, NULL, 2, 'Unauthorized access attempt to '.$file); header('Location:logout.php'); exit(); }
+
+    require_once(__DIR__ . '/database_connect.php');
     require_once(__DIR__ . '/sql_functions.php');
 
     $whereIs = $_SESSION['GOODPRACTICES_SELECTION'];
     $orderBy = $_SESSION['GOODPRACTICES_ORDER'];
     $erased = $_SESSION['ERASED_GOODPRACTICES'];
-    P($erased);
-    $goodPractices = GoodPracticesSelect($whereIs, $orderBy, $erased);
+    $erasedPrograms = $_SESSION['ERASED_GOODPRACTICES_PROGRAMS'];
+    $profile = Sanitize($_SESSION['LOGGED_USER']['profile']);
+    $goodPractices = GoodPracticesSelect($whereIs, $orderBy, $erased, $erasedPrograms, $profile);
+    $_SESSION['GOODPRACTICES'] = $goodPractices;
 ?>
 
 <section>
@@ -31,13 +36,34 @@
                 <tbody class="scrollable-tbody">
                     <?php foreach ($goodPractices as $goodPractice) { ?>
                         <tr>
-                            <td class="programs-column"><?php echo Sanitize($goodPractice['program_names']); ?></td>
+                            <td class="programs-column">
+                                <?php 
+                                    $restore = FALSE;
+                                    if ($profile === 'admin' || $profile === 'superadmin') {
+                                        foreach (explode(', ', Sanitize($goodPractice['program_names'])) as $program) {
+                                            $isHidden = substr($program, -2);
+                                            $programName = substr($program, 0, -2);
+                                            if ($isHidden === ':1') {
+                                                $restore = TRUE;
+                                                $programNames .= '<span class="darkred">'.$programName.'</span>, ';
+                                            } else {
+                                                $programNames .= $programName.', ';
+                                            }
+                                        }
+                                        $programNames = rtrim($programNames, ', ');
+                                        echo $programNames;
+                                        $programNames = '';
+                                    } else {
+                                        echo Sanitize($goodPractice['program_names']);
+                                    }
+                                ?>
+                            </td>
                             <td class="phase-column"><?= Sanitize($goodPractice['phase_name']) ?></td>
-                            <td class="item-column"><?= Sanitize($goodPractice['item']) ?></td>
+                            <td class="item-column"><?= $goodPractice['goodpractice_is_hidden'] === 1 ? '<span class="darkred">'.Sanitize($goodPractice['item']).'</span>' : Sanitize($goodPractice['item']) ?></td>
                             <td class="keywords-column"><?= Sanitize($goodPractice['keywords']) ?></td>
                             <td class="actions-column">
                                 <div class="action-btn-container">
-                                    <button class="action-btn" onclick="openGoodpracticeForm('<?= Sanitize($goodPractice['goodpractice_id']) ?>', '<?= Sanitize($goodPractice['program_names']) ?>')">Modifier</button>
+                                    <button class="action-btn" onclick="openGoodpracticeForm('<?= Sanitize($goodPractice['goodpractice_id']) ?>', '<?= Sanitize($goodPractice['program_names']) ?>', <?= ($goodPractice['goodpractice_is_hidden'] === 1 || $restore === TRUE) ? 1 : 0 ?>, '<?= Sanitize($profile) ?>')">Modifier</button>
                                 </div>
                             </td>
                         </tr>
@@ -58,9 +84,10 @@
                 <?php if (isset($_SESSION['LOGGED_USER']) && ($_SESSION['LOGGED_USER']['profile'] === 'superadmin' || $_SESSION['LOGGED_USER']['profile'] === 'admin')) : ?>
                     <li>Effacer ou supprimer définitivement la bonne pratique pour un ou des programmes.</li>
                     <li>Si aucun programme n'est sélectionné, effacer ou supprimer définitivement la bonne pratique pour tous les programmes.</li>
-                <?php else : ?>
-                    <li>Effacer la bonne pratique pour un ou des programmes.</li>
-                    <li>Si aucun programme n'est sélectionné, effacer la bonne pratique pour tous les programmes.</li>
+                    <li>Restaurer une bonne pratique supprimée par un opérateur.</li>
+                <?php elseif (isset($_SESSION['LOGGED_USER']) && $_SESSION['LOGGED_USER']['profile'] === 'operator') : ?>
+                    <li>Effacer ou supprimer la bonne pratique pour un ou des programmes.</li>
+                    <li>Si aucun programme n'est sélectionné, effacer ou supprimer la bonne pratique pour tous les programmes.</li>
                 <?php endif; ?>
             </ul>
             <p></p>
@@ -77,6 +104,8 @@
             </div>
             <?php if (isset($_SESSION['LOGGED_USER']) && ($_SESSION['LOGGED_USER']['profile'] === 'superadmin' || $_SESSION['LOGGED_USER']['profile'] === 'admin')) : ?>
                 <button type="submit" class="btn-warning" name="submit" value="delete">Supprimer définitivement</button>
+            <?php elseif (isset($_SESSION['LOGGED_USER']) && $_SESSION['LOGGED_USER']['profile'] === 'operator') : ?>
+                <button type="submit" class="btn-warning" name="submit" value="operator-delete">Supprimer</button>
             <?php endif; ?>
             <button type="submit" class="btn-warning" name="submit" value="erase">Effacer</button>
             <button type="submit" class="btn" name="submit" value="duplicate">Dupliquer</button>
@@ -88,12 +117,15 @@
 
 <script>
     // Function to open duplicate form
-    function openGoodpracticeForm(goodpracticeId, programNamesString) {
+    function openGoodpracticeForm(goodpracticeId, programNamesString, restore, profile) {
         // Set the good practice ID
         document.getElementById("goodpracticeId").value = goodpracticeId;
         
-        // Convert the string of program names into an array
-        const programNamesArray = programNamesString.split(', ');
+        if (profile !== 'admin' && profile !== 'superadmin') {
+            var programNamesArray = programNamesString.split(', ');
+        } else {
+            var programNamesArray = programNamesString.replace(/:0|:1/g, '').split(', ');
+        }
 
         // Select all labels within the .popup-programs-selection
         const labels = document.querySelectorAll('.popup-programs-selection label');
@@ -104,10 +136,37 @@
             } else {
                 // Reset the label color if needed
                 label.style.color = '#fff'; // or set it to the default color
-            }
-        
-        document.getElementById("goodpracticeForm").style.display = "block";
+            }        
         });
+
+        if (restore) {
+            // Check if the restore button already exists
+            if (!document.getElementById('restore-button')) {
+                // Select the buttons
+                const eraseButton = document.querySelector('button[value="erase"]');
+                const duplicateButton = document.querySelector('button[value="duplicate"]');
+
+                // Create the restore button
+                const restoreButton = document.createElement('button');
+                restoreButton.type = 'submit';
+                restoreButton.id = 'restore-button';
+                restoreButton.className = 'btn';
+                restoreButton.name = 'submit';
+                restoreButton.value = 'restore';
+                restoreButton.textContent = 'Restaurer';
+
+                // Insert the restore button between the duplicate and cancel buttons
+                eraseButton.parentNode.insertBefore(restoreButton, duplicateButton);
+            }
+        } else {
+            // If restore is false, remove the restore button if it exists
+            const existingRestoreButton = document.getElementById('restore-button');
+            if (existingRestoreButton) {
+                existingRestoreButton.parentNode.removeChild(existingRestoreButton);
+            }
+        }
+
+        document.getElementById("goodpracticeForm").style.display = "block";
     }
 
     // Function to close delete form

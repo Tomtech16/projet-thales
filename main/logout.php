@@ -1,13 +1,18 @@
 <?php
-    session_start(); // Démarrez la session si ce n'est pas déjà fait
-
-    // Détruire la session
+    session_start();
+    $_SESSION['LOGOUT_TENTATIVE'] = TRUE;
+    require_once(__DIR__ . '/functions.php');
+    if (isset($_SESSION['LOGGED_USER'])) { 
+        $lm = 1;
+        Logger(Sanitize($_SESSION['LOGGED_USER']['username']), Sanitize($_SESSION['LOGGED_USER']['profile']), 0, 'Successfully deconnected');
+    }
     session_unset();
     session_destroy();
 
     session_start();
-    $_SESSION['LOGIN_MESSAGE'] = 'Vous êtes déconnecté(e)';
 
-    // Rediriger l'utilisateur vers la page d'accueil
+    if ($lm === 1) { $_SESSION['LOGIN_MESSAGE'] = 'Vous êtes déconnecté(e)'; }
+    unset($lm);
+    
     header('Location:index.php');
 ?>
