@@ -8,7 +8,7 @@
     require_once(__DIR__ . '/database_connect.php');
     require_once(__DIR__ . '/sql_functions.php');
 
-    $log = file('./log/log.txt');
+    $log = array_reverse(file('./log/log.txt'));
     $userUsername = Sanitize($_SESSION['LOGGED_USER']['username']);
     $userProfile = Sanitize($_SESSION['LOGGED_USER']['profile']);
     if (isset($_SESSION['LOG_FILTERS']['LOG_DATE_DAY']) && !empty($_SESSION['LOG_FILTERS']['LOG_DATE_DAY'])) {

@@ -71,15 +71,15 @@ CREATE TABLE GOODPRACTICE_KEYWORD (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
 INSERT INTO PROGRAM (program_id, program_name) VALUES
-(1, 'PROG_1'),
-(2, 'PROG_2'),
-(3, 'GENERIQUE');
+(1, 'GENERIQUE'),
+(2, 'PROG_1'),
+(3, 'PROG_2');
 
 INSERT INTO PHASE (phase_id, phase_name) VALUES
-(1, 'codage'),
+(1, 'préparation'),
 (2, 'exécution'),
 (3, 'analyse'),
-(4, 'préparation');
+(4, 'codage');
 
 INSERT INTO KEYWORD (keyword_id, onekeyword) VALUES
 (1, ' '),
@@ -98,15 +98,15 @@ INSERT INTO KEYWORD (keyword_id, onekeyword) VALUES
 
 
 INSERT INTO GOODPRACTICE (goodpractice_id, item, phase_id) VALUES
-(1, 'creertest <test>avec option -c ou -p selon besoin', 1),
-(2, 'modini <test>', 1),
-(3, 'Vérifier que les dates dans le .tp correspond au fichier définition dans REF_CONTEXT/<contexte>/definition', 1),
-(4, 'Mettre une instruction set_1553_Error pour chaque instrument PL utilisé : Set_1553_Error ("1", "TIMEOUT"); /* POSEIDON 1 = 1, POSEIDON 2 = 4 */ Set_1553_Error ("7", "TIMEOUT"); /* DORIS 1 = 7, DORIS 2 = 10 */', 1),
-(5, 'Autoriser l''utilisation de la FDTM durant le test', 1),
-(6, 'Modifier la configuration du RM en cas de reconfiguration inattendue durant le test', 1),
-(7, "Envoyer les TC spécifiques de reprise de contexte des SADM spécifiques avant l'envoi des TC decontexte", 1),
-(8, "Modifier la FDIR pour le health status GYRO pendant le mode TEST après l'envoi des TC de contexte", 1),
-(9, 'La procedure de WarmStart à utiliser se trouve dans la librairie cc_proc_warmstart. Elle porte le nom WS_miss5_<ctx_reprise>_PM<A ou B>(<tGPSWarmStart>).', 1),
+(1, 'creertest <test>avec option -c ou -p selon besoin', 4),
+(2, 'modini <test>', 4),
+(3, 'Vérifier que les dates dans le .tp correspond au fichier définition dans REF_CONTEXT/<contexte>/definition', 4),
+(4, 'Mettre une instruction set_1553_Error pour chaque instrument PL utilisé : Set_1553_Error ("1", "TIMEOUT"); /* POSEIDON 1 = 1, POSEIDON 2 = 4 */ Set_1553_Error ("7", "TIMEOUT"); /* DORIS 1 = 7, DORIS 2 = 10 */', 4),
+(5, 'Autoriser l''utilisation de la FDTM durant le test', 4),
+(6, 'Modifier la configuration du RM en cas de reconfiguration inattendue durant le test', 4),
+(7, "Envoyer les TC spécifiques de reprise de contexte des SADM spécifiques avant l'envoi des TC decontexte", 4),
+(8, "Modifier la FDIR pour le health status GYRO pendant le mode TEST après l'envoi des TC de contexte", 4),
+(9, 'La procedure de WarmStart à utiliser se trouve dans la librairie cc_proc_warmstart. Elle porte le nom WS_miss5_<ctx_reprise>_PM<A ou B>(<tGPSWarmStart>).', 4),
 (10, 'Vérifier que outputs et outputs_ctx sont accessibles en écriture', 2),
 (11, 'Vérifier la date de la dernière calibration. Elle doit être < 15 jours sinon, il faut calibrer les gyros', 2),
 (12, 'Mettre à jour le fichier gyrostd.cal dans $SGSE_HOME/CURRENT_CONF/CHR et $SGSE_HOME/CONF/CHR en fonction des gyros utilisés', 2),
@@ -115,43 +115,43 @@ INSERT INTO GOODPRACTICE (goodpractice_id, item, phase_id) VALUES
 (15, "Vérifier que l'alimentation du DHU est ON", 2),
 (16, "Mettre ON les alimentations de l'EBB POS-3 quand nécessaire", 2),
 (17, 'ana_fonc <test> -c -v', 3),
-(18, 'réception équipement: liste des documents à demander', 4),
-(19, 'expédition équipement: liste des documents à fournir', 4);
+(18, 'réception équipement: liste des documents à demander', 1),
+(19, 'expédition équipement: liste des documents à fournir', 1);
 
 INSERT INTO GOODPRACTICE_PROGRAM (goodpractice_program_id, goodpractice_id, program_id) VALUES
-(1, 1, 1),
-(2, 1, 2),
-(3, 2, 1),
-(4, 2, 2),
-(5, 3, 1),
-(6, 3, 2),
-(7, 4, 1),
-(8, 4, 2),
-(9, 5, 1),
-(10, 5, 2),
-(11, 6, 1),
-(12, 6, 2),
-(13, 7, 1),
-(14, 7, 2),
-(15, 8, 1),
-(16, 8, 2),
-(17, 9, 1),
-(18, 9, 2),
-(19, 10, 1),
-(20, 10, 2),
-(21, 11, 1),
-(22, 11, 2),
-(23, 12, 1),
-(24, 12, 2),
-(25, 13, 2),
-(26, 14, 2),
-(27, 15, 1),
-(28, 15, 2),
-(29, 16, 2),
-(30, 17, 1),
-(31, 17, 2),
-(32, 18, 3),
-(33, 19, 3);
+(1, 1, 2),
+(2, 1, 3),
+(3, 2, 2),
+(4, 2, 3),
+(5, 3, 2),
+(6, 3, 3),
+(7, 4, 2),
+(8, 4, 3),
+(9, 5, 2),
+(10, 5, 3),
+(11, 6, 2),
+(12, 6, 3),
+(13, 7, 2),
+(14, 7, 3),
+(15, 8, 2),
+(16, 8, 3),
+(17, 9, 2),
+(18, 9, 3),
+(19, 10, 2),
+(20, 10, 3),
+(21, 11, 2),
+(22, 11, 3),
+(23, 12, 2),
+(24, 12, 3),
+(25, 13, 3),
+(26, 14, 3),
+(27, 15, 2),
+(28, 15, 3),
+(29, 16, 3),
+(30, 17, 2),
+(31, 17, 3),
+(32, 18, 1),
+(33, 19, 1);
 
 INSERT INTO GOODPRACTICE_KEYWORD (goodpractice_keyword_id, goodpractice_id, keyword_id) VALUES
 (1, 1, 2),
