@@ -5,7 +5,7 @@
     require_once(__DIR__ . '/functions.php');
     if (!isset($_SESSION['LOGGED_USER']) || $_SERVER['REQUEST_METHOD'] !== 'POST') { Logger(Sanitize($_SESSION['LOGGED_USER']['username']), Sanitize($_SESSION['LOGGED_USER']['profile']), 2, 'Unauthorized access attempt to '.$file); header('Location:logout.php'); exit(); }
     
-    require_once(__DIR__ . '/database_connect.php');
+    require_once(__DIR__ . '/config/database_connect.php');
     require_once(__DIR__ . '/sql_functions.php');
 
     $postData = $_POST;
@@ -54,8 +54,22 @@
     } elseif ($postData['submit'] === 'create') {
         header('Location:create_goodpractice.php');
         exit();
-    } elseif ($postData['submit'] === 'export') {
-        $_SESSION['CHECKLIST_CREATION_OUTPUT'] = Sanitize(DownloadChecklist($_SESSION['GOODPRACTICES_PARAMETERS'], Sanitize($_SESSION['username']), Sanitize($_SESSION['profile'])));
+    } elseif ($postData['submit'] === 'export-csv') {
+        $whereIs = $_SESSION['GOODPRACTICES_SELECTION'];
+        $orderBy = $_SESSION['GOODPRACTICES_ORDER'];
+        $erased = $_SESSION['ERASED_GOODPRACTICES'];
+        $erasedPrograms = $_SESSION['ERASED_GOODPRACTICES_PROGRAMS'];
+        $username = Sanitize($_SESSION['LOGGED_USER']['username']);
+        $profile = Sanitize($_SESSION['LOGGED_USER']['profile']);
+        $_SESSION['CHECKLIST_CREATION_OUTPUT'] = Sanitize(DownloadChecklist($whereIs, $orderBy, $erased, $erasedPrograms, $username, $profile, 'csv'));
+    } elseif ($postData['submit'] === 'export-pdf') {
+        $whereIs = $_SESSION['GOODPRACTICES_SELECTION'];
+        $orderBy = $_SESSION['GOODPRACTICES_ORDER'];
+        $erased = $_SESSION['ERASED_GOODPRACTICES'];
+        $erasedPrograms = $_SESSION['ERASED_GOODPRACTICES_PROGRAMS'];
+        $username = Sanitize($_SESSION['LOGGED_USER']['username']);
+        $profile = Sanitize($_SESSION['LOGGED_USER']['profile']);
+        $_SESSION['CHECKLIST_CREATION_OUTPUT'] = Sanitize(DownloadChecklist($whereIs, $orderBy, $erased, $erasedPrograms, $username, $profile, 'pdf'));
     }
     header('Location:index.php');
 ?>

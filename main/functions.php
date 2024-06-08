@@ -97,29 +97,49 @@
         return $string;
     }
 
-    function DownloadChecklist(array $goodpracticesParameters, string $username, string $profile): string
-    {
-        $jsonData = json_encode($goodpracticesParameters);
 
-        if ($jsonGoodpractices === false) {
-            Logger(Sanitize($username), Sanitize($profile), 2, 'Failed to generate checklist, failed to json encode python parameters');
-            return "Erreur !\n\nL'encodage JSON des paramètres du programme python a échouée.";
-        } else {
-            $file = './json/python_parameters.json';
-            if (file_put_contents($file, $jsonData)) {
-                $output =  shell_exec('/usr/bin/python3 checklist_generator.py');
-                if (!$output) {
-                    Logger(Sanitize($username), Sanitize($profile), 0, 'Successfuly generate checklist');
-                    return "Succès !\n\nLa checklist a bien été générée.";
-                } else {
-                    Logger(Sanitize($username), Sanitize($profile), 2, $output);
-                    return "Erreur !\n\nLe programme python n'a pas réussi à générer la checklist.";
-                }
-            } else {
-                Logger(Sanitize($username), Sanitize($profile), 2, 'Failed to generate checklist, failed to write python parameters in json file');
-                return "Erreur !\n\nL'écriture des paramètres python dans le fichier json a échouée.";
+    function DownloadChecklist(array $whereIs = NULL, array $orderBy = NULL, array $erasedGoodpractices = NULL, array $erasedPrograms = NULL, string $username = NULL, string $profile, string $mode): string
+    {
+        try {
+            // Convert PHP arrays to JSON strings
+            $whereIs = $whereIs ? json_encode($whereIs) : '';
+            $whereIs = str_replace('"program_name":null,', '', $whereIs);
+            $whereIs = str_replace('"phase_name":null,', '', $whereIs);
+            $whereIs = str_replace('{"keywords":[""],', '', $whereIs);
+            $orderBy = $orderBy ? json_encode($orderBy) : '';
+            $erasedGoodpractices = $erasedGoodpractices ? implode(',', $erasedGoodpractices) : '';
+            $erasedPrograms = $erasedPrograms ? json_encode($erasedPrograms) : '';
+            $profile = Sanitize($profile);
+            $username = $username ? Sanitize($username) : '';
+        
+            // Construct command to execute Python script
+            $command = "cd /home/flo/Iut/thales/app/checklist && /home/flo/Iut/thales/app/python/bin/python3 /home/flo/Iut/thales/app/python/checklist_generator.py ";
+            $command .= "--where " . escapeshellarg($whereIs) . " ";
+            $command .= "--order " . escapeshellarg($orderBy) . " ";
+            $command .= "--erased_goodpractices " . escapeshellarg($erasedGoodpractices) . " ";
+            $command .= "--erased_programs " . escapeshellarg($erasedPrograms) . " ";        
+            if ($username) {
+                $command .= " --username " . escapeshellarg($username) . " ";
             }
+            $command .= "--profile " . escapeshellarg($profile) . " ";
+            $outputFile = "checklist_" . ($username ? $username . '_' : '') . date('d-m-Y') . ($mode === 'pdf' ? '.pdf' : '.csv');
+            $command .= "--output_format " . escapeshellarg($mode) . " ";
+            $command .= "--output_file " . escapeshellarg($outputFile);
+            // Execute the command
+            $exit_code = shell_exec($command);
+        
+            if (intval($exit_code) === 1 || intval($exit_code) === 2) {                
+                Logger($username, $profile, 2, "Failed to generate {$mode} checklist");
+                return 'Erreur !\n\nLe programme python n\'a pas réussi à générer la checklist au format ' . strtoupper($mode) . '.';
+            } elseif (intval($exit_code) === 0) {
+                Logger($username, $profile, 0, "Successfully generated {$mode} checklist");
+                return 'Succès !\n\nLa checklist au format ' . strtoupper($mode) . ' a bien été générée.';
+            }
+        } catch (Exception $e) {
+            error_log("DownloadChecklist: Exception capturée - " . $e->getMessage());
+            return "Erreur : " . $e->getMessage();
         }
+
     }
 
     function getUserIP() {

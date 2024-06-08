@@ -4,9 +4,8 @@
     --thales-gradient-2: #082C46;
     --thales-gradient-3: #073D59;
     --thales-gradient-3-light: rgb(7, 61, 89, 0.4);
+    --thales-gradient-3-light-hex: #073d5966;
     --thales-color: #00abc8;
-
-
 }
 
 body {
@@ -340,11 +339,6 @@ label {
     align-items: baseline;
 }
 
-.goodpractices-selection .selection-button {
-    width: 80%;
-    height: 60px;
-}
-
 #create-goodpractice-selection-button {
     width: 60%;
 }
@@ -396,6 +390,21 @@ button {
 button:hover {
     opacity: 1;
     transition: opacity 0.75s;
+}
+
+.goodpractices-selection .selection-button {
+    padding: 0%;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    width: 100%;
+    height: 60px;
+}
+
+.goodpractices-selection .selection-button button {
+    width: 15%;
+    margin: 0%;
+    margin-left: 0%;
+    margin-right: 0%;
 }
 
 h2, h3, h4 {

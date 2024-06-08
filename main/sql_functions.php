@@ -306,7 +306,7 @@
             unset($goodPractice);
         }
 
-        return array($goodPractices, $sql, $params);
+        return $goodPractices;
     }
 
     function ProgramSelect(string $all = NULL): array
