@@ -44,3 +44,10 @@ En consolidant et en simplifiant la diffusion des méthodologies de test avioniq
 
 
 Ce projet vise à transformer le partage des bonnes pratiques en une activité rapide, fiable et accessible, contribuant ainsi à la réussite des missions de Thales Alenia Space.
+
+
+
+Le code du programme se situe  dans le fichier /main de ce repertoire. Pour utiliser et tester notre programme merci de telecharger le /main et de faire les configuration neccesaire comme la config du fichier de mysql.php avec les info du serveur (mariadb) de la base de données.
+
+Les autres fichiers sont des ancien code non ou plus utiliser par le porgramme maintenant mais aussi des fichier et document en rapport avec le rapport du projet.
+
