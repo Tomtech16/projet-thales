@@ -1,6 +1,6 @@
 import argparse
 import mysql.connector
-import pandas as pd
+import csv
 from reportlab.lib.pagesizes import landscape, A4
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -117,8 +117,12 @@ def good_practices_select(where_is=None, order_by=None, erased_goodpractices=Non
 
 def export_to_csv(data, filename):
     try:
-        df = pd.DataFrame(data)
-        df.to_csv(filename, index=False)
+        header = ['Programmes', 'Phase', 'Item', 'Mots-clés', 'Appliquée']
+        with open(filename, mode='w', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow(header)
+            for row in data:
+                writer.writerow([row['Programmes'], row['Phase'], row['Item'], row['Mots-clés'], ''])
         return 0
     except:
         return 1
