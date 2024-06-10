@@ -234,6 +234,7 @@ def main():
     elif output_format == 'pdf':
         exit_code = export_to_pdf(data, filename, username)
 
+    print(filename)
     sys.exit(exit_code)
 
 if __name__ == "__main__":
