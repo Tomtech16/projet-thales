@@ -109,9 +109,14 @@
 </section>
 
 <script type="text/javascript">
+    window.onload = function() {
     <?php if (isset($_SESSION['CHECKLIST_CREATION_OUTPUT'])) : ?>
-        window.onload = function() {
-            alert('<?= Sanitize($_SESSION['CHECKLIST_CREATION_OUTPUT']); ?>');
-        };
-    <?php unset($_SESSION['CHECKLIST_CREATION_OUTPUT']); endif; ?>
+        alert("<?= Sanitize($_SESSION['CHECKLIST_CREATION_OUTPUT']) ?>");
+        <?php unset($_SESSION['CHECKLIST_CREATION_OUTPUT']); ?>
+    <?php endif; ?>
+    <?php if (isset($_SESSION['CHECKLIST_FILENAME'])) : ?>
+        open("http://<?= $_SERVER['SERVER_NAME'] ?>:<?= $_SERVER['SERVER_PORT'] ?>/checklist/<?= Sanitize($_SESSION['CHECKLIST_FILENAME']) ?>", '_blank');
+        <?php unset($_SESSION['CHECKLIST_FILENAME']); ?>
+    <?php endif; ?>
+    };
 </script>

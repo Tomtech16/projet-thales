@@ -98,48 +98,49 @@
     }
 
 
-    function DownloadChecklist(array $whereIs = NULL, array $orderBy = NULL, array $erasedGoodpractices = NULL, array $erasedPrograms = NULL, string $username = NULL, string $profile, string $mode): string
+    function DownloadChecklist(array $whereIs = NULL, array $orderBy = NULL, array $erasedGoodpractices = NULL, array $erasedPrograms = NULL, string $username = NULL, string $profile, string $mode): array
     {
-        try {
-            // Convert PHP arrays to JSON strings
-            $whereIs = $whereIs ? json_encode($whereIs) : '';
-            $whereIs = str_replace('"program_name":null,', '', $whereIs);
-            $whereIs = str_replace('"phase_name":null,', '', $whereIs);
-            $whereIs = str_replace('{"keywords":[""],', '', $whereIs);
-            $orderBy = $orderBy ? json_encode($orderBy) : '';
-            $erasedGoodpractices = $erasedGoodpractices ? implode(',', $erasedGoodpractices) : '';
-            $erasedPrograms = $erasedPrograms ? json_encode($erasedPrograms) : '';
-            $profile = Sanitize($profile);
-            $username = $username ? Sanitize($username) : '';
-        
-            // Construct command to execute Python script
-            $command = "cd /home/flo/Iut/thales/app/checklist && /home/flo/Iut/thales/app/python/bin/python3 /home/flo/Iut/thales/app/python/checklist_generator.py ";
-            $command .= "--where " . escapeshellarg($whereIs) . " ";
-            $command .= "--order " . escapeshellarg($orderBy) . " ";
-            $command .= "--erased_goodpractices " . escapeshellarg($erasedGoodpractices) . " ";
-            $command .= "--erased_programs " . escapeshellarg($erasedPrograms) . " ";        
-            if ($username) {
-                $command .= " --username " . escapeshellarg($username) . " ";
-            }
-            $command .= "--profile " . escapeshellarg($profile) . " ";
-            $outputFile = "checklist_" . ($username ? $username . '_' : '') . date('d-m-Y') . ($mode === 'pdf' ? '.pdf' : '.csv');
-            $command .= "--output_format " . escapeshellarg($mode) . " ";
-            $command .= "--output_file " . escapeshellarg($outputFile);
-            // Execute the command
-            $exit_code = shell_exec($command);
-        
-            if (intval($exit_code) === 1 || intval($exit_code) === 2) {                
-                Logger($username, $profile, 2, "Failed to generate {$mode} checklist");
-                return 'Erreur !\n\nLe programme python n\'a pas réussi à générer la checklist au format ' . strtoupper($mode) . '.';
-            } elseif (intval($exit_code) === 0) {
-                Logger($username, $profile, 0, "Successfully generated {$mode} checklist");
-                return 'Succès !\n\nLa checklist au format ' . strtoupper($mode) . ' a bien été générée.';
-            }
-        } catch (Exception $e) {
-            error_log("DownloadChecklist: Exception capturée - " . $e->getMessage());
-            return "Erreur : " . $e->getMessage();
-        }
+        // Convert PHP arrays to JSON strings
+        $whereIs = $whereIs ? json_encode($whereIs) : '';
+        $whereIs = str_replace('"program_name":null,', '', $whereIs);
+        $whereIs = str_replace('"phase_name":null,', '', $whereIs);
+        $whereIs = str_replace('{"keywords":[""],', '', $whereIs);
+        $orderBy = $orderBy ? json_encode($orderBy) : '';
+        $erasedGoodpractices = $erasedGoodpractices ? implode(',', $erasedGoodpractices) : '';
+        $erasedPrograms = $erasedPrograms ? json_encode($erasedPrograms) : '';
+        $profile = Sanitize($profile);
+        $username = $username ? Sanitize($username) : '';
+    
+        // Construct command to execute Python script
+        $currentDirectoryPath = getcwd();
+        $checklistFilesDirectory = $currentDirectoryPath . "/checklist";
+        require_once(__DIR__ . '/config/paths.php');
+        $pythonChecklistGeneratorProgramPath = $currentDirectoryPath . "/python/checklist_generator.py";
 
+        $command = "cd " . $checklistFilesDirectory . " && " . $python3BinaryPath . " " . $pythonChecklistGeneratorProgramPath . " ";
+        $command .= "--where " . escapeshellarg($whereIs) . " ";
+        $command .= "--order " . escapeshellarg($orderBy) . " ";
+        $command .= "--erased_goodpractices " . escapeshellarg($erasedGoodpractices) . " ";
+        $command .= "--erased_programs " . escapeshellarg($erasedPrograms) . " ";        
+        if ($username) {
+            $command .= " --username " . escapeshellarg($username) . " ";
+        }
+        $command .= "--profile " . escapeshellarg($profile) . " ";
+        $outputFile = "checklist_" . ($username ? $username . '_' : '') . date('d-m-Y') . ($mode === 'pdf' ? '.pdf' : '.csv');
+        $command .= "--output_format " . escapeshellarg($mode) . " ";
+        $command .= "--output_file " . escapeshellarg($outputFile);
+
+        // Execute the command
+        exec($command, $output, $exit_code);
+        $filename = $output[0];
+
+        if (intval($exit_code) === 0) {                
+            Logger($username, $profile, 0, "Successfully generated {$mode} checklist with filename : $filename");
+            return array('Succès !\n\nLa checklist : ' . $filename . ', au format ' . strtoupper($mode) . ' a bien été générée.', $filename);
+        } else {
+            Logger($username, $profile, 2, "Failed to generate {$mode} checklist with filename : $filename");
+            return array('Erreur !\n\nLe programme python n\'a pas réussi à générer la checklist : ' . $filename . ', au format ' . strtoupper($mode) . '.', $filename);
+        }
     }
 
     function getUserIP() {

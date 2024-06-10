@@ -61,7 +61,9 @@
         $erasedPrograms = $_SESSION['ERASED_GOODPRACTICES_PROGRAMS'];
         $username = Sanitize($_SESSION['LOGGED_USER']['username']);
         $profile = Sanitize($_SESSION['LOGGED_USER']['profile']);
-        $_SESSION['CHECKLIST_CREATION_OUTPUT'] = Sanitize(DownloadChecklist($whereIs, $orderBy, $erased, $erasedPrograms, $username, $profile, 'csv'));
+        $download = DownloadChecklist($whereIs, $orderBy, $erased, $erasedPrograms, $username, $profile, 'csv');
+        $_SESSION['CHECKLIST_CREATION_OUTPUT'] = Sanitize($download[0]);
+        $_SESSION['CHECKLIST_FILENAME'] = Sanitize($download[1]);
     } elseif ($postData['submit'] === 'export-pdf') {
         $whereIs = $_SESSION['GOODPRACTICES_SELECTION'];
         $orderBy = $_SESSION['GOODPRACTICES_ORDER'];
@@ -69,7 +71,9 @@
         $erasedPrograms = $_SESSION['ERASED_GOODPRACTICES_PROGRAMS'];
         $username = Sanitize($_SESSION['LOGGED_USER']['username']);
         $profile = Sanitize($_SESSION['LOGGED_USER']['profile']);
-        $_SESSION['CHECKLIST_CREATION_OUTPUT'] = Sanitize(DownloadChecklist($whereIs, $orderBy, $erased, $erasedPrograms, $username, $profile, 'pdf'));
+        $download = DownloadChecklist($whereIs, $orderBy, $erased, $erasedPrograms, $username, $profile, 'pdf');
+        $_SESSION['CHECKLIST_CREATION_OUTPUT'] = Sanitize($download[0]);
+        $_SESSION['CHECKLIST_FILENAME'] = Sanitize($download[1]);
     }
     header('Location:index.php');
 ?>
