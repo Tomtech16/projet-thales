@@ -1,0 +1,23 @@
+# SETUP PROCEDURE
+
+- Set mysql connection variables in : 
+    - config/mysql.php
+    - python/db_connection.py
+
+- Set python3 binary path variable in :  
+    - config/paths.php
+    - You have to install mysql.connector and reportlab modules, maybe more if the checklist exportation do not work.
+    - Please check if you have installed modules required in checklist_generator.py
+
+- Check directories and files, owner and rights : 
+    - Set www-data the owner of all directories and files
+        - You can use the chown command :
+            - !!! in the right directory !!!
+            - chown -R www-data:www-data *
+    - Set rights of all directories and files
+        - You can use the chmod command : 
+            - !!! in the right directory !!!
+            - chmod -R 774 *
+    - Please check that checklist_generator.py and db_connection.py are executable files.
+        - You can do so with "ls -l" command in python directory.
+        - If not, you can use the "chmod ug+x checklist_generator.py db_connection.py" command to make it.
