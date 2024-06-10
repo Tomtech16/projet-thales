@@ -1,8 +1,12 @@
---
--- Structure de la table USERS
---
+---
+--- Erase USERS table if exists
+---
 
 DROP TABLE IF EXISTS USERS;
+
+--
+-- Create USERS table
+--
 
 CREATE TABLE USERS (
   user_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -17,11 +21,8 @@ CREATE TABLE USERS (
 
 
 --
--- Contenu de la table USERS
+-- Insert data into USERS table
 --
 
 INSERT INTO USERS (user_id, username, firstname, lastname, profile, password, attempts) VALUES
-(1, 'operator', 'thales', 'thales', 'operator', '$2y$10$dGtIzyANyT6PuMWSOkuc9.7uBNENbKwXCXNq9V33BYuwwK/nQ78kG', 0),
-(2, 'admin', 'thales', 'thales', 'admin', '$2y$10$llEMmo.QXQIv3G6bpL2StOAB/iBDIJ/BYJZkdixL5VFLUpjf9Nh0C', 0),
-(3, 'superadmin', 'thales', 'thales', 'superadmin', '$2y$10$Oww8cGL4jDkklFaeAcgnHeLhojCNrA5LSu5KbpYKvQSOAmq2.KZcm', 0);
-
+(1, 'thales06', 'thales06', 'thales06', 'superadmin', '$2y$10$uM4Dr0WDEGCA/oaQsatk.eAaNC1iQRlpzXHAj8QMVgl9Mig3arEfS', 0);
