@@ -1,30 +1,41 @@
 <?php 
     session_start();
-    $path = $_SERVER['PHP_SELF'];
-    $file = basename($path);
     require_once(__DIR__ . '/functions.php');
-    if (!isset($_SESSION['LOGGED_USER']) || $_SERVER['REQUEST_METHOD'] !== 'POST' || ($_SESSION['LOGGED_USER']['profile'] !== 'admin' && $_SESSION['LOGGED_USER']['profile'] !== 'superadmin')) { Logger(Sanitize($_SESSION['LOGGED_USER']['username']), Sanitize($_SESSION['LOGGED_USER']['profile']), 2, 'Unauthorized access attempt to '.$file); header('Location:logout.php'); exit(); }
-  
+    CheckPostAdminRights();
+
     require_once(__DIR__ . '/config/database_connect.php');
     require_once(__DIR__ . '/sql_functions.php');
 
     $postData = $_POST;
 
+    // If the form submission is for ordering users
     if ($postData['submit'] === 'users-order') {
+        // Sanitize and set the order type and direction in session
         $_SESSION['USERS_SELECTION_ORDER'] = array(Sanitize($postData['users-order']['type']), Sanitize($postData['users-order']['direction']));
-    } elseif ($postData['submit'] === 'password-update') {
+    } 
+    // If the form submission is for updating password settings
+    elseif ($postData['submit'] === 'password-update') {
         $n = Sanitize($postData['n']);
         $p = Sanitize($postData['p']);
         $q = Sanitize($postData['q']);
         $r = Sanitize($postData['r']);
+        // Update password configuration settings
         PasswordUpdate($n, $p, $q, $r);
+        // Log the successful password configuration change
         Logger(Sanitize($_SESSION['LOGGED_USER']['username']), Sanitize($_SESSION['LOGGED_USER']['profile']), 1, 'Successfully changed password configuration settings');
-    } elseif ($postData['submit'] === 'create-user') {
+    } 
+    // If the form submission is to create a new user
+    elseif ($postData['submit'] === 'create-user') {
+        // Redirect to the create user page
         header('Location:create_user.php');
         exit();
-    } elseif ($postData['submit'] === 'to-logs') {
+    } 
+    // If the form submission is to go to the logs
+    elseif ($postData['submit'] === 'to-logs') {
+        // Redirect to the log page
         header('Location:log.php');
         exit();
     }
+    
     header('Location:admin.php');
 ?>

@@ -15,9 +15,11 @@ import sys
 from db_connection import get_db_connection
 
 def sanitize(input_string):
+    """Sanitize input string by escaping HTML characters."""
     return html.escape(input_string.strip(), quote=True)
 
 def erase_program_names(program_names, erased_program_names=None, profile=''):
+    """Erase specified program names from a comma-separated list."""
     if erased_program_names is not None:
         if profile not in ['admin', 'superadmin']:
             return sanitize(', '.join(set(program_names.split(', ')) - set(erased_program_names)))
@@ -28,6 +30,7 @@ def erase_program_names(program_names, erased_program_names=None, profile=''):
         return sanitize(program_names)
 
 def good_practices_select(where_is=None, order_by=None, erased_goodpractices=None, erased_programs=None, profile=''):
+    """Select good practices from the database based on criteria."""
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     
@@ -116,6 +119,7 @@ def good_practices_select(where_is=None, order_by=None, erased_goodpractices=Non
     return transformed_good_practices
 
 def export_to_csv(data, filename):
+    """Export data to CSV file."""
     try:
         header = ['Programmes', 'Phase', 'Item', 'Mots-clés', 'Appliquée']
         with open(filename, mode='w', newline='', encoding='utf-8') as file:
@@ -139,6 +143,7 @@ def get_unique_filename(base_filename):
         return base_filename
 
 def header_footer(canvas, doc, username):
+    """Header and Footer setup for PDF."""
     canvas.saveState()
 
     # Header
@@ -157,6 +162,7 @@ def header_footer(canvas, doc, username):
     canvas.restoreState()
 
 def export_to_pdf(data, filename, username):
+    """Export data to PDF file."""
     try:
         doc = SimpleDocTemplate(filename, pagesize=landscape(A4))
         styles = getSampleStyleSheet()
@@ -199,13 +205,14 @@ def export_to_pdf(data, filename, username):
         return 2
 
 def main():
+    """Main function for handling command-line arguments and execution."""
     parser = argparse.ArgumentParser(description='Export good practices into CSV or PDF checklist.')
     parser.add_argument('--where', type=str, help='JSON string for WHERE clause filters.')
     parser.add_argument('--order', type=str, help='JSON string for ORDER BY clause.')
     parser.add_argument('--erased_goodpractices', type=str, help='Comma-separated list of goodpractice IDs to erase.')
     parser.add_argument('--erased_programs', type=str, help='JSON string for programs to erase.')    
     parser.add_argument('--username', type=str, help='Username for header.')
-    parser.add_argument('--profile', type=str, required=True, help='Profile type.')
+    parser.add_argument('--profile', type=str, choices=['operator', 'admin', 'superadmin'], required=True, help='Profile type.')
     parser.add_argument('--output_format', type=str, choices=['csv', 'pdf'], required=True, help='Output format (csv or pdf).')
     parser.add_argument('--output_file', type=str, required=True, help='Output file name.')
 

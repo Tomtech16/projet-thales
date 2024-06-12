@@ -1,17 +1,19 @@
 <?php 
     session_start();
-    $path = $_SERVER['PHP_SELF'];
-    $file = basename($path);
     require_once(__DIR__ . '/functions.php');
-    if (!isset($_SESSION['LOGGED_USER']) || ($_SESSION['LOGGED_USER']['profile'] !== 'admin' && $_SESSION['LOGGED_USER']['profile'] !== 'superadmin')) { Logger(Sanitize($_SESSION['LOGGED_USER']['username']), Sanitize($_SESSION['LOGGED_USER']['profile']), 2, 'Unauthorized access attempt to '.$file); header('Location:logout.php'); exit(); }
+    CheckAdminRights();
 
     require_once(__DIR__ . '/config/database_connect.php');
     require_once(__DIR__ . '/sql_functions.php');
 
-    $password = PasswordSelect();
+    // Retrieve the password configuration settings
+    $passwordParameters = PasswordSelect();
+
+    // Determine the order type and direction for user selection
     $orderType = isset($_SESSION['USERS_SELECTION_ORDER'][0]) ? $_SESSION['USERS_SELECTION_ORDER'][0] : '';
     $orderDirection = isset($_SESSION['USERS_SELECTION_ORDER'][1]) ? $_SESSION['USERS_SELECTION_ORDER'][1] : '';
 ?>
+
 <section class="users-gestion">
     <h2>Interface de gestion des utilisateurs</h2>
     <form class="selection-form" action="submit_users_gestion.php" method="POST">
@@ -49,19 +51,19 @@
                 <div class="password-input-area">
                     <div class="password-input-line">
                         <label for="n">Chiffres : </label>
-                        <input type="number" id="n" name="n" min="0" max="10" value="<?= Sanitize($password['n']) ?>" required>
+                        <input type="number" id="n" name="n" min="0" max="10" value="<?= Sanitize($passwordParameters['n']) ?>" required>
                     </div>
                     <div class="password-input-line">
                         <label for="p">Minuscules : </label>
-                        <input type="number" id="p" name="p" min="0" max="10" value="<?= Sanitize($password['p']) ?>" required>
+                        <input type="number" id="p" name="p" min="0" max="10" value="<?= Sanitize($passwordParameters['p']) ?>" required>
                     </div>
                     <div class="password-input-line">
                         <label for="q">Majuscules : </label>
-                        <input type="number" id="q" name="q" min="0" max="10" value="<?= Sanitize($password['q']) ?>" required>
+                        <input type="number" id="q" name="q" min="0" max="10" value="<?= Sanitize($passwordParameters['q']) ?>" required>
                     </div>
                     <div class="password-input-line">
                         <label for="r">Caractères spéciaux : </label>
-                        <input type="number" id="r" name="r" min="0" max="10" value="<?= Sanitize($password['r']) ?>" required>
+                        <input type="number" id="r" name="r" min="0" max="10" value="<?= Sanitize($passwordParameters['r']) ?>" required>
                     </div>
                 </div>
                 <div class="selection-button">

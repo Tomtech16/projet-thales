@@ -1,20 +1,27 @@
 <?php 
     session_start();   
-    $path = $_SERVER['PHP_SELF'];
-    $file = basename($path);
     require_once(__DIR__ . '/functions.php');
-    if (!isset($_SESSION['LOGGED_USER']) || ($_SESSION['LOGGED_USER']['profile'] !== 'admin' && $_SESSION['LOGGED_USER']['profile'] !== 'superadmin')) { Logger(Sanitize($_SESSION['LOGGED_USER']['username']), Sanitize($_SESSION['LOGGED_USER']['profile']), 2, 'Unauthorized access attempt to '.$file); header('Location:logout.php'); exit(); }
+    CheckAdminRights();
 
     require_once(__DIR__ . '/config/database_connect.php');
     require_once(__DIR__ . '/sql_functions.php');
 
+    // Retrieve the password configuration settings
     $passwordParameters = PasswordSelect();
+
+    // Sanitize the password configuration parameters
     $n = Sanitize($passwordParameters['n']);
     $p = Sanitize($passwordParameters['p']);
     $q = Sanitize($passwordParameters['q']);
     $r = Sanitize($passwordParameters['r']);
+
+    // Retrieve the user selection order from the session
     $usersSelectionOrder = $_SESSION['USERS_SELECTION_ORDER'];
+
+    // Sanitize the profile of the logged-in user
     $profile = Sanitize($_SESSION['LOGGED_USER']['profile']);
+
+    // Retrieve the list of users based on the selection order and profile
     $users = UsersSelect($usersSelectionOrder, $profile);
 ?>
 
@@ -42,8 +49,12 @@
                             <td class="firstname-column"><?= Sanitize($_SESSION['LOGGED_USER']['firstname']) ?></td>
                             <td class="lastname-column"><?= Sanitize($_SESSION['LOGGED_USER']['lastname']) ?></td>
                             <td class="profile-column"><?= Sanitize($_SESSION['LOGGED_USER']['profile']) ?></td>
-                            <td class="attempts-column"></td>
-                            <td class="actions-column"></td>
+                            <td class="attempts-column">0</td>
+                            <td class="actions-column">
+                                <div class="action-btn-container">
+                                    <button class="action-btn" onclick="openUserForm(1, <?= Sanitize($_SESSION['LOGGED_USER']['user_id']) ?>, 0, <?= $n ?>, <?= $p ?>, <?= $q ?>, <?= $r ?>)">Gérer</button>
+                                </div>
+                            </td>
                         </tr>
                     <?php endif; ?>
                     <?php foreach ($users as $user) { ?>
@@ -58,11 +69,9 @@
                                 <td class="attempts-column"><?= Sanitize($user['attempts'])?></td>
                             <?php endif; ?>
                             <td class="actions-column">
-                                <?php if ($user['profile'] !== 'superadmin') : ?>
-                                        <div class="action-btn-container">
-                                            <button class="action-btn" onclick="openUserForm(<?= Sanitize($user['user_id']) ?>, <?= (UserIsBlocked(Sanitize($user['attempts']))) ? 1 : 0 ?>, <?= $n ?>, <?= $p ?>, <?= $q ?>, <?= $r ?>)">Gérer</button>
-                                        </div>
-                                <?php endif; ?>
+                                <div class="action-btn-container">
+                                    <button class="action-btn" onclick="openUserForm(0, <?= Sanitize($user['user_id']) ?>, <?= (UserIsBlocked(Sanitize($user['attempts']))) ? 1 : 0 ?>, <?= $n ?>, <?= $p ?>, <?= $q ?>, <?= $r ?>)">Gérer</button>
+                                </div>
                             </td>
                         </tr>
                     <?php } ?>
@@ -76,27 +85,47 @@
             <h3>Administration de l'utilisateur</h3>
             <p>Vous pouvez : </p>
             <ul>
-                <li>Supprimer l'utilisateur.</li>
+                <li>Supprimer un utilisateur.</li>
                 <li>Réinitialiser le mot de passe d'un utilisateur bloqué.</li>
+                <li>Réinitialiser votre mot de passe.</li>
             </ul>
             <input type="hidden" id="userId" name="userId" value="">
-            <button type="submit" class="btn-warning" name="submit" value="delete-user">Supprimer</button>
             <button id="cancel" type="button" class="btn" onclick="closeUserForm()">Annuler</button>
         </form>
     </div>
 </section>
 
 <script>
+    function openUserForm(option, userId, userIsBlocked, n, p, q, r) {
+        var form = document.querySelector("#userForm form");
+        var cancelButton = document.querySelector('button[id="cancel"]');
 
-function openUserForm(userId, userIsBlocked, n, p, q, r) {
-    document.getElementById("userId").value = userId;
+        // Remove password rules if they exist
+        var passwordRulesDiv = document.getElementById('password-rules');
+        if (passwordRulesDiv) {
+            passwordRulesDiv.remove();
+        }
 
-    if (userIsBlocked) {
-        if (!document.getElementById('reset-password-button')) {
-            const deleteButton = document.querySelector('button[value="delete-user"]');
-            const cancelButton = document.querySelector('button[id="cancel"]');
+        // Remove reset button if it exists
+        var existingResetButton = document.getElementById('reset-password-button');
+        if (existingResetButton) {
+            existingResetButton.remove();
+        }
 
-            const resetButton = document.createElement('button');
+        // Remove delete button if it exists
+        var deleteButton = document.querySelector('button[value="delete-user"]');
+        if (deleteButton) {
+            deleteButton.remove();
+        }
+
+        // Set the userId input value
+        document.getElementById("userId").value = userId;
+
+        // Check if the user is blocked or option is 1
+        if (userIsBlocked || option) {
+            
+            // Add reset password button if it doesn't exist
+            var resetButton = document.createElement('button');
             resetButton.type = 'submit';
             resetButton.id = 'reset-password-button';
             resetButton.className = 'btn';
@@ -104,13 +133,10 @@ function openUserForm(userId, userIsBlocked, n, p, q, r) {
             resetButton.value = 'reset-password';
             resetButton.textContent = 'Réinitialiser le mot de passe';
 
-            deleteButton.parentNode.insertBefore(resetButton, cancelButton);
-        }
+            form.insertBefore(resetButton, cancelButton);
 
-        if (!document.getElementById('password-rules')) {
-            const form = document.querySelector("#userForm form");
-            const deleteButton = document.querySelector('button[value="delete-user"]');
-            const passwordRulesDiv = document.createElement('div');
+            // Add password rules if they don't exist
+            var passwordRulesDiv = document.createElement('div');
             passwordRulesDiv.id = 'password-rules';
 
             let passwordRulesHTML = `
@@ -150,26 +176,27 @@ function openUserForm(userId, userIsBlocked, n, p, q, r) {
                 </div>
             `;
             passwordRulesDiv.innerHTML = passwordRulesHTML;
-            form.insertBefore(passwordRulesDiv, deleteButton);
-        }
-    } else {
-        const existingResetButton = document.getElementById('reset-password-button');
-        if (existingResetButton) {
-            existingResetButton.parentNode.removeChild(existingResetButton);
+            form.insertBefore(passwordRulesDiv, resetButton);
         }
 
-        const passwordRulesDiv = document.getElementById('password-rules');
-        if (passwordRulesDiv) {
-            passwordRulesDiv.parentNode.removeChild(passwordRulesDiv);
+        // Add delete button only if option is 0
+        if (!option) {
+            var deleteButton = document.createElement('button');
+            deleteButton.type = 'submit';
+            deleteButton.className = 'btn-warning';
+            deleteButton.name = 'submit';
+            deleteButton.value = 'delete-user';
+            deleteButton.textContent = 'Supprimer';
+
+            form.insertBefore(deleteButton, cancelButton);
         }
+
+        // Display the user form
+        document.getElementById("userForm").style.display = "block";
     }
 
-    document.getElementById("userForm").style.display = "block";
-}
-
-
-
     function closeUserForm() {
+        // Hide the user form
         document.getElementById("userForm").style.display = "none";
     }
 </script>

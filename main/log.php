@@ -1,37 +1,24 @@
 <?php 
     session_start();
-    $path = $_SERVER['PHP_SELF'];
-    $file = basename($path);
     require_once(__DIR__ . '/functions.php');
-    if (!isset($_SESSION['LOGGED_USER']) || ($_SESSION['LOGGED_USER']['profile'] !== 'admin' && $_SESSION['LOGGED_USER']['profile'] !== 'superadmin')) { Logger(Sanitize($_SESSION['LOGGED_USER']['username']), Sanitize($_SESSION['LOGGED_USER']['profile']), 2, 'Unauthorized access attempt to '.$file); header('Location:logout.php'); exit(); }
-
+    CheckAdminRights();
+    
     require_once(__DIR__ . '/config/database_connect.php');
     require_once(__DIR__ . '/sql_functions.php');
 
+    // Retrieve logs and sanitize session variables for filtering
     $log = array_reverse(file('./log/log.txt'));
     $userUsername = Sanitize($_SESSION['LOGGED_USER']['username']);
     $userProfile = Sanitize($_SESSION['LOGGED_USER']['profile']);
-    if (isset($_SESSION['LOG_FILTERS']['LOG_DATE_DAY']) && !empty($_SESSION['LOG_FILTERS']['LOG_DATE_DAY'])) {
-        $day = Sanitize($_SESSION['LOG_FILTERS']['LOG_DATE_DAY']);
-    } else {
-        $day = 0;
-    }
-    if (isset($_SESSION['LOG_FILTERS']['LOG_DATE_MONTH']) && !empty($_SESSION['LOG_FILTERS']['LOG_DATE_MONTH'])) {
-        $month = Sanitize($_SESSION['LOG_FILTERS']['LOG_DATE_MONTH']);
-    } else {
-        $month = '';
-    }
-    if (isset($_SESSION['LOG_FILTERS']['LOG_DATE_YEAR']) && !empty($_SESSION['LOG_FILTERS']['LOG_DATE_YEAR'])) {
-        $year = Sanitize($_SESSION['LOG_FILTERS']['LOG_DATE_YEAR']);
-    } else {
-        $year = 0;
-    }
+    $day = isset($_SESSION['LOG_FILTERS']['LOG_DATE_DAY']) ? Sanitize($_SESSION['LOG_FILTERS']['LOG_DATE_DAY']) : 0;
+    $month = isset($_SESSION['LOG_FILTERS']['LOG_DATE_MONTH']) ? Sanitize($_SESSION['LOG_FILTERS']['LOG_DATE_MONTH']) : '';
+    $year = isset($_SESSION['LOG_FILTERS']['LOG_DATE_YEAR']) ? Sanitize($_SESSION['LOG_FILTERS']['LOG_DATE_YEAR']) : 0;
     if (isset($_SESSION['LOG_FILTERS']['LOG_EVENEMENT_TYPE'])) {
         $evenementType = $_SESSION['LOG_FILTERS']['LOG_EVENEMENT_TYPE'];
         $logEvenementTypeSelectionChain = Sanitize(implode(', ', $_SESSION['LOG_FILTERS']['LOG_EVENEMENT_TYPE']));
     } else {
         $logEvenementTypeSelectionChain ='';
-    }
+    }    
     if (isset($_SESSION['LOG_FILTERS']['LOG_PROFILES'])) {
         $profiles = $_SESSION['LOG_FILTERS']['LOG_PROFILES'];
         $logUserProfileSelectionChain = Sanitize(implode(', ', $_SESSION['LOG_FILTERS']['LOG_PROFILES']));
@@ -46,6 +33,7 @@
     }
     $logFiltered = LogFilter($userUsername, $userProfile, $log, $day, $month, $year, $evenementType, $profiles, $logSearch);
 
+    // Sanitize and prepare filtered logs for display
     if (isset($logFiltered) && !empty($logFiltered)) {
         $logFilteredChain = Sanitize(implode("\n", $logFiltered));
     }
@@ -101,7 +89,7 @@
                 <div class="checkbox-line">
                     <input class="checkbox" type="checkbox" id="Alarm" name="logEvenementTypeSelection[]" value="Alarm" <?= (str_contains($logEvenementTypeSelectionChain, 'Alarm') ? 'checked' : '') ?>>
                     <label for="Alarm">Alarm</label>
-            </div>         
+                </div>         
             </div>
 
             <?php if ($_SESSION['LOGGED_USER']['profile'] === 'superadmin') : ?>
@@ -132,8 +120,6 @@
             <button id="submit" type="submit" name="submit" value="submit">Appliquer</button>
             <button id="reset" type="submit" name="submit" value="reset">Effacer les filtres</button>
             <button id="copy" value="<?= $logFilteredChain ?>">Copier</button>
-
-            
         </div>
     </form> 
 </section>
@@ -149,17 +135,21 @@
 
 <?php require_once(__DIR__ . '/footer.php'); ?>
 
-
 <script>
+    // Function to copy the filtered log content to clipboard
     function copy() {
-    let copyText = document.querySelector("#copy").value;
+        let copyText = document.querySelector("#copy").value;
 
-    let tempInput = document.createElement("textarea");
-    tempInput.value = copyText;
-    document.body.appendChild(tempInput);
-    tempInput.select();
-    document.execCommand("copy");
+        let tempInput = document.createElement("textarea");
+        tempInput.value = copyText;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+
+        // Clean up temporary textarea
+        document.body.removeChild(tempInput);
     }
 
+    // Event listener for copy button
     document.querySelector("#copy").addEventListener("click", copy);
 </script>

@@ -1,30 +1,28 @@
----
---- Data
----
---- (1, 'PROG_1, PROG_2', 'codage', 'creertest <test>avec option -c ou -p selon besoin', 'TOUS'),
---- (2, 'PROG_1, PROG_2', 'codage', 'modini <test>', 'TOUS'),
---- (3, 'PROG_1, PROG_2', 'codage', 'Vérifier que les dates dans le .tp correspond au fichier définition dans REF_CONTEXT/<contexte>/definition', NULL),
---- (4, 'PROG_1, PROG_2', 'codage', 'Mettre une instruction set_1553_Error pour chaque instrument PL utilisé : Set_1553_Error ("1", "TIMEOUT"); /* POSEIDON 1 = 1, POSEIDON 2 = 4 */ Set_1553_Error ("7", "TIMEOUT"); /* DORIS 1 = 7, DORIS 2 = 10 */', 'PL, POS3'),
---- (5, 'PROG_1, PROG_2', 'codage', "Autoriser l'utilisation de la FDTM durant le test", 'TOUS, sauf deploiement'),
---- (6, 'PROG_1, PROG_2', 'codage', 'Modifier la configuration du RM en cas de reconfiguration inattendue durant le test', 'TOUS, MeO'),
---- (7, 'PROG_1, PROG_2', 'codage', "Envoyer les TC spécifiques de reprise de contexte des SADM spécifiques avant l'envoi des TC decontexte", 'post RDP1'),
---- (8, 'PROG_1, PROG_2', 'codage', "Modifier la FDIR pour le health status GYRO pendant le mode TEST après l'envoi des TC de contexte", 'annulé'),
---- (9, 'PROG_1, PROG_2', 'codage', 'La procedure de WarmStart à utiliser se trouve dans la librairie cc_proc_warmstart. Elle porte le nom WS_miss5_<ctx_reprise>_PM<A ou B>(<tGPSWarmStart>).', 'MeO, GPS, warmstart'),
---- (10, 'PROG_1, PROG_2', 'exécution', 'Vérifier que outputs et outputs_ctx sont accessibles en écriture', 'TOUS'),
---- (11, 'PROG_1, PROG_2', 'exécution', 'Vérifier la date de la dernière calibration. Elle doit être < 15 jours sinon, il faut calibrer les gyros', 'BF GYRO, calibration'),
---- (12, 'PROG_1, PROG_2', 'exécution', 'Mettre à jour le fichier gyrostd.cal dans $SGSE_HOME/CURRENT_CONF/CHR et $SGSE_HOME/CONF/CHR en fonction des gyros utilisés', 'BF GYRO'),
---- (13, 'PROG_2', 'exécution', 'Modifier le fichier plbs.chr pour configurer le paquet DIODE sur le RT, la sous-adresse, la fréquence souhaitée (si paquet diode nécessaire)', 'PL'),
---- (14, 'PROG_2', 'exécution', "Connecter l'EBB POS-3 en fonction du PM utilisé (si besoin)", 'PL, POS3'),
---- (15, 'PROG_1, PROG_2', 'exécution', "Vérifier que l'alimentation du DHU est ON", 'TOUS'),
---- (16, 'PROG_2', 'exécution', "Mettre ON les alimentations de l'EBB POS-3 quand nécessaire", 'PL, POS3'),
---- (17, 'PROG_1, PROG_2', 'analyse', 'ana_fonc <test> -c -v', 'TOUS'),
---- (18, 'GENERIQUE', 'préparation', 'réception équipement: liste des documents à demander', 'TOUS'),
---- (19, 'GENERIQUE', 'préparation', 'expédition équipement: liste des documents à fournir', 'TOUS');
----
+--  Data start
 
----
---- Erase good practices tables if exists
----
+--  (1, 'PROG_1, PROG_2', 'codage', 'creertest <test>avec option -c ou -p selon besoin', 'TOUS'),
+--  (2, 'PROG_1, PROG_2', 'codage', 'modini <test>', 'TOUS'),
+--  (3, 'PROG_1, PROG_2', 'codage', 'Vérifier que les dates dans le .tp correspond au fichier définition dans REF_CONTEXT/<contexte>/definition', NULL),
+--  (4, 'PROG_1, PROG_2', 'codage', 'Mettre une instruction set_1553_Error pour chaque instrument PL utilisé : Set_1553_Error ("1", "TIMEOUT"); /* POSEIDON 1 = 1, POSEIDON 2 = 4 */ Set_1553_Error ("7", "TIMEOUT"); /* DORIS 1 = 7, DORIS 2 = 10 */', 'PL, POS3'),
+--  (5, 'PROG_1, PROG_2', 'codage', "Autoriser l'utilisation de la FDTM durant le test", 'TOUS, sauf deploiement'),
+--  (6, 'PROG_1, PROG_2', 'codage', 'Modifier la configuration du RM en cas de reconfiguration inattendue durant le test', 'TOUS, MeO'),
+--  (7, 'PROG_1, PROG_2', 'codage', "Envoyer les TC spécifiques de reprise de contexte des SADM spécifiques avant l'envoi des TC decontexte", 'post RDP1'),
+--  (8, 'PROG_1, PROG_2', 'codage', "Modifier la FDIR pour le health status GYRO pendant le mode TEST après l'envoi des TC de contexte", 'annulé'),
+--  (9, 'PROG_1, PROG_2', 'codage', 'La procedure de WarmStart à utiliser se trouve dans la librairie cc_proc_warmstart. Elle porte le nom WS_miss5_<ctx_reprise>_PM<A ou B>(<tGPSWarmStart>).', 'MeO, GPS, warmstart'),
+--  (10, 'PROG_1, PROG_2', 'exécution', 'Vérifier que outputs et outputs_ctx sont accessibles en écriture', 'TOUS'),
+--  (11, 'PROG_1, PROG_2', 'exécution', 'Vérifier la date de la dernière calibration. Elle doit être < 15 jours sinon, il faut calibrer les gyros', 'BF GYRO, calibration'),
+--  (12, 'PROG_1, PROG_2', 'exécution', 'Mettre à jour le fichier gyrostd.cal dans $SGSE_HOME/CURRENT_CONF/CHR et $SGSE_HOME/CONF/CHR en fonction des gyros utilisés', 'BF GYRO'),
+--  (13, 'PROG_2', 'exécution', 'Modifier le fichier plbs.chr pour configurer le paquet DIODE sur le RT, la sous-adresse, la fréquence souhaitée (si paquet diode nécessaire)', 'PL'),
+--  (14, 'PROG_2', 'exécution', "Connecter l'EBB POS-3 en fonction du PM utilisé (si besoin)", 'PL, POS3'),
+--  (15, 'PROG_1, PROG_2', 'exécution', "Vérifier que l'alimentation du DHU est ON", 'TOUS'),
+--  (16, 'PROG_2', 'exécution', "Mettre ON les alimentations de l'EBB POS-3 quand nécessaire", 'PL, POS3'),
+--  (17, 'PROG_1, PROG_2', 'analyse', 'ana_fonc <test> -c -v', 'TOUS'),
+--  (18, 'GENERIQUE', 'préparation', 'réception équipement: liste des documents à demander', 'TOUS'),
+--  (19, 'GENERIQUE', 'préparation', 'expédition équipement: liste des documents à fournir', 'TOUS');
+
+-- Data end
+
+-- Erase good practices tables if exists
 
 DROP TABLE IF EXISTS GOODPRACTICE_PROGRAM;
 DROP TABLE IF EXISTS GOODPRACTICE_KEYWORD;
@@ -33,9 +31,7 @@ DROP TABLE IF EXISTS PROGRAM;
 DROP TABLE IF EXISTS GOODPRACTICE;
 DROP TABLE IF EXISTS PHASE;
 
---
 -- Create good practices tables
---
 
 CREATE TABLE PHASE (
     phase_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -77,9 +73,7 @@ CREATE TABLE GOODPRACTICE_KEYWORD (
     FOREIGN KEY (keyword_id) REFERENCES KEYWORD(keyword_id)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
---
 -- Insert data into good practices tables
---
 
 INSERT INTO PROGRAM (program_id, program_name) VALUES
 (1, 'GENERIQUE'),

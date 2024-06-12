@@ -1,12 +1,12 @@
 <?php
-    session_start();   
-    $path = $_SERVER['PHP_SELF'];
-    $file = basename($path);
-    require_once(__DIR__ . '/../functions.php');
-    if (!isset($_SESSION['LOGGED_USER'])) { Logger(NULL, NULL, 2, 'Unauthorized access attempt to '.$file); header('Location:logout.php'); exit(); }
-
+    session_start();  // Start or resume the session
+    require_once(__DIR__ . '/../functions.php');  // Include functions.php file
+    CheckRights();  // Check user rights
+    
+    // Path to Python3 binary
     $python3BinaryPath = "";
 
+    // If the Python3 binary path is not provided, set a default path
     if ($python3BinaryPath === "") {
         $python3BinaryPath = "/usr/share/bin/python3";
     }

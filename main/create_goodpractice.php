@@ -1,55 +1,67 @@
 <?php 
-    session_start(); 
-    $path = $_SERVER['PHP_SELF'];
-    $file = basename($path);
+    session_start();
     require_once(__DIR__ . '/functions.php');
-    if (!isset($_SESSION['LOGGED_USER'])) { Logger(NULL, NULL, 2, 'Unauthorized access attempt to '.$file); header('Location:logout.php'); exit(); }
+    CheckRights();
     
     require_once(__DIR__ . '/config/database_connect.php');
     require_once(__DIR__ . '/sql_functions.php');
 
-
+    // Display alert message if set in session
     if (isset($_SESSION['GOODPRACTICE_CREATION_MESSAGE'])) {
         echo '<script>alert("'.Sanitize($_SESSION['GOODPRACTICE_CREATION_MESSAGE']).'")</script>';
         unset($_SESSION['GOODPRACTICE_CREATION_MESSAGE']);
     }
-?>
 
-<?php require_once(__DIR__ . '/header.php'); ?>
+    require_once(__DIR__ . '/header.php');
 
-<?php
+    // Retrieve programs and phases for selection
     $programs = ProgramSelect();
     $phases = PhaseSelect();
 
+    // Prepare selected programs chain
     if (isset($_SESSION['GOODPRACTICES_CREATION']['program_name'])) {
         $programsSelectionChain = Sanitize(implode(', ', $_SESSION['GOODPRACTICES_CREATION']['program_name']));
     } else {
         $programsSelectionChain = '';
     }
+
+    // Set default value for creating all programs
     if (!isset($_SESSION['CREATE_ALL_PROGRAMS'])) {
         $_SESSION['CREATE_ALL_PROGRAMS'] = 0;
     }
+
+    // Prepare selected phase chain
     if (isset($_SESSION['GOODPRACTICES_CREATION']['phase_name'])) {
         $phaseSelectionChain = Sanitize($_SESSION['GOODPRACTICES_CREATION']['phase_name']);
     } else {
         $phaseSelectionChain = '';
     }
+
+    // Override phase selection chain if CREATE_PHASE_CHECK is set
     if (isset($_SESSION['CREATE_PHASE_CHECK'])) {
         $phaseSelectionChain = Sanitize($_SESSION['CREATE_PHASE_CHECK']);
     }
+
+    // Prepare selected keywords chain
     if (isset($_SESSION['GOODPRACTICES_CREATION']['onekeyword'])) {
         $keywordsSelectionChain = Sanitize(implode(', ', $_SESSION['GOODPRACTICES_CREATION']['onekeyword']));
     } else {
         $keywordsSelectionChain = '';
     }
+
+    // Append CREATE_KEYWORDS_CHECK to keywords selection chain if set
     if (isset($_SESSION['CREATE_KEYWORDS_CHECK'])) {
         $keywordsSelectionChain .= Sanitize($_SESSION['CREATE_KEYWORDS_CHECK']);
     }
+
+    // Prepare additional keywords chain
     if (isset($_SESSION['GOODPRACTICES_CREATION']['addOnekeyword'])) {
         $addKeywordsSelectionChain = Sanitize($_SESSION['GOODPRACTICES_CREATION']['addOnekeyword']);
     } else {
         $addKeywordsSelectionChain = '';
     }
+
+    // Append CREATE_ADD_KEYWORDS_CHECK to additional keywords selection chain if set
     if (isset($_SESSION['CREATE_ADD_KEYWORDS_CHECK'])) {
         $addKeywordsSelectionChain .= Sanitize($_SESSION['CREATE_ADD_KEYWORDS_CHECK']);
     }

@@ -1,12 +1,8 @@
----
---- Erase PASSWORD table if exists
----
+-- Erase PASSWORD table if exists
 
 DROP TABLE IF EXISTS PASSWORD;
 
---
 -- Create PASSWORD table
---
 
 CREATE TABLE PASSWORD (
   password_id INT PRIMARY KEY NOT NULL,
@@ -16,9 +12,7 @@ CREATE TABLE PASSWORD (
   r INT NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
---
 -- Insert data into PASSWORD table
---
 
 INSERT INTO PASSWORD (password_id, n, p, q, r) VALUES
 (0, 0, 0, 0, 0);

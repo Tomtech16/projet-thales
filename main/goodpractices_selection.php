@@ -1,43 +1,29 @@
 <?php 
     session_start(); 
-    $path = $_SERVER['PHP_SELF'];
-    $file = basename($path);
     require_once(__DIR__ . '/functions.php');
-    if (!isset($_SESSION['LOGGED_USER'])) { Logger(NULL, NULL, 2, 'Unauthorized access attempt to '.$file); header('Location:logout.php'); exit(); }
+    CheckRights();
     
     require_once(__DIR__ . '/config/database_connect.php');
     require_once(__DIR__ . '/sql_functions.php');
 
+    // Fetch programs and phases
     $programs = ProgramSelect();
     $phases = PhaseSelect();
 
+    // Sanitize and retrieve session variables
     $orderType = Sanitize($_SESSION['GOODPRACTICES_ORDER'][0]);
     $orderDirection = Sanitize($_SESSION['GOODPRACTICES_ORDER'][1]);
 
-    if (isset($_SESSION['SELECT_ALL_PROGRAMS_CHECK'])) {
-        $programsSelectionChain = Sanitize(implode(', ', $_SESSION['SELECT_ALL_PROGRAMS_CHECK']));
-    } else {
-        $programsSelectionChain = '';
-    }
-    if (!isset($_SESSION['SELECT_ALL_PROGRAMS'])) {
-        $_SESSION['SELECT_ALL_PROGRAMS'] = 0;
-    }
-    if (isset($_SESSION['GOODPRACTICES_SELECTION']['phase_name'])) {
-        $phasesSelectionChain = Sanitize(implode(', ', $_SESSION['GOODPRACTICES_SELECTION']['phase_name']));
-    } else {
-        $phasesSelectionChain = '';
-    }  
-    if (isset($_SESSION['PHASE_CHECK'])) {
-        $phasesSelectionChain .= Sanitize(implode(', ', $_SESSION['PHASE_CHECK']));
-    }
-    if (isset($_SESSION['GOODPRACTICES_SELECTION']['onekeyword'])) {
-        $keywordsSelectionChain = Sanitize(implode(', ', $_SESSION['GOODPRACTICES_SELECTION']['onekeyword']));
-    } else {
-        $keywordsSelectionChain = '';
-    }
-    if (isset($_SESSION['KEYWORDS_CHECK'])) {
-        $keywordsSelectionChain .= Sanitize($_SESSION['KEYWORDS_CHECK']);
-    }
+    $programsSelectionChain = isset($_SESSION['SELECT_ALL_PROGRAMS_CHECK']) ? Sanitize(implode(', ', $_SESSION['SELECT_ALL_PROGRAMS_CHECK'])) : '';
+    $_SESSION['SELECT_ALL_PROGRAMS'] ??= 0;
+    $phasesSelectionChain = isset($_SESSION['GOODPRACTICES_SELECTION']['phase_name']) ? Sanitize(implode(', ', $_SESSION['GOODPRACTICES_SELECTION']['phase_name'])) : '';
+
+    $phasesSelectionChain .= isset($_SESSION['PHASE_CHECK']) ? Sanitize(implode(', ', $_SESSION['PHASE_CHECK'])) : '';
+
+    $keywordsSelectionChain = isset($_SESSION['GOODPRACTICES_SELECTION']['onekeyword']) ? Sanitize(implode(', ', $_SESSION['GOODPRACTICES_SELECTION']['onekeyword'])) : '';
+
+    $keywordsSelectionChain .= isset($_SESSION['KEYWORDS_CHECK']) ? Sanitize($_SESSION['KEYWORDS_CHECK']) : '';
+
 ?>
 <section class="goodpractices-selection">
     <h2>Interface de filtrage des bonnes pratiques</h2>
@@ -46,7 +32,7 @@
             <div class="programs-selection">
                 <div id="programs-selection-title-and-button">
                     <h3>Recherche de programme(s)</h3>
-                    <button id="select-all" type="submit" name="submit" value="select-all-programs"><?= $_SESSION['SELECT_ALL_PROGRAMS'] ? 'Tout désélectionner' : 'Tout sélectionner' ?></button>
+                    <button id="select-all" type="submit" name="submit" value="select-all-programs"><?= $_SESSION['SELECT_ALL_PROGRAMS'] ? 'Tout désélectionner' : 'Tout séléctionner' ?></button>
                 </div>
                 <div class="checkbox-area">
                     <?php foreach ($programs as $program): ?>
@@ -109,14 +95,15 @@
 </section>
 
 <script type="text/javascript">
+    // JavaScript to handle popups and alerts after page load
     window.onload = function() {
-    <?php if (isset($_SESSION['CHECKLIST_CREATION_OUTPUT'])) : ?>
-        alert("<?= Sanitize($_SESSION['CHECKLIST_CREATION_OUTPUT']) ?>");
-        <?php unset($_SESSION['CHECKLIST_CREATION_OUTPUT']); ?>
-    <?php endif; ?>
-    <?php if (isset($_SESSION['CHECKLIST_FILENAME'])) : ?>
-        open("http://<?= $_SERVER['SERVER_NAME'] ?>:<?= $_SERVER['SERVER_PORT'] ?>/checklist/<?= Sanitize($_SESSION['CHECKLIST_FILENAME']) ?>", '_blank');
-        <?php unset($_SESSION['CHECKLIST_FILENAME']); ?>
-    <?php endif; ?>
+        <?php if (isset($_SESSION['CHECKLIST_CREATION_OUTPUT'])) : ?>
+            alert("<?= Sanitize($_SESSION['CHECKLIST_CREATION_OUTPUT']) ?>");
+            <?php unset($_SESSION['CHECKLIST_CREATION_OUTPUT']); ?>
+            <?php if (isset($_SESSION['CHECKLIST_FILENAME'])) : ?>
+                open("http://<?= $_SERVER['SERVER_NAME'] ?>:<?= $_SERVER['SERVER_PORT'] ?>/checklist/<?= Sanitize($_SESSION['CHECKLIST_FILENAME']) ?>", '_blank');
+                <?php unset($_SESSION['CHECKLIST_FILENAME']); ?>
+            <?php endif; ?>
+        <?php endif; ?>
     };
 </script>

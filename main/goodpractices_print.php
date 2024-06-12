@@ -1,18 +1,21 @@
 <?php 
-    session_start();   
-    $path = $_SERVER['PHP_SELF'];
-    $file = basename($path);
+    // Start session and include necessary files
+    session_start();
     require_once(__DIR__ . '/functions.php');
-    if (!isset($_SESSION['LOGGED_USER'])) { Logger(NULL, NULL, 2, 'Unauthorized access attempt to '.$file); header('Location:logout.php'); exit(); }
-
+    CheckRights();
+    
+    // Include database connection and SQL functions
     require_once(__DIR__ . '/config/database_connect.php');
     require_once(__DIR__ . '/sql_functions.php');
 
+    // Retrieve session variables
     $whereIs = $_SESSION['GOODPRACTICES_SELECTION'];
     $orderBy = $_SESSION['GOODPRACTICES_ORDER'];
     $erased = $_SESSION['ERASED_GOODPRACTICES'];
     $erasedPrograms = $_SESSION['ERASED_GOODPRACTICES_PROGRAMS'];
     $profile = Sanitize($_SESSION['LOGGED_USER']['profile']);
+
+    // Retrieve good practices based on session variables
     $goodPractices = GoodPracticesSelect($whereIs, $orderBy, $erased, $erasedPrograms, $profile);
 ?>
 
@@ -89,7 +92,6 @@
                     <li>Si aucun programme n'est sélectionné, effacer ou supprimer la bonne pratique pour tous les programmes.</li>
                 <?php endif; ?>
             </ul>
-            <p></p>
             <div class="popup-programs-selection">
                 <h4>Programme(s)</h4>
                 <div class="popup-checkbox-area">
@@ -101,51 +103,51 @@
                     <?php endforeach; ?>   
                 </div>         
             </div>
+            <button type="submit" class="btn" name="submit" value="duplicate">Dupliquer</button>
             <?php if (isset($_SESSION['LOGGED_USER']) && ($_SESSION['LOGGED_USER']['profile'] === 'superadmin' || $_SESSION['LOGGED_USER']['profile'] === 'admin')) : ?>
                 <button type="submit" class="btn-warning" name="submit" value="delete">Supprimer définitivement</button>
             <?php elseif (isset($_SESSION['LOGGED_USER']) && $_SESSION['LOGGED_USER']['profile'] === 'operator') : ?>
                 <button type="submit" class="btn-warning" name="submit" value="operator-delete">Supprimer</button>
             <?php endif; ?>
             <button type="submit" class="btn-warning" name="submit" value="erase">Effacer</button>
-            <button type="submit" class="btn" name="submit" value="duplicate">Dupliquer</button>
             <button type="button" class="btn" onclick="closeGoodpracticeForm()">Annuler</button>
         </form>
     </div>
-
 </section>
 
 <script>
-    // Function to open duplicate form
+    // Function to open the manage good practice form
     function openGoodpracticeForm(goodpracticeId, programNamesString, restore, profile) {
         // Set the good practice ID
         document.getElementById("goodpracticeId").value = goodpracticeId;
         
+        // Process program names based on user profile
+        var programNamesArray = [];
         if (profile !== 'admin' && profile !== 'superadmin') {
-            var programNamesArray = programNamesString.split(', ');
+            programNamesArray = programNamesString.split(', ');
         } else {
-            var programNamesArray = programNamesString.replace(/:0|:1/g, '').split(', ');
+            programNamesArray = programNamesString.replace(/:0|:1/g, '').split(', ');
         }
 
-        // Select all labels within the .popup-programs-selection
+        // Highlight selected program names in the form
         const labels = document.querySelectorAll('.popup-programs-selection label');
         labels.forEach(label => {
             if (programNamesArray.includes(label.getAttribute('for'))) {
-                // Change the label color to red
-                label.style.color = 'red';
+                label.style.color = 'red'; // Change label color to red
             } else {
-                // Reset the label color if needed
-                label.style.color = '#fff'; // or set it to the default color
+                label.style.color = '#fff'; // Reset label color
             }        
         });
 
+        // Manage visibility of restore button
         if (restore) {
-            // Check if the restore button already exists
+            // Check if restore button exists
             if (!document.getElementById('restore-button')) {
-                // Select the buttons
+                // Select erase and duplicate buttons
                 const eraseButton = document.querySelector('button[value="erase"]');
                 const duplicateButton = document.querySelector('button[value="duplicate"]');
 
-                // Create the restore button
+                // Create restore button
                 const restoreButton = document.createElement('button');
                 restoreButton.type = 'submit';
                 restoreButton.id = 'restore-button';
@@ -154,21 +156,22 @@
                 restoreButton.value = 'restore';
                 restoreButton.textContent = 'Restaurer';
 
-                // Insert the restore button between the duplicate and cancel buttons
+                // Insert restore button before duplicate button
                 eraseButton.parentNode.insertBefore(restoreButton, duplicateButton);
             }
         } else {
-            // If restore is false, remove the restore button if it exists
+            // Remove restore button if restore is false
             const existingRestoreButton = document.getElementById('restore-button');
             if (existingRestoreButton) {
                 existingRestoreButton.parentNode.removeChild(existingRestoreButton);
             }
         }
 
+        // Display the manage good practice form
         document.getElementById("goodpracticeForm").style.display = "block";
     }
 
-    // Function to close delete form
+    // Function to close the manage good practice form
     function closeGoodpracticeForm() {
         document.getElementById("goodpracticeForm").style.display = "none";
     }

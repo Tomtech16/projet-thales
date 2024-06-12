@@ -1,13 +1,12 @@
 <?php 
     session_start();
-    $path = $_SERVER['PHP_SELF'];
-    $file = basename($path);
     require_once(__DIR__ . '/functions.php');
-    if (!isset($_SESSION['LOGGED_USER']) || ($_SESSION['LOGGED_USER']['profile'] !== 'admin' && $_SESSION['LOGGED_USER']['profile'] !== 'superadmin')) { Logger(Sanitize($_SESSION['LOGGED_USER']['username']), Sanitize($_SESSION['LOGGED_USER']['profile']), 2, 'Unauthorized access attempt to '.$file); header('Location:logout.php'); exit(); }
+    CheckAdminRights();
 
     require_once(__DIR__ . '/config/database_connect.php');
     require_once(__DIR__ . '/sql_functions.php');
 
+    // Display alert message if set in session
     if (isset($_SESSION['CREATE_USER_MESSAGE'])) {
         echo '<script>alert("'.Sanitize($_SESSION['CREATE_USER_MESSAGE']).'")</script>';
     }
