@@ -1,7 +1,9 @@
 <?php
-    $path = $_SERVER['PHP_SELF'];
-    $file = basename($path);
+    require_once(__DIR__ . '/functions.php');
+    $file = GetCurrentFile();
+    // Creates navigation links based on user permissions
 ?>
+
 <!DOCTYPE HTML>
 <html>
 	<head>
