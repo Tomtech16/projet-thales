@@ -21,6 +21,9 @@
     // Prepare selected programs chain
     if (isset($_SESSION['GOODPRACTICES_CREATION']['program_name'])) {
         $programsSelectionChain = Sanitize(implode(', ', $_SESSION['GOODPRACTICES_CREATION']['program_name']));
+        if (!str_contains($programsSelectionChain, ',')) {
+            $programsSelectionChain .= ',';
+        }
     } else {
         $programsSelectionChain = '';
     }
@@ -79,7 +82,7 @@
                 <div class="checkbox-area">
                     <?php foreach ($programs as $program): ?>
                         <div class="checkbox-line">
-                            <input class="checkbox" type="checkbox" id="id<?= $program[0] ?>" name="programsSelection[]" value="<?= $program[0] ?>" <?= (str_contains($programsSelectionChain, $program[0]) || $_SESSION['CREATE_ALL_PROGRAMS'] ? 'checked' : '') ?>>
+                            <input class="checkbox" type="checkbox" id="id<?= $program[0] ?>" name="programsSelection[]" value="<?= $program[0] ?>" <?= (str_contains($programsSelectionChain, $program[0].',') || $_SESSION['CREATE_ALL_PROGRAMS'] ? 'checked' : '') ?>>
                             <label for="id<?= $program[0] ?>"><?= $program[0] ?></label>
                         </div>
                     <?php endforeach; ?>   

@@ -10,9 +10,21 @@
     $log = array_reverse(file('./log/log.txt'));
     $userUsername = Sanitize($_SESSION['LOGGED_USER']['username']);
     $userProfile = Sanitize($_SESSION['LOGGED_USER']['profile']);
-    $day = isset($_SESSION['LOG_FILTERS']['LOG_DATE_DAY']) ? Sanitize($_SESSION['LOG_FILTERS']['LOG_DATE_DAY']) : 0;
-    $month = isset($_SESSION['LOG_FILTERS']['LOG_DATE_MONTH']) ? Sanitize($_SESSION['LOG_FILTERS']['LOG_DATE_MONTH']) : '';
-    $year = isset($_SESSION['LOG_FILTERS']['LOG_DATE_YEAR']) ? Sanitize($_SESSION['LOG_FILTERS']['LOG_DATE_YEAR']) : 0;
+    if (isset($_SESSION['LOG_FILTERS']['LOG_DATE_DAY']) && !empty($_SESSION['LOG_FILTERS']['LOG_DATE_DAY'])) {
+        $day = Sanitize($_SESSION['LOG_FILTERS']['LOG_DATE_DAY']);
+    } else {
+        $day = 0;
+    }
+    if (isset($_SESSION['LOG_FILTERS']['LOG_DATE_MONTH']) && !empty($_SESSION['LOG_FILTERS']['LOG_DATE_MONTH'])) {
+        $month = Sanitize($_SESSION['LOG_FILTERS']['LOG_DATE_MONTH']);
+    } else {
+        $month = '';
+    }
+    if (isset($_SESSION['LOG_FILTERS']['LOG_DATE_YEAR']) && !empty($_SESSION['LOG_FILTERS']['LOG_DATE_YEAR'])) {
+        $year = Sanitize($_SESSION['LOG_FILTERS']['LOG_DATE_YEAR']);
+    } else {
+        $year = 0;
+    }
     if (isset($_SESSION['LOG_FILTERS']['LOG_EVENEMENT_TYPE'])) {
         $evenementType = $_SESSION['LOG_FILTERS']['LOG_EVENEMENT_TYPE'];
         $logEvenementTypeSelectionChain = Sanitize(implode(', ', $_SESSION['LOG_FILTERS']['LOG_EVENEMENT_TYPE']));
