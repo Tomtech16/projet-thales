@@ -62,7 +62,7 @@
                 <h3>Date</h3>
                 <div>
                     <label for="log-date-day">Jour : </label>
-                    <input id="log-date-day" type="number" name="log-date-day" min="1" max="31" <?= $day ? 'value="'.$day.'"' : '' ?>>
+                    <input id="log-date-day" type="number" name="log-date-day" min="1" max="31" placeholder="Saisir le jour" <?= $day ? 'value="'.$day.'"' : '' ?>>
                 </div>
                 <div>
                     <label for="log-date-month">Mois : </label>
@@ -84,7 +84,7 @@
                 </div>
                 <div>
                     <label for="log-date-year">Année : </label>
-                    <input id="log-date-year" type="number" name="log-date-year" min="2024" max="2100" <?= $year ? 'value="'.$year.'"' : '' ?>>
+                    <input id="log-date-year" type="number" name="log-date-year" min="2024" max="2100" placeholder="Saisir l'année" <?= $year ? 'value="'.$year.'"' : '' ?>>
                 </div>
             </div>
 
@@ -124,7 +124,7 @@
             
             <div class="log-selection" id="log-search-selection<?= $_SESSION['LOGGED_USER']['profile'] === 'admin' ? '-a' : ($_SESSION['LOGGED_USER']['profile'] === 'superadmin' ? '-sa' : '') ?>">
                 <h3>Barre de recherche</h3>
-                <input class="search-input" type="search" id="log-search" name="logSearch" placeholder="Mots séparés par des virgules" value="<?= $logSearchSelectionChain ?>" autofocus>
+                <input class="search-input" type="search" id="log-search" name="logSearch" placeholder="Mots séparés par des virgules, adresse IP..." value="<?= $logSearchSelectionChain ?>" autofocus>
             </div>
         </div>
 

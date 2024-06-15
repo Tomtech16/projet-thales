@@ -359,7 +359,7 @@ section {
 
 /* Styles for specific input fields within password update selection and log date */
 .password-input-line input, #log-date-day, #log-date-year {
-    width: 20%;  /* Width of 20% */
+    width: 40%;  /* Width of 20% */
 }
 
 /* Styles for checkboxes within programs selection, popup programs selection, phases and order selection, phase selection, password input line, create user selection, and log selection */
