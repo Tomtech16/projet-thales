@@ -136,7 +136,7 @@ def get_unique_filename(base_filename):
     if os.path.exists(base_filename):
         count = 1
         filename, extension = os.path.splitext(base_filename)
-        while os.path.exists(f"{filename}_({count}){extension}"):
+        while os.path.exists(f"{filename}({count}){extension}"):
             count += 1
         return f"{filename}({count}){extension}"
     else:
