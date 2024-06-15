@@ -89,6 +89,7 @@ header a {
 /* Styles for specific element with ID "uca" */
 #uca {
     background-color: #fff;  /* White background */
+    color: black;  /* Black text */
     height: 64px;  /* Fixed height */
     width: 150px;  /* Fixed width */
     margin: 0;  /* No margin */
