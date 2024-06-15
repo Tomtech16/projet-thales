@@ -8,17 +8,6 @@
     }
 
     /**
-     * Function to display variable contents in a preformatted manner.
-     * 
-     * @param mixed $var The variable to display
-     */
-    function P($var) {
-        echo "<pre>";
-        print_r($var);
-        echo "</pre>";
-    }
-
-    /**
      * Retrieves the current filename.
      * 
      * @return string The filename
@@ -275,7 +264,8 @@
         $whereIs = $whereIs ? json_encode($whereIs) : '';
         $whereIs = str_replace('"program_name":null,', '', $whereIs);
         $whereIs = str_replace('"phase_name":null,', '', $whereIs);
-        $whereIs = str_replace('{"keywords":[""],', '', $whereIs);
+        $whereIs = str_replace(',"onekeyword":[""]', '', $whereIs);
+        $whereIs = str_replace('"onekeyword":[""]', '', $whereIs);
         $orderBy = $orderBy ? json_encode($orderBy) : '';
         $erasedGoodpractices = $erasedGoodpractices ? implode(',', $erasedGoodpractices) : '';
         $erasedPrograms = $erasedPrograms ? json_encode($erasedPrograms) : '';
@@ -301,7 +291,6 @@
         $command .= "--output_file " . escapeshellarg($outputFile);
         
         exec($command, $output, $exit_code);
-        
         $filename = $output[0];
 
         if (intval($exit_code) === 0) {                
