@@ -78,7 +78,26 @@ CREATE TABLE GOODPRACTICE_KEYWORD (
 INSERT INTO PROGRAM (program_id, program_name) VALUES
 (1, 'GENERIQUE'),
 (2, 'PROG_1'),
-(3, 'PROG_2');
+(3, 'PROG_2'),
+
+-- Presentation data
+
+(4, 'PROG_4'),
+(5, 'PROG_5'),
+(6, 'PROG_6'),
+(7, 'PROG_7'),
+(8, 'PROG_8'),
+(9, 'PROG_9'),
+(10, 'PROG_10'),
+(11, 'PROG_11'),
+(12, 'PROG_12'),
+(13, 'PROG_13'),
+(14, 'PROG_14'),
+(15, 'PROG_15'),
+(16, 'PROG_16'),
+(17, 'PROG_17'),
+(18, 'PROG_18');
+
 
 INSERT INTO PHASE (phase_id, phase_name) VALUES
 (1, 'préparation'),
