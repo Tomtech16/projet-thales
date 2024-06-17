@@ -18,6 +18,3 @@
         - You can use the chmod command : 
             - !!! in the right directory !!!
             - chmod -R 774 *
-    - Please check that checklist_generator.py and db_connection.py are executable files.
-        - You can do so with "ls -l" command in python directory.
-        - If not, you can use the "chmod ug+x checklist_generator.py db_connection.py" command to make it.
