@@ -103,8 +103,8 @@
         $sql .= "WHERE user_id = :userId";
         
         $stmt = $db->prepare($sql);
-        $marqueurs = array('userId' => $userId);
-        $stmt->execute($marqueurs) or die(print_r($stmt->errorInfo()));
+        $markers = array('userId' => $userId);
+        $stmt->execute($markers) or die(print_r($stmt->errorInfo()));
         $stmt->closeCursor();
     }
 
@@ -143,13 +143,13 @@
             $hash = password_hash($password, PASSWORD_BCRYPT);
             $sql = "INSERT INTO USERS (username, firstname, lastname, profile, password, attempts) VALUES (:username, :firstname, :lastname, :profile, :password, 0)";
             $stmt = $db->prepare($sql);
-            $marqueurs = array('username' => Sanitize($username), 'firstname' => Sanitize($firstname), 'lastname' => Sanitize($lastname), 'password' => Sanitize($hash));
+            $markers = array('username' => Sanitize($username), 'firstname' => Sanitize($firstname), 'lastname' => Sanitize($lastname), 'password' => Sanitize($hash));
             if ($profile === NULL || $profile === 'operator') {
-                $marqueurs['profile'] = 'operator';
+                $markers['profile'] = 'operator';
             } elseif ($profile === 'admin') {
-                $marqueurs['profile'] = 'admin';
+                $markers['profile'] = 'admin';
             }
-            $stmt->execute($marqueurs) or die(print_r($stmt->errorInfo()));
+            $stmt->execute($markers) or die(print_r($stmt->errorInfo()));
             $stmt->closeCursor();
             return TRUE;
         } else {
@@ -169,8 +169,8 @@
 
         $sql = "SELECT username FROM USERS WHERE user_id = :userId;";
         $stmt = $db->prepare($sql);
-        $marqueurs['userId'] = Sanitize($userId);
-        $stmt->execute($marqueurs) or die(print_r($stmt->errorInfo()));
+        $markers['userId'] = Sanitize($userId);
+        $stmt->execute($markers) or die(print_r($stmt->errorInfo()));
         $username = $stmt->fetch();
         $stmt->closeCursor();
         return Sanitize($username[0]);
@@ -193,8 +193,8 @@
             $sql = "DELETE FROM USERS WHERE user_id = :userId AND profile = 'operator'";
         }
         $stmt = $db->prepare($sql);
-        $marqueurs['userId'] = Sanitize($userId);
-        $stmt->execute($marqueurs) or die(print_r($stmt->errorInfo()));
+        $markers['userId'] = Sanitize($userId);
+        $stmt->execute($markers) or die(print_r($stmt->errorInfo()));
         $stmt->closeCursor();
     }
 
@@ -227,8 +227,8 @@
             }
         }
         $stmt = $db->prepare($sql);
-        $marqueurs = array('newHash' => $newHash, 'userId' => Sanitize($userId));
-        $stmt->execute($marqueurs) or die(print_r($stmt->errorInfo()));
+        $markers = array('newHash' => $newHash, 'userId' => Sanitize($userId));
+        $stmt->execute($markers) or die(print_r($stmt->errorInfo()));
         $stmt->closeCursor();
     }
 
@@ -407,6 +407,57 @@
         $stmt->closeCursor();
         return $keywords;
     }
+
+/**
+ * Delete a program name from the PROGRAM table, or a keyword from the KEYWORD table.
+ * 
+ * @param string $fieldType Field name
+ * @param string $value Value to delete
+ * @param string $profile User profile
+ */
+function DeleteField(string $fieldType, string $value, string $profile): void
+{
+    global $db;
+
+    if ($profile === 'admin' || $profile === 'superadmin') {
+        if ($fieldType === 'program_name') {
+            $sql = "SELECT program_id FROM PROGRAM WHERE program_name = :valueToDelete";
+            $marker = array('valueToDelete' => $value);
+            $stmt = $db->prepare($sql);
+            $stmt->execute($marker);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            if ($result) {
+                $primaryKey = $result['program_id'];
+                $sql = "DELETE FROM GOODPRACTICE_PROGRAM WHERE program_id = :primaryKey;
+                        DELETE FROM PROGRAM WHERE program_id = :primaryKey";
+                $markers = array('primaryKey' => $primaryKey);
+                $stmt = $db->prepare($sql);
+                $stmt->execute($markers);
+                $stmt->closeCursor();
+            }
+        } elseif ($fieldType === 'onekeyword') {
+            $sql = "SELECT keyword_id FROM KEYWORD WHERE onekeyword = :valueToDelete";
+            $marker = array('valueToDelete' => $value);
+            $stmt = $db->prepare($sql);
+            $stmt->execute($marker);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            if ($result) {
+                $primaryKey = $result['keyword_id'];
+                $sql = "DELETE FROM GOODPRACTICE_KEYWORD WHERE keyword_id = :primaryKey;
+                        DELETE FROM KEYWORD WHERE keyword_id = :primaryKey";
+                $markers = array('primaryKey' => $primaryKey);
+                $stmt = $db->prepare($sql);
+                $stmt->execute($markers);
+                $stmt->closeCursor();
+            }
+        }
+    }
+}
+
 
     /**
      * Validates and filters selected keywords against available keywords in the database.

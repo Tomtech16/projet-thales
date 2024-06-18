@@ -29,6 +29,7 @@
         $_SESSION['CREATE_KEYWORDS_CHECK'] = str_replace($keywordsSelectionChain, '', Sanitize($postData['keywordSearch']));
 
         $_SESSION['CREATE_ADD_KEYWORDS_CHECK'] = Sanitize($postData['addKeyword']); // Store additional keywords selection in session
+        $_SESSION['CREATE_ADD_PROGRAMS_CHECK'] = Sanitize($postData['addProgram']); // Store additional programs selection in session
 
     // Handle 'reset' form submission
     } elseif ($postData['submit'] === 'reset') {
@@ -42,11 +43,21 @@
         unset($_SESSION['CREATE_PHASE_CHECK']);
         unset($_SESSION['CREATE_KEYWORDS_CHECK']);
         unset($_SESSION['CREATE_ADD_KEYWORDS_CHECK']);
+        unset($_SESSION['CREATE_ADD_PROGRAMS_CHECK']);
         $_SESSION['CREATE_ALL_PROGRAMS'] = 0;
 
     // Handle 'submit' form submission
     } elseif ($postData['submit'] === 'submit') {
-        $_SESSION['GOODPRACTICES_CREATION']['program_name'] = $postData['programsSelection']; // Store program name selection in session
+        $programsSelection = $postData['programsSelection'];
+        $_SESSION['GOODPRACTICES_CREATION']['program_name'] = $programsSelection; // Store program name selection in session
+        
+        if ($_SESSION['LOGGED_USER']['profile'] === 'admin' || $_SESSION['LOGGED_USER']['profile'] === 'superadmin') {
+            $addProgram = Sanitize($postData['addProgram']); // Sanitize additional program names
+            $_SESSION['GOODPRACTICES_CREATION']['addProgram'] = $addProgram;
+        } else {
+            $addProgram = '';
+        }
+
         $_SESSION['GOODPRACTICES_CREATION']['phase_name'] = $postData['phasesSelection']; // Store phase name selection in session
 
         // Validate and store keywords selection in session
@@ -55,8 +66,12 @@
         $wrongKeywords = Sanitize(implode(', ', $validateKeywordsSelection[1]));
         $_SESSION['GOODPRACTICES_CREATION']['onekeyword'] = $keywordsSelection;
 
-        $addKeyword = Sanitize($postData['addKeyword']); // Sanitize additional keyword
-        $_SESSION['GOODPRACTICES_CREATION']['addOnekeyword'] = $addKeyword; 
+        if ($_SESSION['LOGGED_USER']['profile'] === 'admin' || $_SESSION['LOGGED_USER']['profile'] === 'superadmin') {
+            $addKeyword = Sanitize($postData['addKeyword']); // Sanitize additional keywords
+            $_SESSION['GOODPRACTICES_CREATION']['addOnekeyword'] = $addKeyword; 
+        } else {
+            $addKeyword = '';
+        }
 
         // Handle error message if there are invalid keywords
         if (!empty($wrongKeywords)) {
@@ -65,13 +80,21 @@
             Logger(Sanitize($_SESSION['LOGGED_USER']['username']), Sanitize($_SESSION['LOGGED_USER']['profile']), 1, 'Failed to create a goodpractice, wrong keywords');
         } else {
             // Proceed if no invalid keywords
-            if (!empty($postData['programsSelection'])) {
+            if (!empty($postData['programsSelection']) || !empty($postData['addProgram'])) {
                 $item = rtrim(Sanitize($postData['goodpractice'])); // Sanitize and trim good practice item
 
                 // Handle error message if good practice is empty
                 if (!empty($item)) {
                     unset($_SESSION['GOODPRACTICE_TEXT']);
-                    $programNames = $postData['programsSelection'];
+
+                    if (!empty($programsSelection && !empty($addProgram))) {
+                        $programNames = array_merge($programsSelection, explode(', ', $addProgram));
+                    } elseif (!empty($programsSelection)) {
+                        $programNames = $programsSelection;
+                    } elseif (!empty($addProgram)) {
+                        $programNames = explode(', ', $addProgram);
+                    }
+
                     $phaseName = Sanitize($postData['phasesSelection']);
 
                     // Merge keywords and handle different scenarios
@@ -91,11 +114,13 @@
                     // Set success message for good practice creation
                     $_SESSION['GOODPRACTICE_CREATION_MESSAGE'] = 'Succès !\n\nLa bonne pratique : \n\n'.$item.'\n\nA bien été créée.';
 
-
                     // Log successful creation of good practice
                     Logger(Sanitize($_SESSION['LOGGED_USER']['username']), Sanitize($_SESSION['LOGGED_USER']['profile']), 1, 'Successfully create a goodpractice');
 
-                    // Unset additional keyword from session after successful creation
+                    // Unset additional programs from session after successful creation
+                    unset($_SESSION['GOODPRACTICES_CREATION']['addProgram']);
+
+                    // Unset additional keywords from session after successful creation
                     unset($_SESSION['GOODPRACTICES_CREATION']['addOnekeyword']);
                         
                 } else {
@@ -119,6 +144,7 @@
         unset($_SESSION['CREATE_PHASE_CHECK']);
         unset($_SESSION['CREATE_KEYWORDS_CHECK']);
         unset($_SESSION['CREATE_ADD_KEYWORDS_CHECK']);
+        unset($_SESSION['CREATE_ADD_PROGRAMS_CHECK']);
     }
 
     header('Location:create_goodpractice.php');

@@ -188,9 +188,9 @@ section {
 }
 
 /* Styles for multiple specific selections */
-.programs-selection, .popup-programs-selection, .phases-and-order-selection, .phase-selection,
-.keywords-selection, .write-goodpractice, .users-order-selection, .password-update-selection,
-.create-user-selection, .log-selection, .create-user, .reset-user-password {
+.programs-selection, .new-programs-selection, .popup-programs-selection, .phases-and-order-selection,
+.phase-selection, .phaseOne-selection, .keywordsOne-selection ,.keywords-selection, .write-goodpractice, .users-order-selection,
+.password-update-selection, .create-user-selection, .log-selection, .create-user, .reset-user-password {
     margin: 1%;  /* 1% margin on all sides */
     padding-left: 10px;  /* Left padding of 10px */
     border: 1px solid var(--thales-gradient-2);  /* Solid border with gradient 2 */
@@ -243,8 +243,17 @@ section {
 }
 
 /* Styles for the keywords selection area within the good practice creation form */
-#goodpractice-creation-form .keywords-selection {
-    width: 25%;  /* Set width to 25% */
+#goodpractice-creation-form .new-programs-selection, #goodpractice-creation-form .keywords-selection {
+    width: 20%;  /* Set width to 20% */
+}
+
+/* Styles for the form selection phase within the good practice creation form */
+#goodpractice-creation-form .phaseOne-selection {
+    width: 30%;  /* Set width to 30% */
+}
+
+#goodpractice-creation-form .keywordsOne-selection {
+    width: 33%;  /* Set width to 33% */
 }
 
 /* Styles for the write good practice section */
@@ -277,10 +286,10 @@ section {
 }
 
 /* Styles for headings across various sections */
-.programs-selection h3, .popup-programs-selection h4, .phases-and-order-selection h3, 
-.phase-selection h3, .keywords-selection h3, .write-goodpractice h3, .users-order-selection h3, 
-.password-update-selection h3, .create-user-selection h3, .log-selection h3, .create-user h3, 
-.create-user h4, .reset-user-password h4 {
+.programs-selection h3, .new-programs-selection h3, .popup-programs-selection h4, .phases-and-order-selection h3, 
+.phase-selection h3, .phaseOne-selection h3, .keywordsOne-selection h3, .keywords-selection h3, .write-goodpractice h3,
+.users-order-selection h3, .password-update-selection h3, .create-user-selection h3, .log-selection h3,
+.create-user h3, .create-user h4, .reset-user-password h4 {
     color: var(--thales-color);  /* Set text color using thales color variable */
     margin-bottom: 10px;  /* Bottom margin of 10px */
     margin-top: 10px;  /* Top margin of 10px */
@@ -297,7 +306,7 @@ section {
 }
 
 /* Styles for paragraphs within keywords selection */
-.keywords-selection p {
+.keywordsOne-selection p, .keywords-selection p {
     height: 40px;  /* Fixed height of 40px */
     flex-wrap: wrap;  /* Wrap content within flex container */
     overflow-y: scroll;  /* Enable vertical scrolling */
@@ -358,17 +367,23 @@ section {
 }
 
 /* Styles for specific input fields within password update selection and log date */
-.password-input-line input, #log-date-day, #log-date-year {
-    width: 40%;  /* Width of 20% */
+.password-input-line input {
+    width: 20%;  /* Width of 20% */
+}
+
+#log-date-day, #log-date-year {
+    width: 40%;  /* Width of 40% */
 }
 
 /* Styles for checkboxes within programs selection, popup programs selection, phases and order selection, phase selection, password input line, create user selection, and log selection */
-.programs-selection .checkbox, .popup-programs-selection .popup-programs-checkbox, .phases-and-order-selection .checkbox, .phase-selection label, .password-input-line label, .create-user-selection label, .log-selection label {
+.programs-selection .checkbox, .popup-programs-selection .popup-programs-checkbox, .phases-and-order-selection .checkbox,
+.phase-selection label, .phaseOne-selection label, .password-input-line label, .create-user-selection label, .log-selection label {
     margin-right: 5px;  /* Right margin of 5px */
 }
 
 /* Styles for labels within programs selection, popup programs selection, phases and order selection, users order selection, create user selection, log selection, create user, and reset user password */
-.programs-selection label, .popup-programs-selection label , .phases-and-order-selection label, .users-order-selection label, .create-user-selection label, .log-selection label, .create-user label, .reset-user-password label {
+.programs-selection label, .popup-programs-selection label , .phases-and-order-selection label, .users-order-selection label,
+.create-user-selection label, .log-selection label, .create-user label, .reset-user-password label {
     color: #fff;  /* White text color */
     cursor: pointer;  /* Pointer cursor */
 }
@@ -382,7 +397,7 @@ label {
 .search-input {
     margin-top: 10px;  /* Top margin of 10px */
     height: 30px;  /* Fixed height of 30px */
-    width: 90%;  /* Width of 90% */
+    width: 92%;  /* Width of 92% */
 }
 
 /* Styles for selection and create user buttons */
@@ -430,6 +445,14 @@ button {
 /* Styles for create good practice selection button */
 #create-goodpractice-selection-button button {
     width: 40%;  /* Width of 40% */
+}
+
+#field-button {
+    width: 25%;
+}
+
+#field-button button {
+    width: 100%;
 }
 
 /* Styles for buttons within specific selections */

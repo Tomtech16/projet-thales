@@ -33,6 +33,9 @@
                     <?php endif; ?>
                     <?php if (isset($_SESSION['LOGGED_USER']) && ($_SESSION['LOGGED_USER']['profile'] === 'superadmin' || $_SESSION['LOGGED_USER']['profile'] === 'admin')) : ?>
                         <li>
+                            <a href="./delete_fields.php" class="<?= ($file === 'delete_fields.php') ? 'current-' : '' ?>page">Suppression</a>
+                        </li>
+                        <li>
                             <a href="./admin.php" class="<?= ($file === 'admin.php') ? 'current-' : '' ?>page">Administration</a>
                         </li>
                         <li>

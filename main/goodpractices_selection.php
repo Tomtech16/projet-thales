@@ -2,7 +2,7 @@
     session_start(); 
     require_once(__DIR__ . '/functions.php');
     CheckRights();
-    
+
     require_once(__DIR__ . '/config/database_connect.php');
     require_once(__DIR__ . '/sql_functions.php');
 
@@ -14,17 +14,32 @@
     $orderType = Sanitize($_SESSION['GOODPRACTICES_ORDER'][0]);
     $orderDirection = Sanitize($_SESSION['GOODPRACTICES_ORDER'][1]);
 
-    $programsSelectionChain = isset($_SESSION['SELECT_ALL_PROGRAMS_CHECK']) ? Sanitize(implode(', ', $_SESSION['SELECT_ALL_PROGRAMS_CHECK'])) : '';
-    $_SESSION['SELECT_ALL_PROGRAMS'] ??= 0;
-    $phasesSelectionChain = isset($_SESSION['GOODPRACTICES_SELECTION']['phase_name']) ? Sanitize(implode(', ', $_SESSION['GOODPRACTICES_SELECTION']['phase_name'])) : '';
-
-    $phasesSelectionChain .= isset($_SESSION['PHASE_CHECK']) ? Sanitize(implode(', ', $_SESSION['PHASE_CHECK'])) : '';
-
-    $keywordsSelectionChain = isset($_SESSION['GOODPRACTICES_SELECTION']['onekeyword']) ? Sanitize(implode(', ', $_SESSION['GOODPRACTICES_SELECTION']['onekeyword'])) : '';
-
-    $keywordsSelectionChain .= isset($_SESSION['KEYWORDS_CHECK']) ? Sanitize($_SESSION['KEYWORDS_CHECK']) : '';
-
+    if (isset($_SESSION['SELECT_ALL_PROGRAMS_CHECK'])) {
+        $programsSelectionChain = Sanitize(implode(', ', $_SESSION['SELECT_ALL_PROGRAMS_CHECK']));
+    } else {
+        $programsSelectionChain = '';
+    }
+    if (!isset($_SESSION['SELECT_ALL_PROGRAMS'])) {
+        $_SESSION['SELECT_ALL_PROGRAMS'] = 0;
+    }
+    if (isset($_SESSION['GOODPRACTICES_SELECTION']['phase_name'])) {
+        $phasesSelectionChain = Sanitize(implode(', ', $_SESSION['GOODPRACTICES_SELECTION']['phase_name']));
+    } else {
+        $phasesSelectionChain = '';
+    }  
+    if (isset($_SESSION['PHASE_CHECK'])) {
+        $phasesSelectionChain .= Sanitize(implode(', ', $_SESSION['PHASE_CHECK']));
+    }
+    if (isset($_SESSION['GOODPRACTICES_SELECTION']['onekeyword'])) {
+        $keywordsSelectionChain = Sanitize(implode(', ', $_SESSION['GOODPRACTICES_SELECTION']['onekeyword']));
+    } else {
+        $keywordsSelectionChain = '';
+    }
+    if (isset($_SESSION['KEYWORDS_CHECK'])) {
+        $keywordsSelectionChain .= Sanitize($_SESSION['KEYWORDS_CHECK']);
+    }
 ?>
+
 <section class="goodpractices-selection">
     <h2>Interface de filtrage des bonnes pratiques</h2>
     <form class="selection-form" action="submit_goodpractices_selection.php" method="POST">

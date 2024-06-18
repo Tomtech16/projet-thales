@@ -33,6 +33,18 @@
         $_SESSION['CREATE_ALL_PROGRAMS'] = 0;
     }
 
+    // Prepare additional keywords chain
+    if (isset($_SESSION['GOODPRACTICES_CREATION']['addProgram'])) {
+        $addProgramsSelectionChain = Sanitize($_SESSION['GOODPRACTICES_CREATION']['addProgram']);
+    } else {
+        $addProgramsSelectionChain = '';
+    }
+
+    // Append CREATE_ADD_PROGRAMS_CHECK to additional programs selection chain if set
+    if (isset($_SESSION['CREATE_ADD_PROGRAMS_CHECK'])) {
+        $addProgramsSelectionChain .= Sanitize($_SESSION['CREATE_ADD_PROGRAMS_CHECK']);
+    }
+
     // Prepare selected phase chain
     if (isset($_SESSION['GOODPRACTICES_CREATION']['phase_name'])) {
         $phaseSelectionChain = Sanitize($_SESSION['GOODPRACTICES_CREATION']['phase_name']);
@@ -88,31 +100,61 @@
                     <?php endforeach; ?>   
                 </div>         
             </div>
-
-            <div class="phase-selection">
-                <h3>Sélection de la phase</h3>
-                <div class="radio-area">
-                    <div class='radio-line'>
-                        <label for='phasesSelection'>Phase : </label>
-                        <select id='phasesSelection' name='phasesSelection'>
-                            <?php foreach ($phases as $phase): ?>
-                                <option id="<?= $phase[0] ?>" value="<?= $phase[0] ?>" <?= (str_contains($phaseSelectionChain, $phase[0]) ? 'selected' : '') ?>><?= $phase[0] ?></option>
-                            <?php endforeach; ?>
-                        </select>
+            
+            <?php if ($_SESSION['LOGGED_USER']['profile'] === 'admin' || $_SESSION['LOGGED_USER']['profile'] === 'superadmin') : ?>
+                <div class="new-programs-selection">
+                    <h3>Nouveaux programmes</h3>
+                    <input class="search-input" type="text" id="ProgramSearch" name="addProgram" placeholder="Programmes séparés par des virgules" value="<?= $addProgramsSelectionChain ?>">
+                </div>
+            <?php endif; ?>
+            <?php if ($_SESSION['LOGGED_USER']['profile'] === 'operator') : ?>
+                <div class="phaseOne-selection">
+                    <h3>Sélection de la phase</h3>
+                    <div class="radio-area">
+                        <div class='radio-line'>
+                            <label for='phasesSelection'>Phase : </label>
+                            <select id='phasesSelection' name='phasesSelection'>
+                                <?php foreach ($phases as $phase): ?>
+                                    <option id="<?= $phase[0] ?>" value="<?= $phase[0] ?>" <?= (str_contains($phaseSelectionChain, $phase[0]) ? 'selected' : '') ?>><?= $phase[0] ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
             
-            <div class="keywords-selection">
-                <h3>Sélection des mots-clés</h3>
-                <input class="search-input" type="text" id="keywordSearch" name="keywordSearch" placeholder="Mots-clés séparés par des virgules" value="<?= $keywordsSelectionChain ?>">
-                <p><?= Sanitize($_SESSION['GOODPRACTICES_KEYWORDS_CREATION_MESSAGE']) ?></p>
-            </div>
+                <div  class="keywordsOne-selection">
+                    <h3>Sélection des mots-clés</h3>
+                    <input class="search-input" type="text" id="keywordSearch" name="keywordSearch" placeholder="Mots-clés séparés par des virgules" value="<?= $keywordsSelectionChain ?>">
+                    <p><?= Sanitize($_SESSION['GOODPRACTICES_KEYWORDS_CREATION_MESSAGE']) ?></p>
+                </div>
+            <?php endif; ?>
+            
+            <?php if ($_SESSION['LOGGED_USER']['profile'] === 'admin' || $_SESSION['LOGGED_USER']['profile'] === 'superadmin') : ?>
+                <div class="phase-selection">
+                    <h3>Sélection de la phase</h3>
+                    <div class="radio-area">
+                        <div class='radio-line'>
+                            <label for='phasesSelection'>Phase : </label>
+                            <select id='phasesSelection' name='phasesSelection'>
+                                <?php foreach ($phases as $phase): ?>
+                                    <option id="<?= $phase[0] ?>" value="<?= $phase[0] ?>" <?= (str_contains($phaseSelectionChain, $phase[0]) ? 'selected' : '') ?>><?= $phase[0] ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="keywords-selection">
+                    <h3>Sélection des mots-clés</h3>
+                    <input class="search-input" type="text" id="keywordSearch" name="keywordSearch" placeholder="Mots-clés séparés par des virgules" value="<?= $keywordsSelectionChain ?>">
+                    <p><?= Sanitize($_SESSION['GOODPRACTICES_KEYWORDS_CREATION_MESSAGE']) ?></p>
+                </div>
 
-            <div class="keywords-selection">
-                <h3>Nouveaux mots-clés</h3>
-                <input class="search-input" type="text" id="keywordSearch" name="addKeyword" placeholder="Mots-clés séparés par des virgules" value="<?= $addKeywordsSelectionChain ?>">
-            </div>
+                <div class="keywords-selection">
+                    <h3>Nouveaux mots-clés</h3>
+                    <input class="search-input" type="text" id="keywordSearch" name="addKeyword" placeholder="Mots-clés séparés par des virgules" value="<?= $addKeywordsSelectionChain ?>">
+                </div>
+            <?php endif; ?>
         </div>
 
         <div class="gestion">
